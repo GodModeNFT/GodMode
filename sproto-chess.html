@@ -249,6 +249,7 @@
         <div class="btns hide" id="watchBtns">
           <button class="bt ghost" id="wLeave" type="button">Stop watching</button>
         </div>
+        <div class="btns hide" id="soundRow"><button class="bt ghost" id="soundBtn" type="button"></button></div>
         <div class="btns hide" id="arrowRow"><button class="bt ghost" id="arrowBtn" type="button">&#9998; Draw arrows: off</button></div>
         <p class="sub hide" id="arrowHint" style="margin-top:6px">Press and hold one of the pieces, then drag to where it could move to draw an arrow (right-click and drag on a computer). Knight moves bend like an L. Tap anywhere to clear. Only you can see them, and only on your turn.</p>
         <div class="banner hide" id="drawBanner"><span id="drawText">Your opponent offers a draw.</span>
@@ -878,8 +879,38 @@ var FIREBASE_CONFIG = {
   function myTurn(){ return mode==='online' && !isViewing() && G && G.white && G.black && !G.result && started() && game.turn()===myColor; }
   function canMove(){ return mode==='local' ? !game.isGameOver() : myTurn(); }
 
+  /* ---------- sound ---------- */
+  var AC=null, soundOn=(lsGet('spc_snd')!=='0'), endSoundGid=null;
+  function ac(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(AC&&AC.state==='suspended'){ try{AC.resume();}catch(e){} } return AC; }
+  document.addEventListener('pointerdown',ac,true); document.addEventListener('keydown',ac,true);
+  function knock(t,vol,freq){
+    var c=AC, n=Math.floor(c.sampleRate*.07), buf=c.createBuffer(1,n,c.sampleRate), d=buf.getChannelData(0);
+    for(var i=0;i<n;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);
+    var src=c.createBufferSource(); src.buffer=buf; var bp=c.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=freq||1400; bp.Q.value=.9;
+    var g=c.createGain(); g.gain.value=vol; src.connect(bp); bp.connect(g); g.connect(c.destination); src.start(t);
+    var o=c.createOscillator(), og=c.createGain(); o.type='sine'; o.frequency.setValueAtTime(190,t); o.frequency.exponentialRampToValueAtTime(70,t+.09);
+    og.gain.setValueAtTime(vol*.9,t); og.gain.exponentialRampToValueAtTime(.001,t+.11); o.connect(og); og.connect(c.destination); o.start(t); o.stop(t+.12);
+  }
+  function ding(t,freq,vol,dur){
+    var c=AC, o=c.createOscillator(), g=c.createGain(); o.type='triangle'; o.frequency.value=freq;
+    g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(.001,t+dur); o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+.02);
+  }
+  function playSound(kind){
+    if(!soundOn||!ac()) return; var t=AC.currentTime+.01;
+    try{
+      if(kind==='capture'){ knock(t,.9,1100); knock(t+.07,.5,900); }
+      else if(kind==='castle'){ knock(t,.7,1400); knock(t+.13,.7,1200); }
+      else if(kind==='check'){ knock(t,.7,1300); ding(t+.1,880,.18,.35); ding(t+.18,1175,.14,.4); }
+      else if(kind==='end'){ knock(t,.8,1000); ding(t+.12,523,.2,.7); ding(t+.12,392,.16,.8); ding(t+.12,330,.14,.9); }
+      else knock(t,.7,1500);
+    }catch(e){}
+  }
+  function moveKind(mv,g){
+    if(g.isGameOver()) return 'end'; if(g.isCheck()) return 'check';
+    if(mv.captured) return 'capture'; if(mv.flags&&(mv.flags.indexOf('k')>=0||mv.flags.indexOf('q')>=0)) return 'castle'; return 'move';
+  }
   /* ---------- review earlier moves ---------- */
-  var viewPly=null;
+  var viewPly=null, lastSoundGameLen=null;
   function isViewing(){ var n=game.history().length; if(viewPly!==null&&viewPly>=n) viewPly=null; return viewPly!==null; }
   function vState(){
     if(!isViewing()) return {g:game,last:lastMove,viewing:false};
@@ -944,6 +975,7 @@ var FIREBASE_CONFIG = {
     try{ res=game.move(m); }catch(e){ return; }
     if(!res) return;
     lastMove={from:res.from,to:res.to}; sel=null;
+    var kd=moveKind(res,game); playSound(kd); if(kd==='end') endSoundGid=gid;
     if(mode==='online'){
       var idx=game.history().length-1, upd={drawOffer:null}, mover=myColor;
       upd['moves/'+idx]=res.from+res.to+(res.promotion||'');
@@ -1020,8 +1052,10 @@ var FIREBASE_CONFIG = {
   }
   $('endB').addEventListener('click',function(){ endHidden=true; this.classList.add('hide'); });
 
+  function ghosts(){ var g={}; arrows.forEach(function(a){ var p=game.get(a[0])||g[a[0]]; if(p) g[a[1]]={type:p.type,color:p.color}; }); return g; }
+  function pieceAt(sq){ return game.get(sq)||ghosts()[sq]||null; }
   function arrowOk(from,to){
-    var p=game.get(from); if(!p||from===to) return false;
+    var p=pieceAt(from); if(!p||from===to) return false;
     var df=FILES.indexOf(to[0])-FILES.indexOf(from[0]), dr=parseInt(to[1],10)-parseInt(from[1],10), ax=Math.abs(df), ay=Math.abs(dr);
     switch(p.type){
       case 'n': return (ax===1&&ay===2)||(ax===2&&ay===1);
@@ -1065,7 +1099,7 @@ var FIREBASE_CONFIG = {
   function startDraw(e,sq){ drag=sq; preview=[sq,sq]; drawnThisGesture=false; try{ boardEl.setPointerCapture(e.pointerId); }catch(x){} }
   boardEl.addEventListener('pointerdown',function(e){
     if(!canDraw()) return;
-    var sq=sqAt(e); if(!sq||!game.get(sq)) { if(e.button===2) e.preventDefault(); return; }
+    var sq=sqAt(e); if(!sq||!pieceAt(sq)) { if(e.button===2) e.preventDefault(); return; }
     var right=(e.button===2);
     if(right||arrowMode){ e.preventDefault(); startDraw(e,sq); return; }
     // press and hold, then drag, to draw an arrow without switching modes
@@ -1073,7 +1107,7 @@ var FIREBASE_CONFIG = {
     holdT=setTimeout(function(){ if(holdInfo&&!drag){ startDraw(holdInfo.ev,holdInfo.sq); } holdInfo=null; },230);
   });
   boardEl.addEventListener('pointermove',function(e){
-    if(holdInfo && Math.hypot(e.clientX-holdInfo.x,e.clientY-holdInfo.y)>10 && !drag){ clearTimeout(holdT); holdInfo=null; }
+    if(holdInfo && Math.hypot(e.clientX-holdInfo.x,e.clientY-holdInfo.y)>12 && !drag){ clearTimeout(holdT); var hi=holdInfo; holdInfo=null; startDraw(hi.ev,hi.sq); }
     if(!drag) return; var sq=sqAt(e); if(sq){ preview=(sq!==drag&&arrowOk(drag,sq))?[drag,sq]:[drag,drag]; drawArrows(); }
   });
   function endDrag(e){
@@ -1103,6 +1137,9 @@ var FIREBASE_CONFIG = {
     if(e.key==='ArrowLeft'){ stepPly(-1); e.preventDefault(); } else if(e.key==='ArrowRight'){ stepPly(1); e.preventDefault(); }
     else if(e.key==='ArrowUp'){ goPly(0); e.preventDefault(); } else if(e.key==='ArrowDown'){ goPly(game.history().length); e.preventDefault(); }
   });
+  function soundLabel(){ $('soundBtn').innerHTML=(soundOn?'&#128266; Sound: on':'&#128263; Sound: off'); }
+  soundLabel();
+  $('soundBtn').addEventListener('click',function(){ soundOn=!soundOn; lsSet('spc_snd',soundOn?'1':'0'); soundLabel(); if(soundOn) playSound('move'); });
   $('arrowBtn').addEventListener('click',function(){
     arrowMode=!arrowMode; sel=null; this.classList.toggle('on',arrowMode); this.innerHTML='&#9998; Draw arrows: '+(arrowMode?'on':'off');
     boardEl.classList.toggle('arrowmode',arrowMode); if(!arrowMode){ arrows=[]; circles=[]; } render();
@@ -1159,7 +1196,7 @@ var FIREBASE_CONFIG = {
     document.body.classList.toggle('fs',fs);
     show('topBar',fs&&!!(G&&G.tc)); show('botBar',fs&&!!(G&&G.tc)); $('botBar').classList.add('bot');
     if(fs&&G){ if(mode==='watch'){ var ft=flipped; $('topName').textContent=((ft?G.white:G.black)||{}).name+' ('+(ft?'Blue':'Red')+')'; $('botName').textContent=((ft?G.black:G.white)||{}).name+' ('+(ft?'Red':'Blue')+')'; } else { $('topName').textContent=oppName(); $('botName').textContent=(meName||'You')+' (you)'; } }
-    show('lobbyPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('shopPanel',mode==='lobby'); show('waitPanel',mode==='waiting'); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch'); show('chatPanel',mode==='online'&&!!(G&&G.white&&G.black));
+    show('lobbyPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('shopPanel',mode==='lobby'); show('waitPanel',mode==='waiting'); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch'); show('soundRow',mode==='online'||mode==='watch'); show('chatPanel',mode==='online'&&!!(G&&G.white&&G.black));
     show('localBtns',mode==='lobby'||mode==='local');
     show('onlineBtns',mode==='online' && G && !G.result);
     show('overBtns',mode==='online' && G && !!G.result);
@@ -1178,7 +1215,7 @@ var FIREBASE_CONFIG = {
   /* ---------- local (one device) ---------- */
   var FEN_B='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1';
   function makeGame(first){ return first==='b'?new Chess(FEN_B):new Chess(); }
-  function resetBoard(){ game=new Chess(); viewPly=null; sel=null; lastMove=null; arrows=[]; circles=[]; arrowsAt=0; }
+  function resetBoard(){ game=new Chess(); viewPly=null; lastSoundGameLen=null; sel=null; lastMove=null; arrows=[]; circles=[]; arrowsAt=0; }
   function showBackToOnline(on){ var b=$('leaveBtn2'); if(!b&&on){ b=document.createElement('button'); b.id='leaveBtn2'; b.type='button'; b.className='bt ghost'; b.textContent='Play online'; b.addEventListener('click',function(){ toLobby(); }); $('localBtns').appendChild(b);} if(b) b.classList.toggle('hide',!on); }
   $('newBtn').addEventListener('click',function(){ resetBoard(); render(); });
   $('undoBtn').addEventListener('click',function(){ game.undo(); sel=null; var h=game.history({verbose:true}); lastMove=h.length?{from:h[h.length-1].from,to:h[h.length-1].to}:null; render(); });
@@ -1395,11 +1432,15 @@ var FIREBASE_CONFIG = {
       if(mode==='online'||mode==='watch'){
         var want=g.first||'w'; if(game.history().length===0&&game.turn()!==want){ game=makeGame(want); lastMove=null; }
         var arr=movesArr(g);
+        var applied=0, lastMv=null;
         while(game.history().length<arr.length){
           var u=arr[game.history().length], mv;
           try{ mv=game.move({from:u.slice(0,2),to:u.slice(2,4),promotion:u[4]}); }catch(e){ break; }
-          if(!mv) break; lastMove={from:mv.from,to:mv.to}; sel=null;
+          if(!mv) break; lastMove={from:mv.from,to:mv.to}; sel=null; applied++; lastMv=mv;
         }
+        if(applied===1&&lastMv){ var kd2=moveKind(lastMv,game); playSound(kd2); if(kd2==='end') endSoundGid=gid; }
+        if(g.result&&endSoundGid!==gid&&lastSoundGameLen!==null){ endSoundGid=gid; playSound('end'); }
+        lastSoundGameLen=arr.length;
       }
       setPanels(); render(); renderChat(g);
       if(mode==='online'&&g.white&&g.black) registerPlayer();
