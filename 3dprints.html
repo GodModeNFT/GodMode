@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F2F1EC">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>3D Prints — GodMode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2F1EC;
+    --surface:#FFFFFF;
+    --ink:#1E1D1B;
+    --ink-soft:#5B5750;
+    --line:#D9D5CA;
+    --accent:#2E4034;
+    --brass:#AD8A4E;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 32px;}
+
+  header.top{
+    padding:48px 0 32px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid var(--line);
+  }
+  .brand-name{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:clamp(24px,4vw,32px);
+  }
+  nav.top-nav{display:flex;gap:24px;flex-wrap:wrap;}
+  nav.top-nav a{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    text-decoration:none;
+    color:var(--ink-soft);
+    border-bottom:1px solid transparent;
+    transition:border-color .2s, color .2s;
+  }
+  nav.top-nav a:hover{color:var(--ink);border-color:var(--brass);}
+
+  main{padding:64px 0 100px;}
+  .section-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:16px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:clamp(32px,5vw,48px);
+    line-height:1.1;
+    margin:0 0 20px;
+  }
+  .lede{
+    font-size:16px;
+    line-height:1.65;
+    color:var(--ink-soft);
+    max-width:600px;
+    margin-bottom:32px;
+  }
+
+  .collection-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:24px;
+  }
+  @media (max-width:700px){ .collection-grid{grid-template-columns:1fr;} }
+
+  .collection-btn{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    background:var(--surface);
+    border:1px solid var(--line);
+    text-decoration:none;
+    color:var(--ink);
+    padding:40px 32px;
+    min-height:180px;
+    transition:border-color .2s, transform .2s, background .2s;
+  }
+  .collection-btn:hover{
+    border-color:var(--brass);
+    transform:translateY(-3px);
+  }
+  .collection-btn .coll-name{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:28px;
+    margin-bottom:10px;
+  }
+  .collection-btn .coll-status{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--brass);
+  }
+  .collection-btn .coll-arrow{
+    align-self:flex-end;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:22px;
+    transition:transform .2s;
+  }
+  .collection-btn:hover .coll-arrow{transform:translateX(4px);}
+
+  .collection-btn.disabled{
+    opacity:.55;
+    cursor:default;
+    pointer-events:none;
+  }
+  .collection-btn.disabled .coll-status{color:var(--ink-soft);}
+  .title-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px 32px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+  }
+  .title-row h1{margin:0;}
+
+  .voucher{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 22px 14px 18px;
+    color:#fff;
+    background:linear-gradient(135deg,#0A2A66 0%,#1B3F8F 55%,#B22234 100%);
+    border:2px dashed #fff;
+    outline:2px solid #B22234;
+    outline-offset:2px;
+    border-radius:6px;
+    transform:rotate(-2deg);
+    box-shadow:0 8px 22px rgba(10,42,102,.35);
+    overflow:hidden;
+    animation:voucherPulse 2.4s ease-in-out infinite;
+  }
+  .voucher::before,.voucher::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    width:16px;height:16px;
+    margin-top:-8px;
+    background:var(--paper);
+    border-radius:50%;
+  }
+  .voucher::before{left:-9px;}
+  .voucher::after{right:-9px;}
+  .voucher .shine{
+    position:absolute;
+    top:0;left:-60%;
+    width:40%;height:100%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);
+    transform:skewX(-20deg);
+    animation:voucherShine 3.2s ease-in-out infinite;
+    pointer-events:none;
+  }
+  .voucher .flag{font-size:34px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3));}
+  .voucher .v-big{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:22px;
+    letter-spacing:.02em;
+    line-height:1.05;
+    text-transform:uppercase;
+  }
+  .voucher .v-small{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:#FFD9DD;
+    margin-top:4px;
+  }
+  @keyframes voucherPulse{
+    0%,100%{transform:rotate(-2deg) scale(1);}
+    50%{transform:rotate(-2deg) scale(1.04);}
+  }
+  @keyframes voucherShine{
+    0%{left:-60%;}
+    55%,100%{left:130%;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .voucher,.voucher .shine{animation:none;}
+  }
+  .tagline{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(20px,3vw,26px);
+    color:var(--brass);
+    margin:-4px 0 18px;
+  }
+  .ribbon-wrap{margin:6px 0 44px;padding:0 28px;}
+  .ribbon{
+    position:relative;
+    display:inline-block;
+    padding:12px 34px;
+    background:linear-gradient(180deg,#C9A25F 0%,#AD8A4E 55%,#8F6F38 100%);
+    color:#fff;
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(18px,3vw,24px);
+    letter-spacing:.03em;
+    text-shadow:0 1px 0 rgba(0,0,0,.35);
+    box-shadow:0 10px 18px rgba(30,29,27,.28), 0 2px 0 rgba(255,255,255,.35) inset;
+    transform:rotate(-1.5deg);
+    animation:ribbonPop .7s cubic-bezier(.2,1.6,.4,1) both;
+  }
+  .ribbon::before,.ribbon::after{
+    content:"";
+    position:absolute;
+    top:14px;
+    width:36px;
+    height:100%;
+    background:#8F6F38;
+    z-index:-1;
+  }
+  .ribbon::before{
+    left:-26px;
+    clip-path:polygon(0 0,100% 0,100% 100%,0 100%,12px 50%);
+  }
+  .ribbon::after{
+    right:-26px;
+    clip-path:polygon(0 0,100% 0,calc(100% - 12px) 50%,100% 100%,0 100%);
+  }
+  .ribbon span{position:relative;z-index:1;}
+  .ribbon-wrap .ribbon{isolation:isolate;}
+  @keyframes ribbonPop{
+    0%{transform:rotate(-1.5deg) scale(.4);opacity:0;}
+    100%{transform:rotate(-1.5deg) scale(1);opacity:1;}
+  }
+  @media (prefers-reduced-motion:reduce){ .ribbon{animation:none;} }
+  .life-banner{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:20px;
+    padding:26px 24px;
+    margin-bottom:40px;
+    background:linear-gradient(110deg,#1E1D1B 0%,#2E4034 50%,#1E1D1B 100%);
+    background-size:200% 100%;
+    border:2px solid var(--brass);
+    box-shadow:0 0 0 4px var(--paper), 0 0 0 5px var(--brass), 0 14px 28px rgba(30,29,27,.25);
+    overflow:hidden;
+    animation:lifeSweep 6s linear infinite;
+  }
+  .life-banner::after{
+    content:"";
+    position:absolute;
+    top:0;left:-40%;
+    width:30%;height:100%;
+    background:linear-gradient(100deg,transparent,rgba(255,235,180,.35),transparent);
+    transform:skewX(-20deg);
+    animation:lifeShine 4s ease-in-out infinite;
+    pointer-events:none;
+  }
+  .life-text{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(24px,5vw,40px);
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:#F3D9A0;
+    text-shadow:0 0 18px rgba(173,138,78,.7);
+    text-align:center;
+  }
+  .life-banner .spark{
+    color:var(--brass);
+    font-size:clamp(20px,4vw,32px);
+    animation:sparkle 1.6s ease-in-out infinite;
+  }
+  .life-banner .spark-r{animation-delay:.8s;}
+  @keyframes sparkle{
+    0%,100%{transform:scale(1) rotate(0);opacity:1;}
+    50%{transform:scale(1.4) rotate(45deg);opacity:.6;}
+  }
+  @keyframes lifeSweep{0%{background-position:0% 0;}100%{background-position:200% 0;}}
+  @keyframes lifeShine{0%{left:-40%;}60%,100%{left:130%;}}
+  @media (prefers-reduced-motion:reduce){
+    .life-banner,.life-banner::after,.life-banner .spark{animation:none;}
+  }
+  .collection-btn.print-anything{
+    grid-column:1 / -1;
+    justify-self:center;
+    width:calc(50% - 12px);
+    border-color:var(--brass);
+  }
+  @media (max-width:700px){ .collection-btn.print-anything{width:100%;} }
+
+  /* ===== iPhone / mobile polish ===== */
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+  body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);padding-bottom:env(safe-area-inset-bottom);}
+  a,button,label,summary{-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+  input,textarea,select{font-size:16px;}
+  img{max-width:100%;}
+  @media (max-width:640px){
+    header.top{flex-wrap:wrap;gap:14px 18px;padding-top:max(28px,env(safe-area-inset-top));padding-bottom:22px;}
+    nav.top-nav{flex-wrap:wrap;gap:6px 18px;width:100%;}
+    nav.top-nav a{display:inline-flex;align-items:center;min-height:44px;padding-bottom:0;}
+    .back-link{display:inline-flex;align-items:center;min-height:44px;}
+    .wrap{padding-left:20px;padding-right:20px;}
+    main{padding-top:36px;}
+    .buy-btn,.pill,.btn,.donate-btn,.submit{min-height:44px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand-name">GodMode</div>
+    <nav class="top-nav">
+      <a href="gallery.html">NFT Profile</a>
+      <a href="3dprints.html">3D Prints</a>
+      <a href="donate.html">Donate</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="section-label">3D Prints</div>
+    <div class="title-row">
+      <h1>Choose A Collection</h1>
+        <div class="voucher" aria-label="Free shipping for USA orders">
+          <span class="shine"></span>
+          <span class="flag">&#127482;&#127480;</span>
+          <div>
+            <div class="v-big">Free Shipping</div>
+            <div class="v-small">For USA Orders</div>
+          </div>
+        </div>
+    </div>
+    <div class="tagline">Bringing the Digital to Physical!</div>
+    <div class="ribbon-wrap"><div class="ribbon"><span>Customized to your NFT!</span></div></div>
+    <p class="lede">Every 3D print is organized by collection. Pick one below to view the models, sizes, and pricing.</p>
+
+    <div class="life-banner" role="note">
+      <span class="spark spark-l">&#10022;</span>
+      <span class="life-text">Bring your NFT to Life!</span>
+      <span class="spark spark-r">&#10022;</span>
+    </div>
+
+    <div class="collection-grid">
+      <a class="collection-btn" href="aeon3d.html">
+        <div>
+          <div class="coll-name">Project Aeon</div>
+          <div class="coll-status">Available Now</div>
+        </div>
+        <div class="coll-arrow">&rarr;</div>
+      </a>
+
+      <a class="collection-btn" href="sproto3d.html">
+        <div>
+          <div class="coll-name">Sproto Gremlins</div>
+          <div class="coll-status">Available Now</div>
+        </div>
+        <div class="coll-arrow">&rarr;</div>
+      </a>
+
+      <a class="collection-btn" href="apu3d.html">
+        <div>
+          <div class="coll-name">Apu Apustaja</div>
+          <div class="coll-status">Available Now</div>
+        </div>
+        <div class="coll-arrow">&rarr;</div>
+      </a>
+
+      <a class="collection-btn disabled" href="#">
+        <div>
+          <div class="coll-name">Hammy</div>
+          <div class="coll-status">Coming Soon</div>
+        </div>
+        <div class="coll-arrow">&rarr;</div>
+      </a>
+
+      <a class="collection-btn print-anything" href="order.html?item=3D%20Design%20and%20Print%20Anything">
+        <div>
+          <div class="coll-name">3D Design and Print Anything</div>
+          <div class="coll-status">Custom Requests</div>
+        </div>
+        <div class="coll-arrow">&rarr;</div>
+      </a>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>
