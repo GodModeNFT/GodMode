@@ -19,7 +19,7 @@
   }
   *{box-sizing:border-box;}
   html{-webkit-text-size-adjust:100%;}
-  body{margin:0;background:var(--yellow);color:var(--lead);font-family:'Barlow',system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+  body{margin:0;background:#3D9141;color:var(--lead);font-family:'Barlow',system-ui,sans-serif;-webkit-font-smoothing:antialiased;
     padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);padding-bottom:env(safe-area-inset-bottom);}
   a{color:inherit;-webkit-tap-highlight-color:transparent;}
   button,select,input{font-family:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
@@ -122,7 +122,7 @@
   body.fs .wrap{padding:0;max-width:none;}
   body.fs .game{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;gap:10px;overflow:auto;
     padding:max(8px,env(safe-area-inset-top)) 3px max(10px,env(safe-area-inset-bottom));
-    background:var(--yellow);}
+    background:#3D9141;}
   body.fs .boardwrap{width:100%;display:flex;flex-direction:column;align-items:center;--bw:min(100%,1000px,calc(100dvh - 125px));}
   body.fs .board{margin:0;}
   body.fs .side{width:100%;max-width:1000px;}
@@ -178,6 +178,22 @@
   @keyframes shopPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(230,57,70,.7);}50%{transform:scale(1.04);box-shadow:0 0 0 8px rgba(230,57,70,0);}}
   @keyframes shopShine{0%{left:-60%;}60%,100%{left:130%;}}
   @media (prefers-reduced-motion:reduce){.shop .flash,.shop .flash::after{animation:none;}}
+  #chatPanel summary{cursor:pointer;margin:0;display:flex;align-items:center;gap:8px;}
+  .badge{background:var(--red);color:#fff;border-radius:999px;padding:1px 8px;font-size:13px;font-family:'Barlow',sans-serif;font-weight:700;}
+  .chatlog{list-style:none;margin:10px 0;padding:0;max-height:170px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;-webkit-overflow-scrolling:touch;}
+  .chatlog li{max-width:86%;background:#fff;border:3px solid var(--lead);border-radius:12px;padding:5px 10px;font-size:15px;line-height:1.25;overflow-wrap:anywhere;align-self:flex-start;}
+  .chatlog li.me{align-self:flex-end;background:var(--yellow);}
+  .chatlog li b{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#52608A;}
+  .chatlog li.me b{color:#2A3350;}
+  .chatlog .none{align-self:center;background:transparent;border:0;color:#52608A;font-weight:600;}
+  .chatform{display:flex;gap:8px;}
+  .chatform input{flex:1;min-width:0;font-size:16px;padding:10px 12px;border:3px solid var(--lead);border-radius:12px;font-family:inherit;}
+  .chatform .bt{min-height:44px;}
+  .hnav{display:inline-flex;gap:4px;flex:none;}
+  .hnav button{width:34px;height:30px;border:3px solid var(--lead);border-radius:8px;background:#fff;color:var(--lead);font-size:14px;line-height:1;padding:0;cursor:pointer;touch-action:manipulation;}
+  .hnav button:disabled{opacity:.3;cursor:default;}
+  .hnav button:not(:disabled):active{background:var(--yellow);}
+  .hnav.past .hLast{background:var(--red);color:#fff;}
   .promo{display:flex;gap:10px;margin-top:12px;}
   .promo button{width:72px;height:72px;border:3px solid var(--lead);border-radius:12px;background:var(--cream);cursor:pointer;padding:4px;}
   .promo .pc{width:100%;height:100%;transform:none !important;}
@@ -195,7 +211,7 @@
 <div class="stripe"></div>
 <div class="wrap">
   <header class="top">
-    <div class="brand">GodMode</div>
+    
     <nav>
       <a href="sproto3d.html">&larr; Sproto</a>
       <a href="3dprints.html">3D Prints</a>
@@ -214,7 +230,7 @@
         <div class="chk-toast hide" id="chkT">CHECK!</div>
         <div class="endb hide" id="endB" role="alert"><div class="et" id="endT"></div><div class="es" id="endS"></div><div class="ex">tap to hide</div></div>
       </div>
-      <div class="pbar hide" id="botBar"><span class="pn" id="botName"></span><span class="clk" id="botClk">--:--</span></div>
+      <div class="pbar hide" id="botBar"><span class="pn" id="botName"></span><span class="hnav hide" id="hnav"><button type="button" class="hFirst" aria-label="First move">&#9198;</button><button type="button" class="hPrev" aria-label="Previous move">&#9664;</button><button type="button" class="hNext" aria-label="Next move">&#9654;</button><button type="button" class="hLast" aria-label="Back to live game">&#9197;</button></span><span class="clk" id="botClk">--:--</span></div>
     </div>
 
     <aside class="side">
@@ -278,6 +294,14 @@
         <p class="sub">Your game is listed in Open games. Or send this link to a friend:</p>
         <div class="share"><input type="text" id="shareLink" readonly><button class="bt" id="copyLink" type="button">Copy</button></div>
         <div class="btns"><button class="bt ghost" id="cancelBtn" type="button">Cancel game</button></div>
+      </div>
+
+      <div class="panel hide" id="chatPanel">
+        <details id="chatBox" open>
+          <summary class="ph">Chat <span class="badge hide" id="chatBadge"></span></summary>
+          <ol class="chatlog" id="chatLog"></ol>
+          <form class="chatform" id="chatForm" autocomplete="off"><input type="text" id="chatIn" maxlength="200" placeholder="Say something..." enterkeyhint="send"><button class="bt red" type="submit">Send</button></form>
+        </details>
       </div>
 
       <div class="panel hide" id="legendPanel">
@@ -782,7 +806,7 @@ var FIREBASE_CONFIG = {
     var off=0; FB.onValue(FB.ref(rdb,'.info/serverTimeOffset'),function(s){ off=s.val()||0; });
     DB={
       now:function(){ return Date.now()+off; },
-      listen:function(p,cb){ return FB.onValue(FB.ref(rdb,p),function(s){cb(s.val());}); },
+      listen:function(p,cb,err){ return FB.onValue(FB.ref(rdb,p),function(s){cb(s.val());},function(e){ if(err) err(e); }); },
       set:function(p,v){ return FB.set(FB.ref(rdb,p),v); },
       update:function(p,o){ return FB.update(FB.ref(rdb,p),o); },
       remove:function(p){ return FB.remove(FB.ref(rdb,p)); },
@@ -851,24 +875,45 @@ var FIREBASE_CONFIG = {
     u[charge]=Math.max(0,base-(game.turn()===charge&&started()?el:0)); u[other]=(G[other]!=null)?G[other]:G.tc*1000; u.ts=now; return u;
   }
   function finish(res,chargeColor){ var u=clockUpd(chargeColor||game.turn()); u.result=res; u.drawOffer=null; DB.update('games/'+gid,u); }
-  function myTurn(){ return mode==='online' && G && G.white && G.black && !G.result && started() && game.turn()===myColor; }
+  function myTurn(){ return mode==='online' && !isViewing() && G && G.white && G.black && !G.result && started() && game.turn()===myColor; }
   function canMove(){ return mode==='local' ? !game.isGameOver() : myTurn(); }
 
+  /* ---------- review earlier moves ---------- */
+  var viewPly=null;
+  function isViewing(){ var n=game.history().length; if(viewPly!==null&&viewPly>=n) viewPly=null; return viewPly!==null; }
+  function vState(){
+    if(!isViewing()) return {g:game,last:lastMove,viewing:false};
+    var hv=game.history({verbose:true}), fen=viewPly===0?hv[0].before:hv[viewPly-1].after;
+    return {g:new Chess(fen),last:viewPly>0?{from:hv[viewPly-1].from,to:hv[viewPly-1].to}:null,viewing:true};
+  }
+  function goPly(k){
+    var n=game.history().length; if(k>=n) k=null; else if(k<0) k=0;
+    if(k===viewPly) return; viewPly=k; sel=null; render();
+  }
+  function stepPly(d){ var n=game.history().length, cur=(viewPly===null?n:viewPly); var t=cur+d; if(t<0||t>n) return; goPly(t>=n?null:t); }
+  function updateNav(){
+    var on=(mode==='online'||mode==='watch'), n=game.history().length, v=isViewing(), cur=v?viewPly:n;
+    ['hnav','hnavT'].forEach(function(id){ var el=$(id); if(el) el.classList.toggle('hide',!(on&&n>0)); });
+    document.querySelectorAll('.hFirst,.hPrev').forEach(function(b){ b.disabled=(cur<=0); });
+    document.querySelectorAll('.hNext,.hLast').forEach(function(b){ b.disabled=!v; });
+    document.querySelectorAll('.hnav').forEach(function(w){ w.classList.toggle('past',v); });
+  }
   function render(){
+    var VS=vState(), vg=VS.g, vlast=VS.last;
     boardEl.innerHTML='';
-    var b=game.board(), moves=sel?game.moves({square:sel,verbose:true}):[];
+    var b=vg.board(), moves=(sel&&!VS.viewing)?vg.moves({square:sel,verbose:true}):[];
     var tg={}; moves.forEach(function(m){tg[m.to]=m;});
     var kingSq=null;
-    if(game.isCheck()){ b.forEach(function(row){row.forEach(function(p){ if(p&&p.type==='k'&&p.color===game.turn()) kingSq=p.square; });}); }
+    if(vg.isCheck()){ b.forEach(function(row){row.forEach(function(p){ if(p&&p.type==='k'&&p.color===vg.turn()) kingSq=p.square; });}); }
     for(var i=0;i<8;i++){ for(var j=0;j<8;j++){
       var r=flipped?7-i:i, c=flipped?7-j:j, name=sqName(r,c), p=b[r][c];
       var s=document.createElement('button'); s.type='button';
       s.className='sq '+(((r+c)%2===0)?'l':'');
       s.setAttribute('data-sq',name);
       s.setAttribute('aria-label',name+(p?' '+(p.color==='w'?'blue ':'red ')+NAMES[p.type]:''));
-      if(lastMove && (lastMove.from===name||lastMove.to===name)) s.classList.add('last');
+      if(vlast && (vlast.from===name||vlast.to===name)) s.classList.add('last');
       if(sel===name) s.classList.add('sel');
-      if(kingSq===name){ s.classList.add('chk'); if(game.isCheckmate()) s.classList.add('mate'); }
+      if(kingSq===name){ s.classList.add('chk'); if(vg.isCheckmate()) s.classList.add('mate'); }
       if(p){ var pe=pieceEl(p.color,p.type); if((p.type==='b'&&(name==='c1'||name==='c8'))||(p.type==='r'&&(name==='h1'||name==='h8'))) pe.firstChild.style.transform='scaleX(-1)'; s.appendChild(pe); }
       if(tg[name]){ if(p) s.classList.add('cap'); else { var dt=document.createElement('span'); dt.className='dot'; s.appendChild(dt); } }
       if(j===0){ var rk=document.createElement('span'); rk.className='co r'; rk.textContent=8-r; s.appendChild(rk); }
@@ -876,7 +921,7 @@ var FIREBASE_CONFIG = {
       (function(n){ s.addEventListener('click',function(){ onSquare(n); }); })(name);
       boardEl.appendChild(s);
     }}
-    updateStatus(); afterRender();
+    updateStatus(); afterRender(); updateNav();
   }
 
   function onSquare(name){
@@ -952,7 +997,7 @@ var FIREBASE_CONFIG = {
     return {t:t,s:s,tone:tone,key:(gid||'local')+'|'+r.type+'|'+game.history().length};
   }
   function afterRender(){
-    var es=endState(), b=$('endB');
+    var es=isViewing()?null:endState(), b=$('endB');
     if(es){
       if(es.key!==endKey){ endKey=es.key; endHidden=false; b.className='endb '+es.tone; $('endT').textContent=es.t; $('endS').textContent=es.s;
         b.style.animation='none'; void b.offsetWidth; b.style.animation=''; }
@@ -960,11 +1005,11 @@ var FIREBASE_CONFIG = {
     } else { endKey=null; endHidden=false; b.classList.add('hide'); }
     // check alert
     var len=game.history().length;
-    if(game.isCheck()&&!game.isGameOver()&&len!==lastCheckLen&&len>0){
+    if(!isViewing()&&game.isCheck()&&!game.isGameOver()&&len!==lastCheckLen&&len>0){
       var c=$('chkT'); c.classList.remove('hide'); c.style.animation='none'; void c.offsetWidth; c.style.animation='';
       clearTimeout(chkTimer); chkTimer=setTimeout(function(){ c.classList.add('hide'); },1500);
     }
-    if(!game.isCheck()) $('chkT').classList.add('hide');
+    if(!game.isCheck()||isViewing()) $('chkT').classList.add('hide');
     lastCheckLen=len;
     // arrows only live while it is your turn, and clear when a move is played
     if(len!==arrowsAt){ arrows=[]; circles=[]; arrowsAt=len; }
@@ -989,7 +1034,7 @@ var FIREBASE_CONFIG = {
     }
     return false;
   }
-  function canDraw(){ return mode==='local' ? !game.isGameOver() : (mode==='online'&&G&&!G.result&&myTurn()); }
+  function canDraw(){ return mode==='local' ? !game.isGameOver() : (mode==='online'&&G&&!G.result&&myTurn()&&!isViewing()); }
   function dispXY(name){ var col=FILES.indexOf(name[0]), row=8-parseInt(name[1],10); return [(flipped?7-col:col)+.5,(flipped?7-row:row)+.5]; }
   function sqAt(e){
     var r=boardEl.getBoundingClientRect(), x=(e.clientX-r.left)/r.width*8, y=(e.clientY-r.top)/r.height*8, c=Math.floor(x), rr=Math.floor(y);
@@ -1046,9 +1091,18 @@ var FIREBASE_CONFIG = {
     if(!(arrows.length||circles.length)) return;
     if(Date.now()<suppressClickUntil) return;
     var t=e.target;
-    if(t.closest&&(t.closest('#arrowBtn')||t.closest('.modal'))) return;
+    if(t.closest&&(t.closest('#arrowBtn')||t.closest('.modal')||t.closest('#chatPanel')||t.closest('.hnav'))) return;
     clearDrawings();
   },true);
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('.hnav button'); if(!b) return;
+    if(b.classList.contains('hFirst')) goPly(0); else if(b.classList.contains('hPrev')) stepPly(-1); else if(b.classList.contains('hNext')) stepPly(1); else goPly(game.history().length);
+  });
+  document.addEventListener('keydown',function(e){
+    if(!(mode==='online'||mode==='watch')) return; var t=e.target&&e.target.tagName; if(t==='INPUT'||t==='TEXTAREA') return;
+    if(e.key==='ArrowLeft'){ stepPly(-1); e.preventDefault(); } else if(e.key==='ArrowRight'){ stepPly(1); e.preventDefault(); }
+    else if(e.key==='ArrowUp'){ goPly(0); e.preventDefault(); } else if(e.key==='ArrowDown'){ goPly(game.history().length); e.preventDefault(); }
+  });
   $('arrowBtn').addEventListener('click',function(){
     arrowMode=!arrowMode; sel=null; this.classList.toggle('on',arrowMode); this.innerHTML='&#9998; Draw arrows: '+(arrowMode?'on':'off');
     boardEl.classList.toggle('arrowmode',arrowMode); if(!arrowMode){ arrows=[]; circles=[]; } render();
@@ -1072,6 +1126,7 @@ var FIREBASE_CONFIG = {
     var st=$('status'), sub=$('sub'), t=WORD[game.turn()], other=WORD[game.turn()==='w'?'b':'w'];
     if(mode==='lobby'){ st.textContent='Sproto Chess'; sub.textContent='Start a game, or join one from Open games.'; return; }
     if(mode==='waiting'){ st.textContent='Waiting...'; sub.textContent='You will play '+WORD[myColor]+'.'; return; }
+    if((mode==='watch'||mode==='online')&&isViewing()){ st.textContent=viewPly===0?'Start of the game':'Move '+viewPly+' of '+game.history().length; sub.textContent='Reviewing earlier moves. Tap the last arrow to go back to the live game.'; return; }
     if(mode==='watch'){
       if(!G){ st.textContent='Loading game...'; sub.textContent=''; return; }
       var wn=(G.white||{}).name||'Blue', bn=(G.black||{}).name||'Red', who=function(c){return (c==='w'?wn:bn)+' ('+WORD[c]+')';};
@@ -1104,7 +1159,7 @@ var FIREBASE_CONFIG = {
     document.body.classList.toggle('fs',fs);
     show('topBar',fs&&!!(G&&G.tc)); show('botBar',fs&&!!(G&&G.tc)); $('botBar').classList.add('bot');
     if(fs&&G){ if(mode==='watch'){ var ft=flipped; $('topName').textContent=((ft?G.white:G.black)||{}).name+' ('+(ft?'Blue':'Red')+')'; $('botName').textContent=((ft?G.black:G.white)||{}).name+' ('+(ft?'Red':'Blue')+')'; } else { $('topName').textContent=oppName(); $('botName').textContent=(meName||'You')+' (you)'; } }
-    show('lobbyPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('shopPanel',mode==='lobby'); show('waitPanel',mode==='waiting'); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch');
+    show('lobbyPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('shopPanel',mode==='lobby'); show('waitPanel',mode==='waiting'); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch'); show('chatPanel',mode==='online'&&!!(G&&G.white&&G.black));
     show('localBtns',mode==='lobby'||mode==='local');
     show('onlineBtns',mode==='online' && G && !G.result);
     show('overBtns',mode==='online' && G && !!G.result);
@@ -1123,7 +1178,7 @@ var FIREBASE_CONFIG = {
   /* ---------- local (one device) ---------- */
   var FEN_B='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1';
   function makeGame(first){ return first==='b'?new Chess(FEN_B):new Chess(); }
-  function resetBoard(){ game=new Chess(); sel=null; lastMove=null; arrows=[]; circles=[]; arrowsAt=0; }
+  function resetBoard(){ game=new Chess(); viewPly=null; sel=null; lastMove=null; arrows=[]; circles=[]; arrowsAt=0; }
   function showBackToOnline(on){ var b=$('leaveBtn2'); if(!b&&on){ b=document.createElement('button'); b.id='leaveBtn2'; b.type='button'; b.className='bt ghost'; b.textContent='Play online'; b.addEventListener('click',function(){ toLobby(); }); $('localBtns').appendChild(b);} if(b) b.classList.toggle('hide',!on); }
   $('newBtn').addEventListener('click',function(){ resetBoard(); render(); });
   $('undoBtn').addEventListener('click',function(){ game.undo(); sel=null; var h=game.history({verbose:true}); lastMove=h.length?{from:h[h.length-1].from,to:h[h.length-1].to}:null; render(); });
@@ -1138,10 +1193,11 @@ var FIREBASE_CONFIG = {
 
   /* ---------- leaderboard ---------- */
   function nameKey(n){ return String(n||'').toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,24)||'player'; }
-  var lbUnsub=null;
+  var lbUnsub=null, lbFail=false;
+  function lbProblem(){ lbFail=true; var n=$('lbNote'); if(n){ n.textContent='The leaderboard cannot save or load right now. In Firebase, open Realtime Database, then Rules, and publish the latest rules file (it must include the players section).'; n.style.color='#B3121F'; } }
   function startLeaderboard(){
     if(lbUnsub) return;
-    lbUnsub=DB.listen('players',function(v){
+    lbUnsub=DB.listen('players',function(v){ lbFail=false;
       var rows=[]; Object.keys(v||{}).forEach(function(k){ var p=v[k]; if(!p) return; var w=+p.w||0,l=+p.l||0,d=+p.d||0,g=w+l+d; rows.push({k:k,name:p.name||k,w:w,l:l,d:d,g:g,pct:g?Math.round(w/g*100):-1}); });
       rows.sort(function(a,b){ return (b.pct-a.pct)||(b.w-a.w)||(b.g-a.g); });
       var ol=$('lb'); ol.innerHTML='';
@@ -1153,7 +1209,7 @@ var FIREBASE_CONFIG = {
         li.children[0].textContent=i+1; li.children[1].textContent=r.name;
         li.children[2].textContent=r.w+'W-'+r.l+'L-'+r.d+'D'; li.children[3].textContent=r.g?(r.pct+'%'):'new'; ol.appendChild(li);
       });
-    });
+    },function(){ lbProblem(); });
   }
   function stopLeaderboard(){ if(lbUnsub){ lbUnsub(); lbUnsub=null; } }
   // results are counted once per player per game; any connected client (player or spectator) can do it, so a result is never lost if one player leaves
@@ -1166,15 +1222,47 @@ var FIREBASE_CONFIG = {
       DB.txn('games/'+id+'/counted_'+col,function(cur){ if(cur) return undefined; return true; }).then(function(ok){
         if(!ok) return;
         var f=(r.winner==null)?'d':(r.winner===col?'w':'l');
-        DB.txn('players/'+nameKey(nm),function(cur){ cur=cur||{w:0,l:0,d:0}; cur.name=nm; cur.w=+cur.w||0; cur.l=+cur.l||0; cur.d=+cur.d||0; cur[f]=cur[f]+1; return cur; });
+        DB.txn('players/'+nameKey(nm),function(cur){ cur=cur||{w:0,l:0,d:0}; cur.name=nm; cur.w=+cur.w||0; cur.l=+cur.l||0; cur.d=+cur.d||0; cur[f]=cur[f]+1; return cur; }).catch(function(){ lbProblem(); });
       });
     });
   }
   // put a player on the leaderboard as soon as they sit down to a game
+  /* ---------- chat (the two players only) ---------- */
+  var chatSeen=0, chatGid=null, lastSend=0;
+  function renderChat(g){
+    var log=$('chatLog'); if(!log) return;
+    if(chatGid!==gid){ chatGid=gid; chatSeen=0; log.innerHTML=''; $('chatBadge').classList.add('hide'); }
+    if(mode!=='online'||!g){ return; }
+    var ms=[]; var c=g.chat||{}; Object.keys(c).sort().forEach(function(k){ if(c[k]&&c[k].text) ms.push(c[k]); });
+    ms=ms.slice(-60);
+    var shown=log.getAttribute('data-n')|0; if(shown===ms.length) return;
+    var atEnd=log.scrollHeight-log.scrollTop-log.clientHeight<40;
+    log.innerHTML='';
+    if(!ms.length){ var n=document.createElement('li'); n.className='none'; n.textContent='No messages yet. Say hi!'; log.appendChild(n); }
+    ms.forEach(function(m){
+      var li=document.createElement('li'), nm=document.createElement('b'), tx=document.createElement('span');
+      nm.textContent=m.name||'Player'; tx.textContent=m.text; if(m.uid===uid) li.className='me';
+      li.appendChild(nm); li.appendChild(tx); log.appendChild(li);
+    });
+    log.setAttribute('data-n',ms.length);
+    if(atEnd||shown===0) log.scrollTop=log.scrollHeight;
+    var fromOthers=ms.filter(function(m){return m.uid!==uid;}).length;
+    if($('chatBox').open){ chatSeen=fromOthers; $('chatBadge').classList.add('hide'); }
+    else if(fromOthers>chatSeen){ $('chatBadge').textContent=(fromOthers-chatSeen)+' new'; $('chatBadge').classList.remove('hide'); }
+  }
+  $('chatBox').addEventListener('toggle',function(){ if(this.open){ chatSeen=0; var log=$('chatLog'); $('chatBadge').classList.add('hide'); log.setAttribute('data-n','0'); if(G) renderChat(G); log.scrollTop=log.scrollHeight; } });
+  $('chatForm').addEventListener('submit',function(e){
+    e.preventDefault(); if(mode!=='online'||!gid||!G||!G.white||!G.black) return;
+    var inp=$('chatIn'), t=inp.value.replace(/\s+/g,' ').trim().slice(0,200); if(!t) return;
+    if(Date.now()-lastSend<500) return; lastSend=Date.now();
+    var key=Date.now().toString(36)+rid(3);
+    DB.set('games/'+gid+'/chat/'+key,{uid:uid,name:meName||'Player',text:t,t:Date.now()});
+    inp.value='';
+  });
   var registeredGid=null;
   function registerPlayer(){
     if(!meName||registeredGid===gid) return; registeredGid=gid;
-    DB.txn('players/'+nameKey(meName),function(cur){ cur=cur||{w:0,l:0,d:0}; cur.name=meName; cur.w=+cur.w||0; cur.l=+cur.l||0; cur.d=+cur.d||0; return cur; });
+    DB.txn('players/'+nameKey(meName),function(cur){ cur=cur||{w:0,l:0,d:0}; cur.name=meName; cur.w=+cur.w||0; cur.l=+cur.l||0; cur.d=+cur.d||0; return cur; }).catch(function(){ lbProblem(); });
   }
 
   /* ---------- lobby list ---------- */
@@ -1313,7 +1401,7 @@ var FIREBASE_CONFIG = {
           if(!mv) break; lastMove={from:mv.from,to:mv.to}; sel=null;
         }
       }
-      setPanels(); render();
+      setPanels(); render(); renderChat(g);
       if(mode==='online'&&g.white&&g.black) registerPlayer();
       if((mode==='online'||mode==='watch')&&g.result) recordResult(g);
     });
