@@ -215,7 +215,6 @@
     <nav>
       <a href="sproto3d.html">&larr; Sproto</a>
       <a href="3dprints.html">3D Prints</a>
-      <a href="donate.html">Donate</a>
     </nav>
   </header>
   <h1>Sproto <span>Chess</span></h1>
@@ -251,7 +250,7 @@
         </div>
         <div class="btns hide" id="soundRow"><button class="bt ghost" id="soundBtn" type="button"></button></div>
         <div class="btns hide" id="arrowRow"><button class="bt ghost" id="arrowBtn" type="button">&#9998; Draw arrows: off</button></div>
-        <p class="sub hide" id="arrowHint" style="margin-top:6px">Press and hold one of the pieces, then drag to where it could move to draw an arrow (right-click and drag on a computer). Knight moves bend like an L. Tap anywhere to clear. Only you can see them, and only on your turn.</p>
+        <p class="sub hide" id="arrowHint" style="margin-top:6px">Press and hold any square, then drag to another square to draw an arrow (right-click and drag on a computer). Works on empty squares and on your opponent's turn too. Knight-shaped lines bend like an L. Tap anywhere to clear. Only you can see them.</p>
         <div class="banner hide" id="drawBanner"><span id="drawText">Your opponent offers a draw.</span>
           <div class="btns"><button class="bt" id="drawYes" type="button">Accept</button><button class="bt ghost" id="drawNo" type="button">Decline</button></div></div>
         <div class="banner hide" id="rematchBanner"><span>Your opponent wants a rematch.</span>
@@ -1043,10 +1042,10 @@ var FIREBASE_CONFIG = {
     }
     if(!game.isCheck()||isViewing()) $('chkT').classList.add('hide');
     lastCheckLen=len;
-    // arrows only live while it is your turn, and clear when a move is played
+    // arrows can be drawn any time and clear when a move is played
     if(len!==arrowsAt){ arrows=[]; circles=[]; arrowsAt=len; }
     if(!canDraw()&&(arrows.length||circles.length)){ arrows=[]; circles=[]; }
-    var show=(mode==='local'||mode==='online')&&!(G&&G.result&&mode==='online');
+    var show=(mode==='local'||mode==='online'||mode==='watch');
     $('arrowRow').classList.toggle('hide',!show); $('arrowHint').classList.toggle('hide',!(show&&arrowMode));
     drawArrows();
   }
@@ -1054,21 +1053,8 @@ var FIREBASE_CONFIG = {
 
   function ghosts(){ var g={}; arrows.forEach(function(a){ var p=game.get(a[0])||g[a[0]]; if(p) g[a[1]]={type:p.type,color:p.color}; }); return g; }
   function pieceAt(sq){ return game.get(sq)||ghosts()[sq]||null; }
-  function arrowOk(from,to){
-    var p=pieceAt(from); if(!p||from===to) return false;
-    var df=FILES.indexOf(to[0])-FILES.indexOf(from[0]), dr=parseInt(to[1],10)-parseInt(from[1],10), ax=Math.abs(df), ay=Math.abs(dr);
-    switch(p.type){
-      case 'n': return (ax===1&&ay===2)||(ax===2&&ay===1);
-      case 'b': return ax===ay;
-      case 'r': return df===0||dr===0;
-      case 'q': return ax===ay||df===0||dr===0;
-      case 'k': return Math.max(ax,ay)===1||(dr===0&&ax===2&&(from==='e1'||from==='e8'));
-      case 'p': var dir=p.color==='w'?1:-1, start=p.color==='w'?'2':'7';
-        return (df===0&&(dr===dir||(dr===2*dir&&from[1]===start)))||(ax===1&&dr===dir);
-    }
-    return false;
-  }
-  function canDraw(){ return mode==='local' ? !game.isGameOver() : (mode==='online'&&G&&!G.result&&myTurn()&&!isViewing()); }
+  function arrowOk(from,to){ return !!from&&!!to&&from!==to; }
+  function canDraw(){ return mode==='local'||mode==='online'||mode==='watch'; }
   function dispXY(name){ var col=FILES.indexOf(name[0]), row=8-parseInt(name[1],10); return [(flipped?7-col:col)+.5,(flipped?7-row:row)+.5]; }
   function sqAt(e){
     var r=boardEl.getBoundingClientRect(), x=(e.clientX-r.left)/r.width*8, y=(e.clientY-r.top)/r.height*8, c=Math.floor(x), rr=Math.floor(y);
@@ -1099,7 +1085,7 @@ var FIREBASE_CONFIG = {
   function startDraw(e,sq){ drag=sq; preview=[sq,sq]; drawnThisGesture=false; try{ boardEl.setPointerCapture(e.pointerId); }catch(x){} }
   boardEl.addEventListener('pointerdown',function(e){
     if(!canDraw()) return;
-    var sq=sqAt(e); if(!sq||!pieceAt(sq)) { if(e.button===2) e.preventDefault(); return; }
+    var sq=sqAt(e); if(!sq) { if(e.button===2) e.preventDefault(); return; }
     var right=(e.button===2);
     if(right||arrowMode){ e.preventDefault(); startDraw(e,sq); return; }
     // press and hold, then drag, to draw an arrow without switching modes

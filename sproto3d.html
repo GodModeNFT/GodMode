@@ -158,8 +158,8 @@
   .buyrow .btn{margin-top:0;flex:1;font-size:18px;padding:10px 14px;cursor:pointer;}
   .btn.added{background:#1a8f4c;}
   .stepper{display:flex;align-items:center;border:4px solid var(--lead);border-radius:14px;background:#fff;overflow:hidden;box-shadow:4px 4px 0 var(--lead);}
-  .stepper button{width:44px;min-height:48px;border:0;background:var(--yellow);color:var(--lead);font-size:24px;font-weight:700;cursor:pointer;touch-action:manipulation;}
-  .stepper button:active{background:var(--gold);}
+  .stepper button{width:44px;min-height:48px;border:0;background:#fff;color:var(--lead);font-size:24px;font-weight:700;cursor:pointer;touch-action:manipulation;}
+  .stepper button:active{background:#e8ecf7;}
   .stepper output{min-width:38px;text-align:center;font-family:'Alfa Slab One',Georgia,serif;font-size:20px;color:var(--lead);}
   .inorder{min-height:20px;font-weight:700;font-size:14px;color:var(--red-dk);margin-top:-4px;}
 
@@ -217,21 +217,20 @@
 <div class="stripe"></div>
 <div class="wrap">
   <header class="top">
-    <div class="brand-name">GodMode</div>
+    
     <nav class="top-nav">
-      <a href="gallery.html">NFT Profile</a>
+      <a href="gallery.html">My NFT Profile</a>
       <a href="3dprints.html">3D Prints</a>
-      <a href="donate.html">Donate</a>
     </nav>
   </header>
 
   <section class="hero">
     <div>
-      <span class="tag">GodMode &middot; Sproto Gremlins</span>
+      
       <h1>Sprotos, <span class="y">made real.</span></h1>
-      <p class="lede">Mini chess sets and stained glass Sprotos &mdash; collectible pieces made for the Sproto Gremlins crowd.</p>
+      <p class="lede">Collectible pieces made for the Sproto Gremlins crowd.</p>
       <div class="perks">
-        <span class="perk c">&#127482;&#127480; Ships from USA</span>
+        <span class="perk c">Ships from USA</span>
         <span class="perk">NO TAX</span>
         <span class="perk r">Free shipping for USA orders!</span>
       </div>
@@ -385,7 +384,7 @@
    Leave empty and customers get a ready-to-send message for Telegram / X.
    PRICES: set a number per item (USD each). While any item in the order has no
    price (null), the total shows "confirmed after review". */
-var FORM_ENDPOINT = "";
+var FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbwXLh7cm4Zt9wCBYWs5GqCR2TSFVgRA5DZByaAp-Bca68QdiX8ST1yq5ZycasZXznzOzQ/exec";
 var PRICES = {chess:null, glass:null, portrait:null};
 var NAMES  = {chess:'Mini Chess Set', glass:'Stained Glass Sprotos', portrait:'3D Portrait (10 x 10 x 10 inch)'};
 

@@ -159,6 +159,30 @@
   @media (prefers-reduced-motion:reduce){
     .scene .towers i,.scene .dots b,.disc,.disc-wrap::before,.start{animation:none;}
   }
+
+  .ao-back{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));background:rgba(2,4,18,.82);}
+  .ao-back.on{display:flex;}
+  .ao-box{position:relative;width:100%;max-width:560px;max-height:100%;overflow:auto;background:linear-gradient(180deg,#0f1a6e,#0a1050);color:var(--white);border:2px solid var(--ice);border-radius:12px;box-shadow:0 0 40px rgba(80,120,255,.5);padding:22px 20px 20px;}
+  .ao-box h2{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(20px,5vw,26px);letter-spacing:.06em;margin:0 40px 4px 0;text-shadow:0 0 12px rgba(120,170,255,.8);}
+  .ao-box p.ao-sub{margin:0 0 4px;font-size:16px;color:var(--ice);}
+  .ao-x{position:absolute;top:8px;right:8px;width:44px;height:44px;border:0;background:transparent;color:var(--ice);font-size:30px;line-height:1;cursor:pointer;}
+  .ao-box label{display:block;font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ice);margin:13px 0 5px;}
+  .ao-box input,.ao-box textarea{width:100%;font:500 16px 'Rajdhani',system-ui,sans-serif;color:#fff;background:#060a38;border:1px solid var(--line);border-radius:6px;padding:11px 12px;}
+  .ao-box textarea{min-height:80px;resize:vertical;}
+  .ao-box input:focus,.ao-box textarea:focus{outline:none;border-color:var(--gold);}
+  .ao-box .bad{border-color:#ff5d6c;background:#2a0a1c;}
+  .ao-row{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;}
+  .ao-sec{margin:18px 0 0;font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;}
+  .ao-err{display:none;margin-top:12px;color:#ff8d98;font-size:15px;font-weight:700;}
+  .ao-err.on{display:block;}
+  .ao-send{display:block;width:100%;min-height:50px;margin-top:16px;border:0;border-radius:8px;cursor:pointer;background:linear-gradient(180deg,var(--gold-lt),var(--gold));color:#1a1000;font-family:'Orbitron',sans-serif;font-weight:900;font-size:15px;letter-spacing:.1em;text-transform:uppercase;}
+  .ao-send:disabled{opacity:.6;cursor:default;}
+  .ao-done{display:none;text-align:center;padding:8px 0 2px;}
+  .ao-done.on{display:block;}
+  .ao-done h3{font-family:'Orbitron',sans-serif;font-size:22px;margin:0 0 8px;}
+  .ao-done p{font-size:17px;line-height:1.45;margin:0 0 10px;}
+  .ao-done a{color:var(--gold-lt);font-weight:700;}
+  @media (max-width:520px){.ao-row{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -172,9 +196,8 @@
   <header class="top">
     <div class="brand-name">GOD<span>mode</span></div>
     <nav class="top-nav">
-      <a href="gallery.html">NFT Profile</a>
+      <a href="gallery.html">My NFT Profile</a>
       <a href="3dprints.html">3D Prints</a>
-      <a href="donate.html">Donate</a>
     </nav>
   </header>
 
@@ -185,7 +208,7 @@
       <p class="sub">Full color resin print</p>
       <p class="lede">Your Aeon NFT, turned into a 7 inch full color resin figure you can hold, display and keep.</p>
       <div class="perks">
-        <span class="perk">&#127482;&#127480; Ships from USA</span>
+        <span class="perk">Ships from USA</span>
         <span class="perk">NO TAX</span>
         <span class="perk g">Free shipping for USA orders!</span>
       </div>
@@ -210,7 +233,7 @@
         <div class="row price"><span class="k">Price</span><span class="v">$150</span></div>
       </div>
       <p class="note">Send me your Aeon NFT ID or OpenSea link and I will respond shortly with the next steps.</p>
-      <a class="start" id="buyBtn" href="order.html?item=Aeon%20Full%20Color%20Resin%20Print%20%E2%80%94%207%22&price=150">&#9654; Request Order</a>
+      <a class="start" id="buyBtn" href="#order" role="button" aria-haspopup="dialog">&#9654; Request Order</a>
       <div class="hint">Crypto payments only</div>
     </div>
   </section>
@@ -237,5 +260,88 @@
   <div class="disclaimer">Disclaimer: All proceeds will be swapped to $SPX and held publicly.</div>
 </div>
 
+
+<div class="ao-back" id="aoBack" role="dialog" aria-modal="true" aria-labelledby="aoTitle">
+  <div class="ao-box">
+    <button class="ao-x" id="aoX" type="button" aria-label="Close">&times;</button>
+    <form id="aoForm" novalidate>
+      <h2 id="aoTitle">Request Order</h2>
+      <p class="ao-sub">Aeon full color resin print &middot; 7 inch &middot; $150</p>
+      <label for="aoNft">Your Aeon NFT # or OpenSea link</label>
+      <input id="aoNft" type="text" autocomplete="off" placeholder="Aeon # or OpenSea link">
+      <label for="aoEmail">Email</label>
+      <input id="aoEmail" type="email" autocomplete="email" placeholder="you@example.com">
+      <label for="aoTg">Telegram or X (optional)</label>
+      <input id="aoTg" type="text" autocomplete="off" placeholder="@yourname">
+      <div class="ao-sec">Shipping address</div>
+      <label for="aoName">Full name</label>
+      <input id="aoName" type="text" autocomplete="name">
+      <label for="aoStreet">Street address</label>
+      <input id="aoStreet" type="text" autocomplete="address-line1">
+      <label for="aoApt">Apartment / unit (optional)</label>
+      <input id="aoApt" type="text" autocomplete="address-line2">
+      <div class="ao-row">
+        <div><label for="aoCity">City</label><input id="aoCity" type="text" autocomplete="address-level2"></div>
+        <div><label for="aoState">State / Province</label><input id="aoState" type="text" autocomplete="address-level1"></div>
+      </div>
+      <div class="ao-row">
+        <div><label for="aoZip">ZIP / Postal</label><input id="aoZip" type="text" autocomplete="postal-code"></div>
+        <div><label for="aoCountry">Country</label><input id="aoCountry" type="text" autocomplete="country-name"></div>
+      </div>
+      <label for="aoPhone">Phone (optional)</label>
+      <input id="aoPhone" type="tel" autocomplete="tel">
+      <label for="aoNotes">Notes (optional)</label>
+      <textarea id="aoNotes" placeholder="Anything else I should know?"></textarea>
+      <div class="ao-err" id="aoErr"></div>
+      <button class="ao-send" id="aoSend" type="submit">Send Request</button>
+    </form>
+    <div class="ao-done" id="aoDone">
+      <h3 id="aoDoneH">Request sent!</h3>
+      <p id="aoDoneP">Got it! Your request is in. I will respond shortly with the payment details.</p>
+      <div id="aoFallback" style="display:none">
+        <textarea id="aoCopy" readonly style="min-height:150px"></textarea>
+        <p style="margin-top:10px">Copy this and send it to me on <a href="https://t.me/mehoyminoy" target="_blank" rel="noopener">Telegram</a> or <a href="https://x.com/angelaeon777" target="_blank" rel="noopener">X</a>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+/* Paste your Google Apps Script web app URL here (see aeon-orders.gs).
+   Left empty, customers get a ready-to-send message for Telegram / X instead. */
+var FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbwXLh7cm4Zt9wCBYWs5GqCR2TSFVgRA5DZByaAp-Bca68QdiX8ST1yq5ZycasZXznzOzQ/exec";
+(function(){
+  var $=function(i){return document.getElementById(i);};
+  var back=$('aoBack'), form=$('aoForm'), done=$('aoDone'), err=$('aoErr'), send=$('aoSend');
+  var REQ=['aoNft','aoEmail','aoName','aoStreet','aoCity','aoState','aoZip','aoCountry'];
+  var LABEL={aoNft:'your Aeon NFT # or link',aoEmail:'a valid email',aoName:'your full name',aoStreet:'your street address',aoCity:'your city',aoState:'your state / province',aoZip:'your ZIP / postal code',aoCountry:'your country'};
+  function open(e){ if(e) e.preventDefault(); form.style.display=''; done.classList.remove('on'); err.classList.remove('on'); back.classList.add('on'); document.body.style.overflow='hidden'; setTimeout(function(){ $('aoNft').focus(); },50); }
+  function close(){ back.classList.remove('on'); document.body.style.overflow=''; }
+  $('buyBtn').addEventListener('click',open);
+  $('aoX').addEventListener('click',close);
+  back.addEventListener('mousedown',function(e){ if(e.target===back) close(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&back.classList.contains('on')) close(); });
+  REQ.forEach(function(i){ $(i).addEventListener('input',function(){ this.classList.remove('bad'); err.classList.remove('on'); }); });
+  function v(i){ return $(i).value.trim(); }
+  function finish(sent,msg){
+    form.style.display='none'; done.classList.add('on');
+    $('aoDoneH').textContent=sent?'Request sent!':'Almost done!';
+    $('aoDoneP').textContent=sent?'Got it! Your request is in. I will respond shortly with the payment details.':'Online sending is not set up yet. Copy your request below and send it to me.';
+    $('aoFallback').style.display=sent?'none':'block'; if(!sent) $('aoCopy').value=msg;
+    send.disabled=false; send.textContent='Send Request';
+  }
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var missing=REQ.filter(function(i){ var ok=v(i)&&(i!=='aoEmail'||/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v(i))); $(i).classList.toggle('bad',!ok); return !ok; });
+    if(missing.length){ err.textContent='Please enter '+LABEL[missing[0]]+(missing.length>1?' (and '+(missing.length-1)+' more highlighted).':'.'); err.classList.add('on'); $(missing[0]).focus(); return; }
+    var msg='Aeon resin print request (7 inch, $150)\n\nNFT: '+v('aoNft')+'\nEmail: '+v('aoEmail')+(v('aoTg')?'\nTelegram/X: '+v('aoTg'):'')+
+      '\n\nShip to:\n'+v('aoName')+'\n'+v('aoStreet')+(v('aoApt')?', '+v('aoApt'):'')+'\n'+v('aoCity')+', '+v('aoState')+' '+v('aoZip')+'\n'+v('aoCountry')+(v('aoPhone')?'\nPhone: '+v('aoPhone'):'')+(v('aoNotes')?'\n\nNotes: '+v('aoNotes'):'');
+    if(!FORM_ENDPOINT){ finish(false,msg); return; }
+    send.disabled=true; send.textContent='Sending...';
+    var payload={collection:'Project Aeon',quantity:1,total:150,nft_number:v('aoNft'),nft_numbers:[v('aoNft')],email:v('aoEmail'),telegram:v('aoTg'),name:v('aoName'),street:v('aoStreet'),apt:v('aoApt'),city:v('aoCity'),state:v('aoState'),zip:v('aoZip'),country:v('aoCountry'),phone:v('aoPhone'),notes:v('aoNotes')};
+    fetch(FORM_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)})
+      .then(function(){ finish(true,msg); }).catch(function(){ finish(false,msg); });
+  });
+})();
+</script>
 </body>
 </html>
