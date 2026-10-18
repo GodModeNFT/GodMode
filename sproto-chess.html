@@ -20,7 +20,6 @@
   *{box-sizing:border-box;}
   html{-webkit-text-size-adjust:100%;}
   body{margin:0;background:var(--yellow);color:var(--lead);font-family:'Barlow',system-ui,sans-serif;-webkit-font-smoothing:antialiased;
-    background-image:linear-gradient(135deg,rgba(255,255,255,.18) 25%,transparent 25%),linear-gradient(225deg,rgba(255,255,255,.18) 25%,transparent 25%);background-size:64px 64px;
     padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);padding-bottom:env(safe-area-inset-bottom);}
   a{color:inherit;-webkit-tap-highlight-color:transparent;}
   button,select,input{font-family:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
@@ -123,7 +122,7 @@
   body.fs .wrap{padding:0;max-width:none;}
   body.fs .game{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;gap:10px;overflow:auto;
     padding:max(8px,env(safe-area-inset-top)) 3px max(10px,env(safe-area-inset-bottom));
-    background:var(--yellow);background-image:linear-gradient(135deg,rgba(255,255,255,.18) 25%,transparent 25%),linear-gradient(225deg,rgba(255,255,255,.18) 25%,transparent 25%);background-size:64px 64px;}
+    background:var(--yellow);}
   body.fs .boardwrap{width:100%;display:flex;flex-direction:column;align-items:center;--bw:min(100%,1000px,calc(100dvh - 125px));}
   body.fs .board{margin:0;}
   body.fs .side{width:100%;max-width:1000px;}
@@ -137,7 +136,7 @@
 
   .arrows{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;}
   .board.arrowmode{touch-action:none;cursor:crosshair;}
-  body.fs .board{touch-action:none;}
+  body.fs .board{touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
   .bt.on{background:var(--yellow);box-shadow:3px 3px 0 var(--lead);}
   .endb{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:8;width:min(92%,520px);text-align:center;padding:20px 16px 14px;border:5px solid var(--lead);border-radius:20px;
     box-shadow:8px 8px 0 var(--lead);cursor:pointer;animation:endpop .55s cubic-bezier(.2,1.4,.4,1);}
@@ -235,7 +234,7 @@
           <button class="bt ghost" id="wLeave" type="button">Stop watching</button>
         </div>
         <div class="btns hide" id="arrowRow"><button class="bt ghost" id="arrowBtn" type="button">&#9998; Draw arrows: off</button></div>
-        <p class="sub hide" id="arrowHint" style="margin-top:6px">Press and hold a square, then drag to any other square to draw an arrow (any direction; knight moves bend like an L). Tap an empty spot to clear them. Only you can see them, and they clear when a move is made.</p>
+        <p class="sub hide" id="arrowHint" style="margin-top:6px">Press and hold one of the pieces, then drag to where it could move to draw an arrow (right-click and drag on a computer). Knight moves bend like an L. Tap anywhere to clear. Only you can see them, and only on your turn.</p>
         <div class="banner hide" id="drawBanner"><span id="drawText">Your opponent offers a draw.</span>
           <div class="btns"><button class="bt" id="drawYes" type="button">Accept</button><button class="bt ghost" id="drawNo" type="button">Decline</button></div></div>
         <div class="banner hide" id="rematchBanner"><span>Your opponent wants a rematch.</span>
@@ -976,6 +975,20 @@ var FIREBASE_CONFIG = {
   }
   $('endB').addEventListener('click',function(){ endHidden=true; this.classList.add('hide'); });
 
+  function arrowOk(from,to){
+    var p=game.get(from); if(!p||from===to) return false;
+    var df=FILES.indexOf(to[0])-FILES.indexOf(from[0]), dr=parseInt(to[1],10)-parseInt(from[1],10), ax=Math.abs(df), ay=Math.abs(dr);
+    switch(p.type){
+      case 'n': return (ax===1&&ay===2)||(ax===2&&ay===1);
+      case 'b': return ax===ay;
+      case 'r': return df===0||dr===0;
+      case 'q': return ax===ay||df===0||dr===0;
+      case 'k': return Math.max(ax,ay)===1||(dr===0&&ax===2&&(from==='e1'||from==='e8'));
+      case 'p': var dir=p.color==='w'?1:-1, start=p.color==='w'?'2':'7';
+        return (df===0&&(dr===dir||(dr===2*dir&&from[1]===start)))||(ax===1&&dr===dir);
+    }
+    return false;
+  }
   function canDraw(){ return mode==='local' ? !game.isGameOver() : (mode==='online'&&G&&!G.result&&myTurn()); }
   function dispXY(name){ var col=FILES.indexOf(name[0]), row=8-parseInt(name[1],10); return [(flipped?7-col:col)+.5,(flipped?7-row:row)+.5]; }
   function sqAt(e){
@@ -1007,7 +1020,7 @@ var FIREBASE_CONFIG = {
   function startDraw(e,sq){ drag=sq; preview=[sq,sq]; drawnThisGesture=false; try{ boardEl.setPointerCapture(e.pointerId); }catch(x){} }
   boardEl.addEventListener('pointerdown',function(e){
     if(!canDraw()) return;
-    var sq=sqAt(e); if(!sq) return;
+    var sq=sqAt(e); if(!sq||!game.get(sq)) { if(e.button===2) e.preventDefault(); return; }
     var right=(e.button===2);
     if(right||arrowMode){ e.preventDefault(); startDraw(e,sq); return; }
     // press and hold, then drag, to draw an arrow without switching modes
@@ -1016,12 +1029,13 @@ var FIREBASE_CONFIG = {
   });
   boardEl.addEventListener('pointermove',function(e){
     if(holdInfo && Math.hypot(e.clientX-holdInfo.x,e.clientY-holdInfo.y)>10 && !drag){ clearTimeout(holdT); holdInfo=null; }
-    if(!drag) return; var sq=sqAt(e); if(sq){ preview=[drag,sq]; drawArrows(); }
+    if(!drag) return; var sq=sqAt(e); if(sq){ preview=(sq!==drag&&arrowOk(drag,sq))?[drag,sq]:[drag,drag]; drawArrows(); }
   });
   function endDrag(e){
     clearTimeout(holdT); holdInfo=null;
     if(!drag) return; var from=drag, to=sqAt(e)||preview&&preview[1]||from; drag=null; preview=null;
-    if(to!==from){ var k=-1; arrows.forEach(function(a,j){ if(a[0]===from&&a[1]===to) k=j; }); if(k>=0) arrows.splice(k,1); else arrows.push([from,to]); suppressClickUntil=Date.now()+350; }
+    if(to!==from&&arrowOk(from,to)){ var k=-1; arrows.forEach(function(a,j){ if(a[0]===from&&a[1]===to) k=j; }); if(k>=0) arrows.splice(k,1); else arrows.push([from,to]); suppressClickUntil=Date.now()+350; }
+    else if(to!==from){ suppressClickUntil=Date.now()+350; }
     else if(!arrowMode){ /* a plain hold with no drag: treat as normal tap */ }
     drawArrows();
   }
@@ -1033,11 +1047,6 @@ var FIREBASE_CONFIG = {
     if(Date.now()<suppressClickUntil) return;
     var t=e.target;
     if(t.closest&&(t.closest('#arrowBtn')||t.closest('.modal'))) return;
-    if(t.closest&&t.closest('#board')){
-      var sqEl=t.closest('.sq'); if(!sqEl) return;
-      var nm=sqEl.getAttribute('data-sq'), pc=game.get(nm);
-      if(sel||(pc&&pc.color===game.turn())) return; // selecting/moving a piece keeps them
-    }
     clearDrawings();
   },true);
   $('arrowBtn').addEventListener('click',function(){
@@ -1093,8 +1102,6 @@ var FIREBASE_CONFIG = {
   function setPanels(){
     var wasFs=document.body.classList.contains('fs'), fs=(mode==='online'||mode==='watch');
     document.body.classList.toggle('fs',fs);
-    if(fs&&!wasFs){ try{ var el=document.documentElement; (el.requestFullscreen||el.webkitRequestFullscreen||function(){return Promise.reject();}).call(el).catch(function(){}); }catch(e){} }
-    if(!fs&&wasFs){ try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){} }
     show('topBar',fs&&!!(G&&G.tc)); show('botBar',fs&&!!(G&&G.tc)); $('botBar').classList.add('bot');
     if(fs&&G){ if(mode==='watch'){ var ft=flipped; $('topName').textContent=((ft?G.white:G.black)||{}).name+' ('+(ft?'Blue':'Red')+')'; $('botName').textContent=((ft?G.black:G.white)||{}).name+' ('+(ft?'Red':'Blue')+')'; } else { $('topName').textContent=oppName(); $('botName').textContent=(meName||'You')+' (you)'; } }
     show('lobbyPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('shopPanel',mode==='lobby'); show('waitPanel',mode==='waiting'); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch');
@@ -1220,7 +1227,6 @@ var FIREBASE_CONFIG = {
     });
   }
   function watchLive(id){
-    try{ var de=document.documentElement; (de.requestFullscreen||de.webkitRequestFullscreen||function(){return Promise.reject();}).call(de).catch(function(){}); }catch(e){}
     var un=DB.listen('games/'+id,function(g){
       un();
       if(!g||!g.white||!g.black){ alert('That game is no longer available.'); return; }
@@ -1267,7 +1273,7 @@ var FIREBASE_CONFIG = {
 
   function joinLobby(id){
     if(!nameOk()){ $('pname').dataset.touched='1'; needName(); return; }
-    var name=myName(); try{ var de=document.documentElement; (de.requestFullscreen||de.webkitRequestFullscreen||function(){return Promise.reject();}).call(de).catch(function(){}); }catch(e){}
+    var name=myName();
     DB.txn('lobbies/'+id,function(cur){
       if(!cur||cur.status!=='open'||cur.uid===uid) return undefined;
       cur.status='playing'; cur.guest=uid; return cur;
