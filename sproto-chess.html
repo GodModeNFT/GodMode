@@ -244,6 +244,9 @@
     body.fs .leftcol .legend{grid-template-columns:repeat(3,1fr);gap:8px 4px;}
   }
   @media (max-width:440px){.hnav{gap:3px;} .hnav button{width:28px;height:28px;font-size:12px;border-width:2px;border-radius:7px;} .hnav .rwl{font-size:10px;margin-right:1px;letter-spacing:.03em;}}
+  .cheer .tl{margin:0 0 6px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#2A3350;}
+  .cheer .cb{display:flex;gap:8px;flex-wrap:wrap;} .cheer .bt{flex:1 1 120px;} .cheer .bt:disabled{opacity:.5;}
+  #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60;}
 </style>
 </head>
 <body>
@@ -278,6 +281,7 @@
         <details id="chatBox" open>
           <summary class="ph">Chat <span class="badge hide" id="chatBadge"></span></summary>
           <ol class="chatlog" id="chatLog"></ol>
+          <p class="sub hide" id="chatWatchNote" style="font-size:13px;margin-top:6px;">You can read the chat while watching, but only the two players can type.</p>
           <form class="chatform" id="chatForm" autocomplete="off"><input type="text" id="chatIn" maxlength="200" placeholder="Say something..." enterkeyhint="send"><button class="bt red" type="submit">Send</button></form>
         </details>
       </div>
@@ -311,6 +315,7 @@
           <button class="bt red" id="resignBtn" type="button">Resign</button>
           <button class="bt ghost" id="leaveBtn" type="button">Leave</button>
         </div>
+        <div class="cheer hide" id="cheerRow"><p class="tl">Root for a side</p><div class="cb"><button type="button" id="cheerW" class="bt"></button><button type="button" id="cheerB" class="bt red"></button></div></div>
         <div class="btns hide" id="watchBtns">
           <button class="bt ghost" id="wLeave" type="button">Stop watching</button>
         </div>
@@ -959,6 +964,9 @@ var FIREBASE_CONFIG = {
       if(kind==='capture'){ knock(t,.9,1100); knock(t+.07,.5,900); }
       else if(kind==='castle'){ knock(t,.7,1400); knock(t+.13,.7,1200); }
       else if(kind==='check'){ knock(t,.7,1300); ding(t+.1,880,.18,.35); ding(t+.18,1175,.14,.4); }
+      else if(kind==='ready'){ ding(t,523,.2,.45); ding(t+.14,659,.2,.45); ding(t+.28,784,.2,.6); }
+      else if(kind==='tick'){ ding(t,740,.22,.18); }
+      else if(kind==='go'){ ding(t,1047,.28,.35); ding(t,523,.2,.5); knock(t,.6,1500); }
       else if(kind==='end'){ knock(t,.8,1000); ding(t+.12,523,.2,.7); ding(t+.12,392,.16,.8); ding(t+.12,330,.14,.9); }
       else knock(t,.7,1500);
     }catch(e){}
@@ -1249,7 +1257,7 @@ var FIREBASE_CONFIG = {
     show('topBar',fs&&!!(G&&G.tc)); show('botBar',fs&&!!(G&&G.tc)); $('botBar').classList.add('bot');
     if(fs&&G){ if(mode==='watch'){ var ft=flipped; $('topName').textContent=((ft?G.white:G.black)||{}).name+' ('+(ft?'Blue':'Red')+')'; $('botName').textContent=((ft?G.black:G.white)||{}).name+' ('+(ft?'Red':'Blue')+')'; } else { $('topName').textContent=oppName(); $('botName').textContent=(meName||'You')+' (you)'; } }
     (function(){ var sc=$('specCount'), on=(mode==='online'||mode==='watch')&&!!G; sc.classList.toggle('hide',!on); if(on){ var n=G.watchers?Object.keys(G.watchers).length:0; sc.textContent='\uD83D\uDC41 '+n+' watching'; } })();
-    show('lobbyPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('lobbyGuide',mode==='lobby'); show('lobbyTag',mode==='lobby'); show('shopPanel',mode==='lobby'); show('waitPanel',mode==='waiting'); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch'); show('soundRow',mode==='online'||mode==='watch'); show('tipsPanel',mode==='online'||mode==='watch'); show('chatPanel',mode==='online'&&!!(G&&G.white&&G.black));
+    show('lobbyPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('lobbyGuide',mode==='lobby'); show('lobbyTag',mode==='lobby'); show('shopPanel',mode==='lobby'); show('waitPanel',mode==='waiting'); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch'); show('soundRow',mode==='online'||mode==='watch'); show('tipsPanel',mode==='online'||mode==='watch'); show('chatPanel',mode==='watch'||(mode==='online'&&!!(G&&G.white&&G.black))); show('cheerRow',mode==='watch'&&!!(G&&G.white&&G.black&&!G.result));
     show('localBtns',mode==='lobby'||mode==='local');
     show('onlineBtns',mode==='online' && G && !G.result);
     show('overBtns',mode==='online' && G && !!G.result);
@@ -1337,13 +1345,14 @@ var FIREBASE_CONFIG = {
   function renderChat(g){
     var log=$('chatLog'); if(!log) return;
     if(chatGid!==gid){ chatGid=gid; chatSeen=0; log.innerHTML=''; $('chatBadge').classList.add('hide'); }
-    if(mode!=='online'||!g){ return; }
+    if((mode!=='online'&&mode!=='watch')||!g){ return; }
+    $('chatForm').classList.toggle('hide',mode==='watch'); $('chatWatchNote').classList.toggle('hide',mode!=='watch');
     var ms=[]; var c=g.chat||{}; Object.keys(c).sort().forEach(function(k){ if(c[k]&&c[k].text) ms.push(c[k]); });
     ms=ms.slice(-60);
     var shown=log.getAttribute('data-n')|0; if(shown===ms.length) return;
     var atEnd=log.scrollHeight-log.scrollTop-log.clientHeight<40;
     log.innerHTML='';
-    if(!ms.length){ var n=document.createElement('li'); n.className='none'; n.textContent='No messages yet. Say hi!'; log.appendChild(n); }
+    if(!ms.length){ var n=document.createElement('li'); n.className='none'; n.textContent=(mode==='watch'?'No messages yet.':'No messages yet. Say hi!'); log.appendChild(n); }
     ms.forEach(function(m){
       var li=document.createElement('li'), nm=document.createElement('b'), tx=document.createElement('span');
       nm.textContent=m.name||'Player'; tx.textContent=m.text; if(m.uid===uid) li.className='me';
@@ -1364,6 +1373,40 @@ var FIREBASE_CONFIG = {
     DB.set('games/'+gid+'/chat/'+key,{uid:uid,name:meName||'Player',text:t,t:Date.now()});
     inp.value='';
   });
+
+  /* ---------- cheering (watchers root for a side, confetti for everyone) ---------- */
+  var cv=document.createElement('canvas'); cv.id='confetti'; document.body.appendChild(cv);
+  var cx=cv.getContext('2d'), parts=[], raf=0;
+  function sizeCv(){ cv.width=innerWidth; cv.height=innerHeight; } sizeCv(); addEventListener('resize',sizeCv);
+  function confetti(side){
+    var r=$('board').getBoundingClientRect(), fromBottom=((side==='w')!==flipped);
+    var x0=r.left+r.width/2, y0=fromBottom?r.bottom:r.top, dir=fromBottom?-1:1;
+    var cols=side==='w'?['#2F6BFF','#7FA6FF','#FFD23F','#FFFFFF']:['#E63946','#FF8A94','#FFD23F','#FFFFFF'];
+    for(var i=0;i<70;i++){ var a=(Math.random()-.5)*Math.PI*.9, sp=7+Math.random()*9;
+      parts.push({x:x0+(Math.random()-.5)*r.width*.7,y:y0,vx:Math.sin(a)*sp,vy:dir*(Math.cos(a)*sp)*1.1,g:.28*(-dir)*-1,s:5+Math.random()*6,c:cols[i%cols.length],rot:Math.random()*6,vr:(Math.random()-.5)*.4,life:90+Math.random()*50}); }
+    if(!raf) raf=requestAnimationFrame(tickConf);
+  }
+  function tickConf(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    parts=parts.filter(function(p){ return p.life>0; });
+    parts.forEach(function(p){ p.x+=p.vx; p.y+=p.vy; p.vy+=.3; p.vx*=.99; p.rot+=p.vr; p.life--; cx.save(); cx.globalAlpha=Math.min(1,p.life/30); cx.translate(p.x,p.y); cx.rotate(p.rot); cx.fillStyle=p.c; cx.fillRect(-p.s/2,-p.s/3,p.s,p.s*.6); cx.restore(); });
+    raf=parts.length?requestAnimationFrame(tickConf):0; if(!raf) cx.clearRect(0,0,cv.width,cv.height);
+  }
+  var cheerSeen=null, cheerGid=null, lastCheer=0;
+  function renderCheer(g){
+    if(cheerGid!==gid){ cheerGid=gid; cheerSeen=null; }
+    var c=g.cheer||{}, first=(cheerSeen===null); if(first) cheerSeen={};
+    var fired=0;
+    Object.keys(c).forEach(function(k){ var e=c[k]; if(!e||!e.t) return; if(cheerSeen[k]!==e.t){ cheerSeen[k]=e.t; if(!first && fired<3 && Date.now()-e.t<15000){ fired++; confetti(e.s==='b'?'b':'w'); } } });
+    if(mode==='watch'){ $('cheerW').textContent='Cheer '+((g.white||{}).name||'Blue')+' (Blue)'; $('cheerB').textContent='Cheer '+((g.black||{}).name||'Red')+' (Red)'; }
+  }
+  function sendCheer(side){
+    if(mode!=='watch'||!gid||!G||G.result) return;
+    var now=Date.now(); if(now-lastCheer<6000){ var left=Math.ceil((6000-(now-lastCheer))/1000); var b=$(side==='w'?'cheerW':'cheerB'),o=b.textContent; b.textContent='Wait '+left+'s...'; setTimeout(function(){ if(G) renderCheer(G); },900); return; }
+    lastCheer=now; DB.set('games/'+gid+'/cheer/'+uid,{s:side,t:now}); confetti(side);
+  }
+  $('cheerW').addEventListener('click',function(){ sendCheer('w'); });
+  $('cheerB').addEventListener('click',function(){ sendCheer('b'); });
   var registeredGid=null;
   function registerPlayer(){
     if(!meName||registeredGid===gid) return; registeredGid=gid;
@@ -1511,7 +1554,7 @@ var FIREBASE_CONFIG = {
         if(g.result&&endSoundGid!==gid&&lastSoundGameLen!==null){ endSoundGid=gid; playSound('end'); }
         lastSoundGameLen=arr.length;
       }
-      setPanels(); render(); renderChat(g);
+      setPanels(); render(); renderChat(g); renderCheer(g);
       if(mode==='online'&&g.white&&g.black) registerPlayer();
       if((mode==='online'||mode==='watch')&&g.result) recordResult(g);
     });
@@ -1581,7 +1624,7 @@ var FIREBASE_CONFIG = {
     if(G.startAt && !G.result){
       var left=G.startAt-now, txt=null, cls='';
       if(left>3000){ txt='Get ready'; cls='sm'; } else if(left>0){ txt=String(Math.ceil(left/1000)); } else if(left>-700){ txt='GO!'; }
-      if(txt!==null){ cd.classList.remove('hide'); if(lastCdText!==txt){ lastCdText=txt; ct.className=cls; ct.textContent=txt; ct.style.animation='none'; void ct.offsetWidth; ct.style.animation=''; } }
+      if(txt!==null){ cd.classList.remove('hide'); if(lastCdText!==txt){ lastCdText=txt; playSound(txt==='Get ready'?'ready':txt==='GO!'?'go':'tick'); ct.className=cls; ct.textContent=txt; ct.style.animation='none'; void ct.offsetWidth; ct.style.animation=''; } }
       else { cd.classList.add('hide'); }
       if(left<=0 && lastCdText!==null && left<=-700){ lastCdText=null; }
     } else { cd.classList.add('hide'); }
