@@ -287,7 +287,7 @@
   .tabbar.hide{display:none;}
   .tabbar button{flex:1;min-height:46px;font-size:15px;line-height:1.15;padding:4px 6px;font-weight:800;border:3px solid var(--lead);border-radius:12px;background:#fff;color:var(--lead);cursor:pointer;box-shadow:3px 3px 0 var(--lead);}
   .tabbar button.on{background:var(--yellow);}
-  body.tab-lb #lobbyPanel,body.tab-how #lobbyPanel,body.tab-prof #lobbyPanel{display:none !important;}
+  body.tab-lb #lobbyPanel,body.tab-how #lobbyPanel,body.tab-prof #lobbyPanel,body.tab-chat #lobbyPanel{display:none !important;}
   body:not(.tab-prof) #profPanel{display:none !important;}
   body:not(.tab-lb) #lbPanel{display:none !important;}
   body:not(.tab-how) #howPanel{display:none !important;}
@@ -378,6 +378,27 @@
   button.sigpill.out{cursor:pointer;}
   button.sigpill:disabled{opacity:1;cursor:default;}
   .sigpill.out{background:#eee;color:#444;}
+  .tglogin{padding:14px 14px 14px!important;border-radius:16px!important;box-shadow:4px 4px 0 var(--lead);}
+  .tgl-h{display:flex;align-items:center;gap:8px;font-size:19px;margin-bottom:6px;}
+  .tgl-ic{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#2AABEE;font-size:16px;}
+  .tgl-p{margin:0 0 12px;font-size:16px;line-height:1.4;}
+  .botlink{color:#0b6fb3;font-weight:800;background:#e3f3fd;padding:1px 7px;border-radius:7px;text-decoration:none;border-bottom:2px solid #2AABEE;white-space:nowrap;}
+  .botlink:hover{background:#cfeafb;}
+  .tgl-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;padding:0 16px;font-family:inherit;font-size:19px;font-weight:800;color:#fff;background:linear-gradient(180deg,#38b6f5,#1e96dc);border:3px solid var(--lead);border-radius:14px;box-shadow:4px 4px 0 var(--lead);cursor:pointer;transition:transform .08s,box-shadow .08s;}
+  .tgl-btn:hover{filter:brightness(1.05);}
+  .tgl-btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--lead);}
+  body:not(.tab-chat):not(.lc-wait) #lchatPanel{display:none !important;}
+  .tabbar button:last-child{grid-column:1/-1;}
+  .tabdot{display:inline-block;min-width:18px;padding:0 5px;border-radius:999px;background:var(--red);color:#fff;font-size:12px;line-height:18px;margin-left:4px;}
+  .tabdot.hide{display:none;}
+  .lchatlog{max-height:240px;min-height:90px;}
+  .lchatlog li{max-width:92%;}
+  .lcrow{display:flex;align-items:center;gap:6px;margin-bottom:2px;}
+  .lcrow b{display:inline;margin:0;}
+  .lchatlog li .lcrow .av,.lchatlog li .lcrow>div{flex:none;}
+  .lcinv{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;padding:6px 8px;background:#e3f3fd;border:2px dashed var(--lead);border-radius:10px;font-weight:700;font-size:14px;}
+  .lcinv span{flex:1;min-width:120px;}
+  .lcinv .bt{min-height:38px;padding:4px 14px;}
   body.tg header.top nav{display:none;}
 </style>
 </head>
@@ -465,6 +486,7 @@
       </div>
       <div class="tabbar hide" id="tabBar" role="tablist">
         <button type="button" class="on" id="tabPlay" role="tab">&#9823; Play</button>
+        <button type="button" id="tabChat" role="tab">&#128172; Global chat <span class="tabdot hide" id="tabChatN"></span></button>
         <button type="button" id="tabLb" role="tab">&#127942; Leaderboard</button>
         <button type="button" id="tabProf" role="tab">&#128100; Profile</button>
         <button type="button" id="tabHow" role="tab">&#128214; How to play</button>
@@ -507,7 +529,7 @@
 
       <div class="panel" id="lobbyPanel">
         <p class="ph">Play online</p>
-        <div class="tglogin hide" id="tgLoginBox"><p class="sub"><b>Play with your Telegram account.</b> Log in to use the same account, name and leaderboard record as the Sproto Chess bot.</p><div id="tgLoginBtn"></div></div>
+        <div class="tglogin hide" id="tgLoginBox"><div class="tgl-h"><span class="tgl-ic">&#9992;&#65039;</span><b>Play with your Telegram account</b></div><p class="tgl-p">Use the same account, name and leaderboard record as the <a href="#" id="tgBotLink" class="botlink">Sproto Chess bot</a>.</p><div id="tgLoginBtn"></div></div>
         <div class="tglogin hide" id="tgLoggedBox"><p class="sub">Logged in with Telegram as <b id="tgLoggedName"></b> &middot; <a href="#" id="tgLogout">Log out</a></p></div>
         <div class="meprof" id="meProf"></div>
         <label class="field">Your name (required)<input type="text" id="pname" maxlength="18" placeholder="Enter a name to play" autocomplete="nickname"></label>
@@ -522,6 +544,14 @@
         <p class="ph" style="margin-top:18px"><span class="live"></span>Live games <span id="liveCount"></span></p>
         <ul class="lobbies" id="liveList"></ul>
         
+      </div>
+
+      <div class="panel hide" id="lchatPanel">
+        <p class="ph"><span class="live"></span>Lobby chat <span class="badge hide" id="lchatBadge"></span></p>
+        <ol class="chatlog lchatlog" id="lchatLog"></ol>
+        <form class="chatform" id="lchatForm" autocomplete="off"><input type="text" id="lchatIn" maxlength="200" placeholder="Say hi to the lobby..." enterkeyhint="send"><button class="bt red" type="submit">Send</button></form>
+        <button type="button" class="bt ghost wide hide" id="lchatInvite" style="margin-top:8px">&#128226; Invite the lobby to my game</button>
+        <p class="sub" id="lchatHint" style="font-size:13px;margin-top:6px;">Start a game, then tap Invite to call people in. Once a game starts, chat is only between the two players.</p>
       </div>
 
       <div class="panel" id="profPanel">
@@ -1508,6 +1538,7 @@ var FIREBASE_CONFIG = {
     }
     (function(){ var sc=$('specCount'), on=(mode==='online'||mode==='watch')&&!!G; sc.classList.toggle('hide',!on); if(on){ var n=G.watchers?Object.keys(G.watchers).length:0; sc.textContent='\uD83D\uDC41 '+n+' watching'; } })();
     show('lobbyPanel',mode==='lobby'); show('tabBar',mode==='lobby'); show('howPanel',mode==='lobby'); show('profPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('lobbyGuide',mode==='lobby'); show('lobbyTag',mode==='lobby'); show('waitPanel',mode==='waiting'); if(mode==='waiting') fillInvite(); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch'); show('soundRow',mode==='online'||mode==='watch'); show('tipsPanel',mode==='online'||mode==='watch'); show('chatPanel',mode==='watch'||(mode==='online'&&!!(G&&G.white&&G.black))); show('cheerRow',mode==='watch'&&!!(G&&G.white&&G.black&&!G.result));
+    lcSync();
     show('localBtns',mode==='lobby'||mode==='local');
     show('onlineBtns',mode==='online' && G && !G.result);
     show('overBtns',mode==='online' && G && !!G.result);
@@ -1941,7 +1972,14 @@ var FIREBASE_CONFIG = {
     }
     var sc=document.createElement('script'); sc.async=true; sc.src='https://telegram.org/js/telegram-widget.js?22';
     sc.setAttribute('data-telegram-login',SC.BOT_USERNAME); sc.setAttribute('data-size','large'); sc.setAttribute('data-radius','10'); sc.setAttribute('data-onauth','onTelegramAuth(user)');
-    $('tgLoginBtn').appendChild(sc);
+    var bl=$('tgBotLink');
+    if(bl){ bl.href='https://t.me/'+SC.BOT_USERNAME; bl.target='_blank'; bl.rel='noopener'; bl.addEventListener('click',function(e){ if(TG&&TG.openTelegramLink){ e.preventDefault(); try{ TG.openTelegramLink('https://t.me/'+SC.BOT_USERNAME); }catch(x){} } }); }
+    if(SC.BOT_ID){
+      var lb=document.createElement('button'); lb.type='button'; lb.className='tgl-btn';
+      lb.innerHTML='<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="#fff" d="M9.8 15.6l-.4 4.2c.6 0 .9-.3 1.2-.6l2.9-2.7 6 4.4c1.1.6 1.9.3 2.2-1L24 3.9c.4-1.6-.6-2.2-1.6-1.8L1.2 10.2c-1.5.6-1.5 1.5-.3 1.9l5.4 1.7 12.6-7.9c.6-.4 1.1-.2.7.2z"/></svg><span>Log in with Telegram</span>';
+      lb.addEventListener('click',function(){ connectTelegram(); });
+      $('tgLoginBtn').appendChild(lb);
+    } else $('tgLoginBtn').appendChild(sc);
   }
 
   /* ---------- interactive tutorial ---------- */
@@ -2125,7 +2163,7 @@ var FIREBASE_CONFIG = {
     var box=$('meProf'); if(!box) return; box.innerHTML='';
     box.appendChild(avatar(MY_PHOTO,46));
     var t=document.createElement('span'); t.className='mpt';
-    if(MY_PHOTO) t.textContent='Your Telegram profile picture';
+    if(MY_PHOTO) t.textContent='';
     else if(IN_TG||webSess) t.textContent='Signed in, but Telegram did not share a profile picture.';
     else {
       t.appendChild(document.createTextNode('No profile picture. '));
@@ -2185,6 +2223,67 @@ var FIREBASE_CONFIG = {
   $('welTgBtn').addEventListener('click',function(){ connectTelegram(); });
   $('welNo').addEventListener('click',function(){ lsSet('spc_welcome','1'); $('welcome').classList.add('hide'); });
 
+  /* ---------- lobby chat ---------- */
+  var lcUn, lcData, lcLast=0, lcFirst=true;
+  function lcSync(){
+    var want=(mode==='lobby'||mode==='waiting');
+    var pan=$('lchatPanel'); if(!pan) return;
+    pan.classList.toggle('hide',!want);
+    $('lchatInvite').classList.toggle('hide',mode!=='waiting'); document.body.classList.toggle('lc-wait',mode==='waiting');
+    $('lchatHint').textContent=mode==='waiting'?'Tap Invite to post your game in the lobby chat. Once a game starts, chat is only between the two players.':'Start a game, then tap Invite to call people in. Once a game starts, chat is only between the two players.';
+    if(want&&!lcUn){ lcFirst=true; lcUn=DB.listen('lobbychat',function(v){ lcData=v||{}; lcRender(); }); }
+    else if(!want&&lcUn){ lcUn(); lcUn=null; lcData=null; $('lchatLog').innerHTML=''; }
+  }
+  function lcRender(){
+    var log=$('lchatLog'); if(!log||!lcData) return;
+    var near=(log.scrollHeight-log.scrollTop-log.clientHeight)<60||lcFirst; lcFirst=false;
+    log.innerHTML='';
+    var keys=Object.keys(lcData).sort().slice(-60), n=0, now=Date.now();
+    keys.forEach(function(k){
+      var m=lcData[k]; if(!m||(!m.text&&!m.inv)) return; n++;
+      var li=document.createElement('li'); if(m.uid===uid) li.className='me';
+      var row=document.createElement('div'); row.className='lcrow';
+      row.appendChild(avatar(m.photo,26));
+      var b=document.createElement('b'); b.textContent=m.name||'Player'; row.appendChild(b); li.appendChild(row);
+      if(m.text){ var tx=document.createElement('span'); tx.textContent=m.text; li.appendChild(tx); }
+      if(m.inv){
+        var card=document.createElement('div'); card.className='lcinv';
+        var live=(now-(m.t||0))<300000;
+        var info=document.createElement('span'); info.textContent='\u265F Game invite \u00b7 '+((m.tc||300)<60?(m.tc||300)+' sec':Math.round((m.tc||300)/60)+' min')+' \u00b7 plays '+(m.col==='w'?'Blue':'Red'); card.appendChild(info);
+        var jb=document.createElement('button'); jb.type='button'; jb.className='bt red';
+        var mine=m.uid===uid;
+        jb.textContent=mine?'Your invite':(live?'Join':'Expired'); jb.disabled=mine||!live||mode!=='lobby';
+        if(!mine&&live&&mode!=='lobby') jb.title='Finish or cancel your game first';
+        jb.addEventListener('click',function(){ if(!nameOk()){ try{ $('tabPlay').click(); }catch(e){} $('pname').dataset.touched='1'; needName(); return; } joinLobby(m.inv); });
+        card.appendChild(jb); li.appendChild(card);
+      }
+      log.appendChild(li);
+    });
+    if(!n){ var e=document.createElement('li'); e.className='none'; e.textContent='No messages yet. Say hi!'; log.appendChild(e); }
+    if(near) log.scrollTop=log.scrollHeight;
+    lcCount();
+  }
+  var lcSeenT=Date.now();
+  function lcSeen(){ if(document.body.classList.contains('tab-chat')){ lcSeenT=Date.now(); } lcCount(); }
+  function lcCount(){
+    var n=0, el=$('tabChatN'); if(!el) return;
+    if(lcData&&!document.body.classList.contains('tab-chat')){ Object.keys(lcData).forEach(function(k){ var m=lcData[k]; if(m&&m.uid!==uid&&(m.t||0)>lcSeenT) n++; }); }
+    else if(document.body.classList.contains('tab-chat')) lcSeenT=Date.now();
+    el.textContent=n>9?'9+':n; el.classList.toggle('hide',!n);
+  }
+  setInterval(function(){ if(lcUn&&lcData) lcRender(); },30000);
+  function lcSend(invite){
+    if(!nameOk()){ try{ $('tabPlay').click(); }catch(e){} $('pname').dataset.touched='1'; needName(); return; }
+    var inp=$('lchatIn'), t=inp.value.replace(/\s+/g,' ').trim().slice(0,200);
+    if(!invite&&!t) return;
+    if(Date.now()-lcLast<900) return; lcLast=Date.now();
+    inp.value='';
+    api('lobbysay',{name:myName(),text:t,invite:invite?gid:undefined}).catch(function(e){ alert(e.message||'Could not send.'); });
+  }
+  $('lchatForm').addEventListener('submit',function(e){ e.preventDefault(); lcSend(false); });
+  $('lchatInvite').addEventListener('click',function(){ lcSend(true); });
+  $('pname').addEventListener('input',function(){ if(lcData) lcRender(); });
+
   /* ---------- tabs + walkthrough ---------- */
   (function(){
     var T=[
@@ -2205,11 +2304,12 @@ var FIREBASE_CONFIG = {
     $('tourBack').addEventListener('click',function(){ if(i>0){ i--; draw(); } });
     $('tourSkip').addEventListener('click',close_);
     $('tourAgain').addEventListener('click',open_);
-    function tab(w){ document.body.classList.toggle('tab-lb',w==='lb'); document.body.classList.toggle('tab-how',w==='how'); document.body.classList.toggle('tab-prof',w==='prof'); $('tabProf').classList.toggle('on',w==='prof'); if(w==='prof'){ try{ renderProfile(); }catch(e){} } $('tabLb').classList.toggle('on',w==='lb'); $('tabHow').classList.toggle('on',w==='how'); $('tabPlay').classList.toggle('on',!w); try{ $('tabBar').scrollIntoView({block:'start',behavior:'smooth'}); }catch(e){} }
+    function tab(w){ document.body.classList.toggle('tab-lb',w==='lb'); document.body.classList.toggle('tab-how',w==='how'); document.body.classList.toggle('tab-prof',w==='prof'); $('tabProf').classList.toggle('on',w==='prof'); if(w==='prof'){ try{ renderProfile(); }catch(e){} } $('tabLb').classList.toggle('on',w==='lb'); $('tabHow').classList.toggle('on',w==='how'); $('tabPlay').classList.toggle('on',!w); document.body.classList.toggle('tab-chat',w==='chat'); $('tabChat').classList.toggle('on',w==='chat'); lcSeen(); try{ $('tabBar').scrollIntoView({block:'start',behavior:'smooth'}); }catch(e){} }
     $('tabPlay').addEventListener('click',function(){ tab(null); });
     $('tabLb').addEventListener('click',function(){ tab('lb'); });
     $('tabHow').addEventListener('click',function(){ tab('how'); });
     $('tabProf').addEventListener('click',function(){ tab('prof'); });
+    $('tabChat').addEventListener('click',function(){ tab('chat'); });
     window.__spcTourOnce=function(){ if(lsGet('spc_tour')!=='1') open_(); };
   })();
 
