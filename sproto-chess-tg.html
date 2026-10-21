@@ -399,6 +399,17 @@
   .lcinv{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;padding:6px 8px;background:#e3f3fd;border:2px dashed var(--lead);border-radius:10px;font-weight:700;font-size:14px;}
   .lcinv span{flex:1;min-width:120px;}
   .lcinv .bt{min-height:38px;padding:4px 14px;}
+  #fsLobby{margin:0 0 4px;}
+  body.tgfull{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px));}
+  @media (max-width:920px){ body:not(.fs) .side{order:-1;} body:not(.fs) .boardwrap{order:1;} }
+  #lbPanel .lb li{grid-template-columns:28px 36px 1fr auto !important;}
+  .lb .nm b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .lb .nm small{display:block;font-size:13px;font-weight:700;color:#2A3350;font-variant-numeric:tabular-nums;}
+  .lb .pct{font-size:20px !important;min-width:56px;}
+  .pstats{grid-template-columns:repeat(5,1fr) !important;gap:6px !important;}
+  .pstats b{font-size:21px !important;}
+  .pstats span{font-size:12px !important;}
+  .pstats div:nth-child(5) b{color:#0b6fb3;}
   body.tg header.top nav{display:none;}
 </style>
 </head>
@@ -484,6 +495,7 @@
         <div class="btns" id="tutPrac" style="display:none"><button class="bt" id="tutHint" type="button">&#128161; Hint</button><button class="bt" id="tutUndo" type="button">&#8630; Undo my move</button><button class="bt ghost" id="tutLevel" type="button">Bot: Easy</button></div>
         <div class="btns"><button class="bt ghost" id="tutSkip" type="button">Skip this lesson</button><button class="bt ghost" id="tutExit" type="button">Exit tutorial</button></div>
       </div>
+      <button type="button" class="bt ghost wide hide" id="fsLobby">&#x26F6; Full screen</button>
       <div class="tabbar hide" id="tabBar" role="tablist">
         <button type="button" class="on" id="tabPlay" role="tab">&#9823; Play</button>
         <button type="button" id="tabChat" role="tab">&#128172; Global chat <span class="tabdot hide" id="tabChatN"></span></button>
@@ -558,7 +570,7 @@
         <p class="ph">&#128100; Your profile</p>
         <div class="prof"><div id="profAv"></div><div class="profn" id="profName"></div><button type="button" class="sigpill" id="profPill"></button><div class="profsub" id="profSub"></div></div>
         <div class="pstats">
-          <div><b id="pW">0</b><span>Wins</span></div><div><b id="pL">0</b><span>Losses</span></div><div><b id="pD">0</b><span>Draws</span></div><div><b id="pP">&ndash;</b><span>Win rate</span></div>
+          <div><b id="pW">0</b><span>Wins</span></div><div><b id="pL">0</b><span>Losses</span></div><div><b id="pD">0</b><span>Draws</span></div><div><b id="pP">&ndash;</b><span>Win rate</span></div><div><b id="pE">1200</b><span>Rating</span></div>
         </div>
         <p class="sub" id="profNote" style="margin-top:12px"></p>
         <div class="btns" style="margin-top:10px"><button class="bt red hide" id="profConnect" type="button">&#9992;&#65039; Connect Telegram</button><button class="bt ghost hide" id="profLogout" type="button">Log out</button></div>
@@ -611,6 +623,7 @@
       <div class="panel" id="lbPanel">
         <p class="ph">&#127942; Leaderboard</p>
         <ol class="lb" id="lb"></ol>
+        <p class="sub" style="margin-top:10px;font-size:13px">Ranked by Elo rating, the same kind of rating chess uses. Everyone starts at 1200. Beating a stronger player earns more points, and losing to a weaker one costs more. Wins, losses and draws are under each name.</p>
         <p class="soon" id="lbNote"></p>
       </div>
 
@@ -1538,7 +1551,7 @@ var FIREBASE_CONFIG = {
     }
     (function(){ var sc=$('specCount'), on=(mode==='online'||mode==='watch')&&!!G; sc.classList.toggle('hide',!on); if(on){ var n=G.watchers?Object.keys(G.watchers).length:0; sc.textContent='\uD83D\uDC41 '+n+' watching'; } })();
     show('lobbyPanel',mode==='lobby'); show('tabBar',mode==='lobby'); show('howPanel',mode==='lobby'); show('profPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('lobbyGuide',mode==='lobby'); show('lobbyTag',mode==='lobby'); show('waitPanel',mode==='waiting'); if(mode==='waiting') fillInvite(); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch'); show('soundRow',mode==='online'||mode==='watch'); show('tipsPanel',mode==='online'||mode==='watch'); show('chatPanel',mode==='watch'||(mode==='online'&&!!(G&&G.white&&G.black))); show('cheerRow',mode==='watch'&&!!(G&&G.white&&G.black&&!G.result));
-    lcSync();
+    lcSync(); try{ fsLobbySync(); }catch(e){}
     show('localBtns',mode==='lobby'||mode==='local');
     show('onlineBtns',mode==='online' && G && !G.result);
     show('overBtns',mode==='online' && G && !!G.result);
@@ -1592,17 +1605,19 @@ var FIREBASE_CONFIG = {
   function startLeaderboard(){
     if(lbUnsub) return;
     lbUnsub=DB.listen('players',function(v){ lbFail=false;
-      var rows=[]; Object.keys(v||{}).forEach(function(k){ var p=v[k]; if(!p) return; var w=+p.w||0,l=+p.l||0,d=+p.d||0,g=w+l+d; rows.push({k:k,name:p.name||k,photo:p.photo,w:w,l:l,d:d,g:g,pct:g?Math.round(w/g*100):-1}); });
-      rows.sort(function(a,b){ return (b.pct-a.pct)||(b.w-a.w)||(b.g-a.g); });
+      var rows=[]; Object.keys(v||{}).forEach(function(k){ var p=v[k]; if(!p) return; var w=+p.w||0,l=+p.l||0,d=+p.d||0,g=w+l+d; rows.push({k:k,name:p.name||k,photo:p.photo,w:w,l:l,d:d,g:g,pct:g?Math.round(w/g*100):-1,elo:(p.elo==null?1200:(Math.round(+p.elo)||1200))}); });
+      rows.sort(function(a,b){ return ((b.g>0)-(a.g>0))||(b.elo-a.elo)||(b.w-a.w)||(b.g-a.g); });
       LB_ROWS=rows; try{ renderProfile(); }catch(e){}
       var ol=$('lb'); ol.innerHTML='';
       if(!rows.length){ var li=document.createElement('li'); li.className='empty'; li.style.display='block'; li.textContent='No players yet. Start a game to get on the board!'; ol.appendChild(li); return; }
       var mine=nameKey(meName||lsGet('spc_name')||'');
       rows.slice(0,25).forEach(function(r,i){
         var li=document.createElement('li'); if(r.k===mine) li.className='me';
-        li.innerHTML='<span class="rk"></span><span class="nm"></span><span class="rec"></span><span class="pct"></span>';
-        li.children[0].textContent=i+1; li.children[1].textContent=r.name;
-        li.children[2].textContent=r.w+'W-'+r.l+'L-'+r.d+'D'; li.children[3].textContent=r.g?(r.pct+'%'):'new'; li.insertBefore(avatar(r.photo,34),li.children[1]); ol.appendChild(li);
+        li.innerHTML='<span class="rk"></span><span class="nm"><b></b><small></small></span><span class="pct"></span>';
+        li.children[0].textContent=i+1; li.children[1].firstChild.textContent=r.name;
+        li.children[1].lastChild.textContent=r.w+'W-'+r.l+'L-'+r.d+'D'+(r.g?' \u00b7 '+r.pct+'% wins':' \u00b7 new');
+        li.children[2].textContent=r.elo; li.children[2].title='Elo rating';
+        li.insertBefore(avatar(r.photo,34),li.children[1]); ol.appendChild(li);
       });
     },function(){ lbProblem(); });
   }
@@ -1931,6 +1946,9 @@ var FIREBASE_CONFIG = {
     if(IN_TG){
       try{ window.__spcTourOnce&&window.__spcTourOnce(); }catch(e){}
       try{ TG.expand(); }catch(e){}
+      try{ if(TG.onEvent){ TG.onEvent('fullscreenChanged',fsLobbySync); TG.onEvent('safeAreaChanged',fsLobbySync); TG.onEvent('contentSafeAreaChanged',fsLobbySync); } }catch(e){}
+      try{ if(fsAvail()&&!TG.isFullscreen) TG.requestFullscreen(); }catch(e){}   // open full screen automatically
+      setTimeout(fsLobbySync,400);
       try{ if(TG.disableVerticalSwipes) TG.disableVerticalSwipes(); }catch(e){}   // so dragging a piece does not close the app
       try{ TG.setHeaderColor('#0F2A8A'); }catch(e){}
       try{ TG.setBackgroundColor('#3D9141'); }catch(e){}
@@ -2181,8 +2199,8 @@ var FIREBASE_CONFIG = {
     var key=nm?nameKey(nm):'', idx=-1, r=null;
     for(var i=0;i<LB_ROWS.length;i++){ if(LB_ROWS[i].k===key){ idx=i; r=LB_ROWS[i]; break; } }
     var w=r?r.w:0, l=r?r.l:0, d=r?r.d:0, g=w+l+d;
-    $('pW').textContent=w; $('pL').textContent=l; $('pD').textContent=d; $('pP').textContent=g?Math.round(w/g*100)+'%':'\u2013';
-    $('profSub').textContent=(g&&idx>=0)?('Rank #'+(idx+1)+' of '+LB_ROWS.length+' \u00b7 '+g+' game'+(g===1?'':'s')):(nm?'No finished games yet':'Enter a name to get started');
+    $('pW').textContent=w; $('pL').textContent=l; $('pD').textContent=d; $('pE').textContent=r?r.elo:1200; $('pP').textContent=g?Math.round(w/g*100)+'%':'\u2013';
+    $('profSub').textContent=(g&&idx>=0)?('Rank #'+(idx+1)+' of '+LB_ROWS.length+' \u00b7 Rating '+r.elo+' \u00b7 '+g+' game'+(g===1?'':'s')):(nm?'No finished games yet':'Enter a name to get started');
     var note;
     if(MY_PHOTO) note='Signed in with Telegram. Your picture and record follow you between the bot and the website.';
     else if(IN_TG) note='Telegram did not share a profile picture, so a ? is shown. Play a game to start your record.';
@@ -2222,6 +2240,25 @@ var FIREBASE_CONFIG = {
 
   $('welTgBtn').addEventListener('click',function(){ connectTelegram(); });
   $('welNo').addEventListener('click',function(){ lsSet('spc_welcome','1'); $('welcome').classList.add('hide'); });
+
+  /* ---------- full screen button (Telegram: real full screen; website: browser full screen) ---------- */
+  function fsAvail(){ try{ if(IN_TG) return !!(TG&&TG.isVersionAtLeast&&TG.isVersionAtLeast('8.0')&&TG.requestFullscreen); return !!document.documentElement.requestFullscreen; }catch(e){ return false; } }
+  function fsIsOn(){ try{ return IN_TG?!!TG.isFullscreen:!!document.fullscreenElement; }catch(e){ return false; } }
+  function fsLobbySync(){
+    var b=$('fsLobby'); if(!b) return;
+    b.classList.toggle('hide',!(mode==='lobby'&&fsAvail()));
+    b.innerHTML=fsIsOn()?'&#x26F6; Exit full screen':'&#x26F6; Full screen';
+    document.body.classList.toggle('tgfull',IN_TG&&fsIsOn());
+  }
+  function fsToggle(){
+    try{
+      if(IN_TG){ if(TG.isFullscreen) TG.exitFullscreen(); else TG.requestFullscreen(); }
+      else if(document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen();
+    }catch(e){}
+    setTimeout(fsLobbySync,350);
+  }
+  $('fsLobby').addEventListener('click',fsToggle);
+  document.addEventListener('fullscreenchange',fsLobbySync);
 
   /* ---------- lobby chat ---------- */
   var lcUn, lcData, lcLast=0, lcFirst=true;
