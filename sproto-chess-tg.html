@@ -440,7 +440,7 @@
   body.big.fs .chathint{display:none !important;}
   body.big.fs #chatPanel{margin:0;padding:8px 10px;border-width:3px;border-radius:12px;box-shadow:none;}
   body.big.fs #chatBox summary{display:none;}
-  body.big.fs #chatPanel .chatlog{max-height:max(44px,calc(100dvh - min(100vw,calc(100dvh - 78px)) - 235px));min-height:44px;margin:0 0 6px;}
+  body.big.fs #chatPanel .chatlog{max-height:max(44px,calc(100dvh - min(100vw,calc(100dvh - 78px)) - 275px));min-height:44px;margin:0 0 6px;}
   body.big.fs #chatPanel .chatform .bt{min-height:42px;}
   @media (max-width:950px) and (orientation:portrait){
     body.big.fs .game{justify-content:flex-start;overflow:auto;}
@@ -463,18 +463,18 @@
 
   .bigstrip{display:none;}
   body.big.fs .leftcol .bigstrip{width:100%;border:3px solid var(--lead);border-radius:10px;margin:0 0 8px;padding:4px 6px;}
-  body.big.fs .bigstrip{display:flex;align-items:center;gap:6px;width:var(--bw,100%);max-width:100%;box-sizing:border-box;padding:3px 6px;margin:0 0 3px;background:var(--cream);color:var(--lead);border-bottom:3px solid var(--lead);}
-  .bigstrip .bsv{flex:none;font-size:10px;font-weight:800;line-height:1;padding:2px 5px;border:2px solid var(--lead);border-radius:999px;background:#fff;align-self:flex-start;}
+  body.big.fs .bigstrip{display:flex;align-items:center;gap:6px;width:var(--bw,100%);max-width:100%;box-sizing:border-box;padding:6px 8px;margin:0 0 3px;background:var(--cream);color:var(--lead);border-bottom:3px solid var(--lead);}
+  .bigstrip .bsv{flex:none;font-size:12px;font-weight:800;line-height:1;padding:2px 5px;border:2px solid var(--lead);border-radius:999px;background:#fff;align-self:flex-start;}
   .bigstrip .bsp{flex:1;min-width:0;display:grid;grid-template-columns:repeat(6,1fr);gap:2px;}
   .bigstrip .bsp span{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;}
-  .bigstrip .bsp img{width:24px;height:24px;object-fit:contain;background:var(--dark);border-radius:5px;border:1.5px solid var(--lead);}
-  .bigstrip .bsp em{font-style:normal;font-size:8.5px;font-weight:800;line-height:1;white-space:nowrap;}
+  .bigstrip .bsp img{width:31px;height:31px;object-fit:contain;background:var(--dark);border-radius:5px;border:1.5px solid var(--lead);}
+  .bigstrip .bsp em{font-style:normal;font-size:10px;font-weight:800;line-height:1;white-space:nowrap;}
   .bigstrip .bsw{flex:none;display:flex;gap:4px;}
-  .bigstrip .bsw button{padding:0;width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--lead);border-radius:7px;cursor:pointer;}
+  .bigstrip .bsw button{padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--lead);border-radius:7px;cursor:pointer;}
   .bigstrip .bsw button.on{background:var(--yellow);box-shadow:0 2px 0 var(--lead);}
-  .bigstrip .bsw .sw{display:grid;grid-template-columns:1fr 1fr;overflow:hidden;width:18px;height:18px;border:1.5px solid var(--lead);border-radius:4px;}
+  .bigstrip .bsw .sw{display:grid;grid-template-columns:1fr 1fr;overflow:hidden;width:22px;height:22px;border:1.5px solid var(--lead);border-radius:5px;}
   .bigstrip .bsw .sw i{display:block;}
-  @media (min-width:951px){ .bigstrip .bsp img{width:30px;height:30px;} .bigstrip .bsp em{font-size:10px;} .bigstrip .bsv{font-size:11px;} .bigstrip .bsw button{width:30px;height:30px;} .bigstrip .bsw .sw{width:21px;height:21px;} }
+  @media (min-width:951px){ body.big.fs .leftcol .bigstrip{flex-wrap:wrap;row-gap:6px;} .bigstrip .bsp{flex:1 1 100%;order:1;} .bigstrip .bsv{order:2;} .bigstrip .bsw{order:2;margin-left:auto;} .bigstrip .bsp img{width:42px;height:42px;} .bigstrip .bsp em{font-size:12.5px;} .bigstrip .bsv{font-size:13px;} .bigstrip .bsw button{width:40px;height:40px;} .bigstrip .bsw .sw{width:28px;height:28px;} }
   @media (max-width:950px) and (orientation:landscape) and (max-height:520px){
     .bigstrip .bsp em{display:none;} .bigstrip .bsp img{width:20px;height:20px;} .bigstrip .bsw button{width:22px;height:22px;} .bigstrip .bsw .sw{width:14px;height:14px;}
   }
@@ -489,6 +489,10 @@
   .joinpanel .jp-w{padding-top:12px;border-top:3px dashed var(--lead);margin-top:14px;}
   .joinpanel .lobbies{margin:0 12px;}
   .joinnote{margin:12px 0 0;padding:8px 10px;background:var(--yellow);border:3px solid var(--lead);border-radius:10px;font-size:15px;line-height:1.3;}
+  body.inlobby:not(.fs) .boardwrap{--bw:min(100%,560px);}
+  .rtag{display:inline-block;margin-left:8px;padding:2px 9px;border:2px solid var(--lead);border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.04em;vertical-align:middle;white-space:nowrap;}
+  .rtag.win{background:var(--yellow);color:var(--lead);}
+  .rtag.draw{background:#2F6BFF;color:#fff;}
 </style>
 </head>
 <body>
@@ -565,7 +569,7 @@
       <div class="pbar hide" id="botBar"><span class="pn" id="botName"></span><span class="hnav hide" id="hnav"><span class="rwl">Rewind</span><button type="button" class="hFirst" aria-label="First move">&#9198;</button><button type="button" class="hPrev" aria-label="Previous move">&#9664;</button><button type="button" class="hNext" aria-label="Next move">&#9654;</button><button type="button" class="hLast" aria-label="Back to live game">&#9197;</button></span><span class="clk" id="botClk">--:--</span></div>
       <div class="pguide" id="lobbyGuide" aria-label="Piece names"><div class="pg-t">Pieces</div><div class="plist" id="lobbyPieces"></div></div>
       <div class="joinpanel hide" id="joinPanel">
-        <div class="jp-t">&#9823; Join a game or watch one live</div>
+        <div class="jp-t"><span id="jpIc"></span> Join a game or watch one live</div>
         <p class="jp-h"><span class="live"></span>Open games &middot; tap Join to play <span id="lobbyCount"></span></p>
         <ul class="lobbies" id="lobbies"></ul>
         <p class="jp-h jp-w"><span class="live"></span>Live games &middot; tap Watch to spectate <span id="liveCount"></span></p>
@@ -585,7 +589,7 @@
       </div>
       <button type="button" class="bt ghost wide hide" id="fsLobby">&#x26F6; Full screen</button>
       <div class="tabbar hide" id="tabBar" role="tablist">
-        <button type="button" class="on" id="tabPlay" role="tab">&#9823; Play</button>
+        <button type="button" class="on" id="tabPlay" role="tab"><span id="tpIc"></span> Play</button>
         <button type="button" id="tabChat" role="tab" style="display:none !important">&#128172; Global chat <span class="tabdot hide" id="tabChatN"></span></button>
         <button type="button" id="tabLb" role="tab">&#127942; Leaderboard</button>
         <button type="button" id="tabProf" role="tab">&#128100; Profile</button>
@@ -1385,9 +1389,10 @@ var FIREBASE_CONFIG = {
     render();
   }
   function doMove(m){
-    var res;
+    var res, cu=(mode==='online'&&G&&G.tc&&!G.result)?clockUpd(myColor):null;   // my thinking time, worked out before the turn flips
     try{ res=game.move(m); }catch(e){ return; }
     if(!res) return;
+    if(cu) Object.assign(G,cu);   // show the charged clocks right away; the server's numbers replace these a moment later
     lastMove={from:res.from,to:res.to}; sel=null;
     var kd=moveKind(res,game); playSound(kd); if(kd==='end') endSoundGid=gid;
     if(mode==='online'){
@@ -1634,9 +1639,16 @@ var FIREBASE_CONFIG = {
       if(mode==='watch'){ topP=((flipped?G.white:G.black)||{}).photo; botP=((flipped?G.black:G.white)||{}).photo; }
       else { var oc=(myColor==='w'?G.black:G.white)||{}, mc=(myColor==='w'?G.white:G.black)||{}; topP=oc.photo; botP=mc.photo||MY_PHOTO; }
       $('topName').insertBefore(avatar(topP,28),$('topName').firstChild); $('botName').insertBefore(avatar(botP,28),$('botName').firstChild);
+      if(G.result){   // the result stays on the player bars after the big message is tapped away
+        var tC=(mode==='watch')?(flipped?'w':'b'):(myColor==='w'?'b':'w'), bC=tC==='w'?'b':'w', rw=G.result.winner;
+        [['topName',tC],['botName',bC]].forEach(function(p){
+          var tag=null; if(rw==null) tag=['DRAW','draw']; else if(rw===p[1]) tag=['\uD83C\uDFC6 WINNER','win'];
+          if(tag){ var sp=document.createElement('span'); sp.className='rtag '+tag[1]; sp.textContent=tag[0]; $(p[0]).appendChild(sp); }
+        });
+      }
     }
     (function(){ var sc=$('specCount'), on=(mode==='online'||mode==='watch')&&!!G; sc.classList.toggle('hide',!on); if(on){ var n=G.watchers?Object.keys(G.watchers).length:0; sc.textContent='\uD83D\uDC41 '+n+' watching'; } })();
-    show('lobbyPanel',mode==='lobby'); show('tabBar',mode==='lobby'); show('howPanel',mode==='lobby'); show('profPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('lobbyGuide',mode==='lobby'); show('joinPanel',mode==='lobby'); show('lobbyTag',mode==='lobby'); show('waitPanel',mode==='waiting'); if(mode==='waiting') fillInvite(); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch'); show('soundRow',mode==='online'||mode==='watch'); show('tipsPanel',mode==='online'||mode==='watch'); show('chatPanel',mode==='watch'||(mode==='online'&&!!(G&&G.white&&G.black))); show('cheerRow',mode==='watch'&&!!(G&&G.white&&G.black&&!G.result));
+    document.body.classList.toggle('inlobby',mode==='lobby'); show('lobbyPanel',mode==='lobby'); show('tabBar',mode==='lobby'); show('howPanel',mode==='lobby'); show('profPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('lobbyGuide',mode==='lobby'); show('joinPanel',mode==='lobby'); show('lobbyTag',mode==='lobby'); show('waitPanel',mode==='waiting'); if(mode==='waiting') fillInvite(); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch'); show('soundRow',mode==='online'||mode==='watch'); show('tipsPanel',mode==='online'||mode==='watch'); show('chatPanel',mode==='watch'||(mode==='online'&&!!(G&&G.white&&G.black))); show('cheerRow',mode==='watch'&&!!(G&&G.white&&G.black&&!G.result));
     lcSync(); try{ fsLobbySync(); }catch(e){}
     try{ if(mode!=='watch') spHide(); }catch(e){}
     try{ bsUpdate(); }catch(e){}
@@ -1685,6 +1697,8 @@ var FIREBASE_CONFIG = {
     var lp=$('lobbyPieces');
     order.forEach(function(o){ var d=document.createElement('div'), im=document.createElement('img'); im.alt=o[1]; im.src=PIECES['w'+o[0]];
       var s=document.createElement('span'); s.textContent=o[1]; d.appendChild(im); d.appendChild(s); lp.appendChild(d); });
+    var tpi=$('tpIc'); if(tpi&&PIECES.wp){ var tim=document.createElement('img'); tim.alt=''; tim.src=PIECES.wp; tim.style.cssText='height:24px;width:auto;vertical-align:middle;margin:-5px 2px -3px 0;'; tpi.appendChild(tim); }
+    var jic=$('jpIc'); if(jic&&PIECES.wp){ var jim=document.createElement('img'); jim.alt=''; jim.src=PIECES.wp; jim.style.cssText='height:34px;width:auto;vertical-align:middle;margin:-6px 4px -4px 0;'; jic.appendChild(jim); }
     var wic=$('welIc'); if(wic&&PIECES.wp){ var wim=document.createElement('img'); wim.alt='Pawn'; wim.src=PIECES.wp; wim.style.cssText='height:120px;width:auto;display:block;margin:0 auto;'; wic.textContent=''; wic.appendChild(wim); }
   })();
 
@@ -2432,7 +2446,7 @@ var FIREBASE_CONFIG = {
       if(m.inv){
         var card=document.createElement('div'); card.className='lcinv';
         var live=(now-(m.t||0))<300000;
-        var info=document.createElement('span'); info.textContent='\u265F Game invite \u00b7 '+((m.tc||300)<60?(m.tc||300)+' sec':Math.round((m.tc||300)/60)+' min')+' \u00b7 plays '+(m.col==='w'?'Blue':'Red'); card.appendChild(info);
+        var info=document.createElement('span'); info.textContent='Game invite \u00b7 '+((m.tc||300)<60?(m.tc||300)+' sec':Math.round((m.tc||300)/60)+' min')+' \u00b7 plays '+(m.col==='w'?'Blue':'Red'); card.appendChild(info);
         var jb=document.createElement('button'); jb.type='button'; jb.className='bt red';
         var mine=m.uid===uid;
         jb.textContent=mine?'Your invite':(live?'Join':'Expired'); jb.disabled=mine||!live||mode!=='lobby';
@@ -2477,7 +2491,7 @@ var FIREBASE_CONFIG = {
       ['\uD83C\uDFC6','Public leaderboard','Wins, losses and draws are counted for everyone. Tap the Leaderboard tab to see where you rank, under your Telegram @username.']
     ], i=0, el=$('tour');
     function draw(){
-      $('tourIc').textContent=T[i][0]; $('tourH').textContent=T[i][1]; $('tourP').textContent=T[i][2];
+      $('tourIc').textContent=T[i][0]; if(T[i][0]==='\u265F\uFE0F'&&PIECES.wp){ $('tourIc').textContent=''; var tim2=document.createElement('img'); tim2.alt='Pawn'; tim2.src=PIECES.wp; tim2.style.cssText='height:90px;width:auto;display:block;margin:0 auto;'; $('tourIc').appendChild(tim2); } $('tourH').textContent=T[i][1]; $('tourP').textContent=T[i][2];
       $('tourDots').innerHTML=T.map(function(_,k){ return '<i'+(k===i?' class="on"':'')+'></i>'; }).join('');
       $('tourBack').style.visibility=i?'visible':'hidden'; $('tourNext').textContent=(i===T.length-1)?'Let\u2019s play':'Next'; $('tourSkip').style.display=(i===T.length-1)?'none':'';
     }
