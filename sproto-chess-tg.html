@@ -369,6 +369,8 @@
   #welcome .wopt b{font-size:19px;}
   #welcome .wopt span{font-size:14px;color:#2A3350;font-weight:600;}
   #welcome .wopt #welTg{min-height:40px;margin-top:6px;}
+  #welcome .wtg{width:100%;min-height:52px;font-size:19px;font-weight:800;border:3px solid var(--lead);border-radius:12px;background:#2AABEE;color:#fff;cursor:pointer;box-shadow:3px 3px 0 var(--lead);margin-top:6px;}
+  #welcome .wtg.hide{display:none;}
   #welcome .wno{width:100%;min-height:50px;font-size:18px;font-weight:800;border:3px solid var(--lead);border-radius:12px;background:#fff;color:var(--lead);cursor:pointer;}
   .sigpill{font-size:14px;font-weight:800;padding:4px 12px;border-radius:999px;border:3px solid var(--lead);background:#fff;}
   .sigpill.in{background:#c9f2d6;color:#0d5a2c;}
@@ -383,7 +385,7 @@
 <div id="welcome" class="hide" role="dialog" aria-modal="true" aria-label="Welcome to Sproto Chess">
   <div class="card"><div class="ic">&#9823;&#65039;</div><h2>Welcome to Sproto Chess</h2>
     <p>Continue with Telegram or continue without signing in.</p>
-    <div class="wopt"><b>Continue with Telegram</b><span>Keep the same name, picture and record in the bot and on the website.</span><div id="welTg"></div></div>
+    <div class="wopt"><b>Continue with Telegram</b><span>Keep the same name, picture and record in the bot and on the website.</span><button type="button" class="wtg hide" id="welTgBtn">&#9992;&#65039; Continue with Telegram</button><div id="welTg"></div></div>
     <button type="button" class="wno" id="welNo">Continue without signing in</button>
   </div>
 </div>
@@ -1058,7 +1060,7 @@ firebase/app/dist/esm/index.esm.js:
 /* ===== SERVER (needed for Telegram + secure moves; see SETUP-TELEGRAM.md) =====
    API_URL: the address of your Cloudflare Worker, for example https://sproto-chess-server.YOURNAME.workers.dev
    TG_LINK: your Mini App link from BotFather, for example https://t.me/YourBot/play  (used for invite links inside Telegram) */
-var SERVER_CONFIG = { API_URL: "https://sproto-chess-server.sprotochess.workers.dev", TG_LINK: "https://t.me/sprotoschessbot/play", BOT_USERNAME: "sprotoschessbot", BOT_ID: "" };   // BOT_USERNAME: your bot name without the @, e.g. "sprotochessbot" (turns on the website Log in with Telegram button)
+var SERVER_CONFIG = { API_URL: "https://sproto-chess-server.sprotochess.workers.dev", TG_LINK: "https://t.me/sprotoschessbot/play", BOT_USERNAME: "sprotoschessbot", BOT_ID: "8317830479" };   // BOT_USERNAME: your bot name without the @, e.g. "sprotochessbot" (turns on the website Log in with Telegram button)
 var FIREBASE_CONFIG = {
   apiKey: "",
   authDomain: "sproto-chess-57da4.firebaseapp.com",
@@ -1930,9 +1932,12 @@ var FIREBASE_CONFIG = {
     if(forceWel){ try{ history.replaceState(null,'',location.pathname); }catch(e){} }
     if(forceWel||lsGet('spc_welcome')!=='1'){
       $('welcome').classList.remove('hide');
-      var w=document.createElement('script'); w.async=true; w.src='https://telegram.org/js/telegram-widget.js?22';
-      w.setAttribute('data-telegram-login',SC.BOT_USERNAME); w.setAttribute('data-size','large'); w.setAttribute('data-radius','10'); w.setAttribute('data-onauth','onTelegramAuth(user)');
-      $('welTg').appendChild(w);
+      if(SC.BOT_ID){ $('welTgBtn').classList.remove('hide'); }   // our own button opens Telegram's login popup
+      else {
+        var w=document.createElement('script'); w.async=true; w.src='https://telegram.org/js/telegram-widget.js?22';
+        w.setAttribute('data-telegram-login',SC.BOT_USERNAME); w.setAttribute('data-size','large'); w.setAttribute('data-radius','10'); w.setAttribute('data-onauth','onTelegramAuth(user)');
+        $('welTg').appendChild(w);
+      }
     }
     var sc=document.createElement('script'); sc.async=true; sc.src='https://telegram.org/js/telegram-widget.js?22';
     sc.setAttribute('data-telegram-login',SC.BOT_USERNAME); sc.setAttribute('data-size','large'); sc.setAttribute('data-radius','10'); sc.setAttribute('data-onauth','onTelegramAuth(user)');
@@ -2177,6 +2182,7 @@ var FIREBASE_CONFIG = {
     window.open(url,'_blank');
   });
 
+  $('welTgBtn').addEventListener('click',function(){ connectTelegram(); });
   $('welNo').addEventListener('click',function(){ lsSet('spc_welcome','1'); $('welcome').classList.add('hide'); });
 
   /* ---------- tabs + walkthrough ---------- */
