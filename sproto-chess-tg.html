@@ -480,6 +480,15 @@
   }
   #arrowRow,#arrowHint{display:none !important;}
   body.tg header.top nav{display:none;}
+  #fsLobbyBtn{display:none !important;background:var(--red);color:#fff;}
+  body.big.fs.fsover #fsLobbyBtn{display:inline-flex !important;animation:none;}
+  .joinpanel{width:var(--bw,min(100%,720px));max-width:100%;margin:12px 0 0;padding:0 0 10px;background:var(--cream);color:var(--lead);border:5px solid var(--lead);border-radius:14px;box-shadow:6px 6px 0 var(--lead);overflow:hidden;box-sizing:border-box;}
+  .joinpanel.hide{display:none;}
+  .joinpanel .jp-t{background:var(--red);color:#fff;font-family:'Alfa Slab One',Georgia,serif;font-size:clamp(18px,4.6vw,26px);letter-spacing:.02em;text-align:center;padding:10px 12px;border-bottom:5px solid var(--lead);}
+  .joinpanel .jp-h{margin:12px 12px 6px;font-weight:800;font-size:17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .joinpanel .jp-w{padding-top:12px;border-top:3px dashed var(--lead);margin-top:14px;}
+  .joinpanel .lobbies{margin:0 12px;}
+  .joinnote{margin:12px 0 0;padding:8px 10px;background:var(--yellow);border:3px solid var(--lead);border-radius:10px;font-size:15px;line-height:1.3;}
 </style>
 </head>
 <body>
@@ -545,7 +554,7 @@
 
     <div class="boardwrap">
       <div class="bigstrip" id="bigStrip" aria-label="Piece names and board colors"></div>
-      <div class="pbar hide" id="topBar"><span class="pn" id="topName"></span><button type="button" class="fsbtn mini" id="fsGame" aria-label="Full screen"><span class="fsi">&#x26F6;</span> <span class="fst">Full screen</span></button><span class="clk" id="topClk">--:--</span></div>
+      <div class="pbar hide" id="topBar"><span class="pn" id="topName"></span><button type="button" class="fsbtn mini" id="fsGame" aria-label="Full screen"><span class="fsi">&#x26F6;</span> <span class="fst">Full screen</span></button><button type="button" class="fsbtn mini" id="fsLobbyBtn">&#8592; Return to lobby</button><span class="clk" id="topClk">--:--</span></div>
       <div class="bwrap">
         <div class="board" id="board" role="grid" aria-label="Chess board"></div>
         <svg class="arrows" id="arrows" viewBox="0 0 8 8" preserveAspectRatio="none" aria-hidden="true"></svg>
@@ -555,6 +564,13 @@
       </div>
       <div class="pbar hide" id="botBar"><span class="pn" id="botName"></span><span class="hnav hide" id="hnav"><span class="rwl">Rewind</span><button type="button" class="hFirst" aria-label="First move">&#9198;</button><button type="button" class="hPrev" aria-label="Previous move">&#9664;</button><button type="button" class="hNext" aria-label="Next move">&#9654;</button><button type="button" class="hLast" aria-label="Back to live game">&#9197;</button></span><span class="clk" id="botClk">--:--</span></div>
       <div class="pguide" id="lobbyGuide" aria-label="Piece names"><div class="pg-t">Pieces</div><div class="plist" id="lobbyPieces"></div></div>
+      <div class="joinpanel hide" id="joinPanel">
+        <div class="jp-t">&#9823; Join a game or watch one live</div>
+        <p class="jp-h"><span class="live"></span>Open games &middot; tap Join to play <span id="lobbyCount"></span></p>
+        <ul class="lobbies" id="lobbies"></ul>
+        <p class="jp-h jp-w"><span class="live"></span>Live games &middot; tap Watch to spectate <span id="liveCount"></span></p>
+        <ul class="lobbies" id="liveList"></ul>
+      </div>
     </div>
 
     <aside class="side">
@@ -575,6 +591,21 @@
         <button type="button" id="tabProf" role="tab">&#128100; Profile</button>
         <button type="button" id="tabHow" role="tab">&#128214; How to play</button>
       </div>
+      <div class="panel" id="lobbyPanel">
+        <p class="ph">Play online</p>
+        <div class="tglogin hide" id="tgLoginBox"><div class="tgl-h"><span class="tgl-ic">&#9992;&#65039;</span><b>Play with your Telegram account</b></div><p class="tgl-p">Use the same account, name and leaderboard record as the <a href="#" id="tgBotLink" class="botlink">Sproto Chess bot</a>.</p><div id="tgLoginBtn"></div></div>
+        <div class="tglogin hide" id="tgLoggedBox"><p class="sub">Logged in with Telegram as <b id="tgLoggedName"></b> &middot; <a href="#" id="tgLogout">Log out</a></p></div>
+        <div class="meprof" id="meProf"></div>
+        <label class="field">Your name (required)<input type="text" id="pname" maxlength="18" placeholder="Enter a name to play" autocomplete="nickname"></label>
+        <div class="need-name hide" id="nameHint">Enter a name (at least 2 letters) to start or join a game.</div>
+        <div class="field">Time control
+          <div class="seg" id="tcSeg"><button type="button" class="on" data-tc="300">5 min</button><button type="button" data-tc="600">10 min</button></div></div>
+        <button class="bt red big wide" id="startBtn" type="button">Start game</button>
+        <button class="bt ghost wide hide" id="webBtn" type="button" style="margin-top:8px">&#127760; Play in browser</button>
+        <div class="demo hide" id="demoNote">Demo mode: lobbies only work between tabs in this browser until Firebase is connected.</div>
+        <p class="joinnote">&#128071; <b>Join or watch games</b> in the box under the board.</p>
+      </div>
+
       <div class="panel" id="statusPanel">
         <div class="strow"><p class="status" id="status">White to move</p><span class="chathint" id="chatHint">Scroll down to chat &darr;</span></div>
         <p class="sub" id="sub">Tap a piece, then tap where to move it.</p>
@@ -616,25 +647,6 @@
           <button class="bt red" id="rematchBtn" type="button">Rematch</button>
           <button class="bt ghost" id="backBtn" type="button">Back to lobby</button>
         </div>
-      </div>
-
-      <div class="panel" id="lobbyPanel">
-        <p class="ph">Play online</p>
-        <div class="tglogin hide" id="tgLoginBox"><div class="tgl-h"><span class="tgl-ic">&#9992;&#65039;</span><b>Play with your Telegram account</b></div><p class="tgl-p">Use the same account, name and leaderboard record as the <a href="#" id="tgBotLink" class="botlink">Sproto Chess bot</a>.</p><div id="tgLoginBtn"></div></div>
-        <div class="tglogin hide" id="tgLoggedBox"><p class="sub">Logged in with Telegram as <b id="tgLoggedName"></b> &middot; <a href="#" id="tgLogout">Log out</a></p></div>
-        <div class="meprof" id="meProf"></div>
-        <label class="field">Your name (required)<input type="text" id="pname" maxlength="18" placeholder="Enter a name to play" autocomplete="nickname"></label>
-        <div class="need-name hide" id="nameHint">Enter a name (at least 2 letters) to start or join a game.</div>
-        <div class="field">Time control
-          <div class="seg" id="tcSeg"><button type="button" class="on" data-tc="300">5 min</button><button type="button" data-tc="600">10 min</button></div></div>
-        <button class="bt red big wide" id="startBtn" type="button">Start game</button>
-        <button class="bt ghost wide hide" id="webBtn" type="button" style="margin-top:8px">&#127760; Play in browser</button>
-        <div class="demo hide" id="demoNote">Demo mode: lobbies only work between tabs in this browser until Firebase is connected.</div>
-        <p class="ph" style="margin-top:18px"><span class="live"></span>Open games <span id="lobbyCount"></span></p>
-        <ul class="lobbies" id="lobbies"></ul>
-        <p class="ph" style="margin-top:18px"><span class="live"></span>Live games <span id="liveCount"></span></p>
-        <ul class="lobbies" id="liveList"></ul>
-        
       </div>
 
       <div class="panel" id="profPanel">
@@ -1549,15 +1561,16 @@ var FIREBASE_CONFIG = {
   /* ---------- full screen (phones): makes the board as big as the phone screen allows ---------- */
   (function(){
     var b=$('fsGame'); if(!b) return;
+    var TG=window.Telegram&&window.Telegram.WebApp, IN_TG=!!(TG&&TG.initData);   // read here: the page-wide copies are only set further down
     function tgIsFs(){ try{ return !!(IN_TG&&TG&&TG.isFullscreen); }catch(e){ return false; } }
     function label(){ b.querySelector('.fst').textContent=(document.body.classList.contains('big')||tgIsFs())?'Exit full screen':'Full screen'; }
     function apply(on){ document.body.classList.toggle('big',on); label(); }
-    apply(lsGet('spc_big')==='1');
+    apply(lsGet('spc_big')==='1'||tgIsFs());
     document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&document.body.classList.contains('big')){ lsSet('spc_big','0'); apply(false); } });
     b.addEventListener('click',function(){ var on=!(document.body.classList.contains('big')||tgIsFs()); lsSet('spc_big',on?'1':'0'); b.classList.add('used'); apply(on); tgFull(on); });
     // Inside Telegram, also hide Telegram's own top bar (phone and desktop) when the app supports it (Bot API 8.0+).
     function tgFull(on){ if(!IN_TG||!TG) return; try{ if(!TG.isVersionAtLeast||!TG.isVersionAtLeast('8.0')) return; if(on){ if(!TG.isFullscreen) TG.requestFullscreen(); } else if(TG.isFullscreen){ TG.exitFullscreen(); } }catch(e){} }
-    if(IN_TG&&TG&&TG.onEvent){ try{ TG.onEvent('fullscreenChanged',function(){ if(!TG.isFullscreen&&document.body.classList.contains('big')){ lsSet('spc_big','0'); apply(false); } label(); }); }catch(e){} }
+    if(IN_TG&&TG&&TG.onEvent){ try{ TG.onEvent('fullscreenChanged',function(){ if(!TG.isFullscreen&&document.body.classList.contains('big')){ lsSet('spc_big','0'); apply(false); } else if(TG.isFullscreen&&!document.body.classList.contains('big')){ lsSet('spc_big','1'); apply(true); } label(); }); }catch(e){} }
   })();
   $('soundBtn').addEventListener('click',function(){ soundOn=!soundOn; lsSet('spc_snd',soundOn?'1':'0'); soundLabel(); if(soundOn) playSound('move'); });
   $('arrowBtn').addEventListener('click',function(){
@@ -1623,13 +1636,14 @@ var FIREBASE_CONFIG = {
       $('topName').insertBefore(avatar(topP,28),$('topName').firstChild); $('botName').insertBefore(avatar(botP,28),$('botName').firstChild);
     }
     (function(){ var sc=$('specCount'), on=(mode==='online'||mode==='watch')&&!!G; sc.classList.toggle('hide',!on); if(on){ var n=G.watchers?Object.keys(G.watchers).length:0; sc.textContent='\uD83D\uDC41 '+n+' watching'; } })();
-    show('lobbyPanel',mode==='lobby'); show('tabBar',mode==='lobby'); show('howPanel',mode==='lobby'); show('profPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('lobbyGuide',mode==='lobby'); show('lobbyTag',mode==='lobby'); show('waitPanel',mode==='waiting'); if(mode==='waiting') fillInvite(); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch'); show('soundRow',mode==='online'||mode==='watch'); show('tipsPanel',mode==='online'||mode==='watch'); show('chatPanel',mode==='watch'||(mode==='online'&&!!(G&&G.white&&G.black))); show('cheerRow',mode==='watch'&&!!(G&&G.white&&G.black&&!G.result));
+    show('lobbyPanel',mode==='lobby'); show('tabBar',mode==='lobby'); show('howPanel',mode==='lobby'); show('profPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('lobbyGuide',mode==='lobby'); show('joinPanel',mode==='lobby'); show('lobbyTag',mode==='lobby'); show('waitPanel',mode==='waiting'); if(mode==='waiting') fillInvite(); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch'); show('soundRow',mode==='online'||mode==='watch'); show('tipsPanel',mode==='online'||mode==='watch'); show('chatPanel',mode==='watch'||(mode==='online'&&!!(G&&G.white&&G.black))); show('cheerRow',mode==='watch'&&!!(G&&G.white&&G.black&&!G.result));
     lcSync(); try{ fsLobbySync(); }catch(e){}
     try{ if(mode!=='watch') spHide(); }catch(e){}
     try{ bsUpdate(); }catch(e){}
     show('localBtns',mode==='lobby'||mode==='local');
     show('onlineBtns',mode==='online' && G && !G.result);
     show('overBtns',mode==='online' && G && !!G.result);
+    document.body.classList.toggle('fsover',(mode==='online'||mode==='watch')&&!!G&&!!G.result);
     show('newBtn',mode==='local'); show('undoBtn',mode==='local');
     if(mode==='online'&&G){
       var offer=G.drawOffer&&G.drawOffer!==myColor&&!G.result;
@@ -1915,6 +1929,7 @@ var FIREBASE_CONFIG = {
     showBackToOnline(false); setPanels(); startLobbyList(); render();
   }
 
+  $('fsLobbyBtn').addEventListener('click',function(){ toLobby(); });
   $('cancelBtn').addEventListener('click',function(){ var id=gid; api('cancel',{gid:id}).catch(function(){}); toLobby(); });
   $('resignBtn').addEventListener('click',function(){ if(!G||G.result) return; if(!confirm('Resign this game?')) return; api('resign',{gid:gid}).catch(function(){}); });
   $('drawBtn').addEventListener('click',function(){ if(!G||G.result||G.drawOffer) return; api('drawOffer',{gid:gid}).catch(function(){}); });
