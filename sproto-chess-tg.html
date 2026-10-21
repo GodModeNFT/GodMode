@@ -387,7 +387,9 @@
   .tgl-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;padding:0 16px;font-family:inherit;font-size:19px;font-weight:800;color:#fff;background:linear-gradient(180deg,#38b6f5,#1e96dc);border:3px solid var(--lead);border-radius:14px;box-shadow:4px 4px 0 var(--lead);cursor:pointer;transition:transform .08s,box-shadow .08s;}
   .tgl-btn:hover{filter:brightness(1.05);}
   .tgl-btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--lead);}
-  body:not(.tab-chat):not(.lc-wait) #lchatPanel{display:none !important;}
+  .lchatbox{margin:10px 0 4px;text-align:left;}
+  .lchatbox.hide{display:none;}
+  .lchatbox .ph{margin:0 0 6px;}
   .tabbar button:last-child{grid-column:1/-1;}
   .tabdot{display:inline-block;min-width:18px;padding:0 5px;border-radius:999px;background:var(--red);color:#fff;font-size:12px;line-height:18px;margin-left:4px;}
   .tabdot.hide{display:none;}
@@ -402,6 +404,9 @@
   #fsLobby{margin:0 0 4px;}
   body.tgfull{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px));}
   @media (max-width:920px){ body:not(.fs) .side{order:-1;} body:not(.fs) .boardwrap{order:1;} }
+  body.tab-prof:not(.fs) .boardwrap{display:none !important;}
+  body.tab-prof:not(.fs) #statusPanel{display:none !important;}
+  body.tab-chat:not(.fs) .boardwrap,body.tab-chat:not(.fs) #statusPanel{display:none !important;}
   #lbPanel .lb li{grid-template-columns:28px 36px 1fr auto !important;}
   .lb .nm b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .lb .nm small{display:block;font-size:13px;font-weight:700;color:#2A3350;font-variant-numeric:tabular-nums;}
@@ -410,12 +415,78 @@
   .pstats b{font-size:21px !important;}
   .pstats span{font-size:12px !important;}
   .pstats div:nth-child(5) b{color:#0b6fb3;}
+  body.tab-lb:not(.fs) .boardwrap,body.tab-lb:not(.fs) #statusPanel{display:none !important;}
+  body.tab-lb:not(.fs) .game{grid-template-columns:minmax(0,1fr) !important;}
+  body.tab-lb:not(.fs) .side{max-width:900px;margin:0 auto;width:100%;}
+  #lbPanel{padding:22px 24px;}
+  #lbPanel .ph{font-size:26px;}
+  #lbPanel .lb{max-height:none;overflow:visible;gap:10px;margin-top:14px;}
+  #lbPanel .lb li{grid-template-columns:34px 52px 1fr auto !important;gap:14px;padding:12px 16px;border-radius:14px;font-size:20px;}
+  #lbPanel .lb .rk{font-size:22px;}
+  #lbPanel .lb .nm small{font-size:15px;margin-top:2px;}
+  #lbPanel .lb .pct{font-size:30px !important;min-width:80px;}
+  @media (max-width:520px){ #lbPanel{padding:16px 14px;} #lbPanel .lb li{grid-template-columns:26px 44px 1fr auto !important;gap:10px;padding:10px 12px;font-size:18px;} #lbPanel .lb .pct{font-size:24px !important;min-width:60px;} #lbPanel .lb .rk{font-size:18px;} }
+  #specNote{position:fixed;top:0;left:0;right:0;z-index:9000;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:max(10px,env(safe-area-inset-top)) 14px 10px;background:var(--yellow);color:var(--lead);border-bottom:4px solid var(--lead);text-align:center;font-size:16px;line-height:1.3;}
+  body.tgfull #specNote{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + 8px);}
+  #specNote.hide{display:none;}
+  #specNote .sn-t{flex:1 1 260px;max-width:620px;}
+  #specNote button{min-height:42px;padding:0 16px;font-size:16px;font-weight:800;font-family:inherit;border:3px solid var(--lead);border-radius:12px;background:var(--red);color:#fff;cursor:pointer;box-shadow:3px 3px 0 var(--lead);}
+  body.spechint:not(.fs) .wrap{padding-top:var(--sn-h,84px);}
+  body.spechint.fs .game{top:var(--sn-h,84px) !important;}
+
+  body.big.fs .game > .leftcol{display:flex !important;flex-direction:column;gap:8px;width:100%;max-width:none;order:3;padding:0 8px;box-sizing:border-box;}
+  body.big.fs .game > .boardwrap{order:1;}
+  body.big.fs .leftcol #tipsPanel,body.big.fs .leftcol #legendPanel{display:none !important;}
+  body.big.fs .chathint{display:none !important;}
+  body.big.fs #chatPanel{margin:0;padding:8px 10px;border-width:3px;border-radius:12px;box-shadow:none;}
+  body.big.fs #chatBox summary{display:none;}
+  body.big.fs #chatPanel .chatlog{max-height:max(44px,calc(100dvh - min(100vw,calc(100dvh - 78px)) - 235px));min-height:44px;margin:0 0 6px;}
+  body.big.fs #chatPanel .chatform .bt{min-height:42px;}
+  @media (max-width:950px) and (orientation:portrait){
+    body.big.fs .game{justify-content:flex-start;overflow:auto;}
+  }
+  @media (max-width:950px) and (orientation:landscape) and (max-height:520px){
+    body.big.fs .game > .leftcol{width:clamp(210px,34vw,340px);flex:none;order:2;padding:0;align-self:stretch;justify-content:flex-start;}
+    body.big.fs #chatPanel .chatlog{max-height:calc(100dvh - 150px);}
+  }
+  @media (min-width:951px){
+    body.big.fs .game{display:flex !important;flex-direction:row !important;align-items:flex-start;justify-content:center;gap:18px;padding:2px 12px;}
+    body.big.fs .boardwrap{--bw:min(calc(100vw - 440px),calc(100dvh - 104px));flex:none;}
+    body.big.fs .game > .leftcol{width:360px;flex:none;order:2;padding:0;margin-top:0;}
+    body.big.fs #chatPanel .chatlog{max-height:calc(100dvh - 215px);min-height:200px;}
+  }
+  @media (max-width:950px) and (orientation:landscape) and (max-height:520px){
+    body.big.fs .game{padding-top:1px !important;padding-bottom:0 !important;}
+    body.big.fs .pbar{margin-bottom:2px !important;} body.big.fs .pbar.bot{margin-top:2px !important;}
+  }
+  @media (min-width:951px){ body.big.fs .pbar{margin-bottom:3px !important;} body.big.fs .pbar.bot{margin-top:3px !important;} }
+
+  .bigstrip{display:none;}
+  body.big.fs .leftcol .bigstrip{width:100%;border:3px solid var(--lead);border-radius:10px;margin:0 0 8px;padding:4px 6px;}
+  body.big.fs .bigstrip{display:flex;align-items:center;gap:6px;width:var(--bw,100%);max-width:100%;box-sizing:border-box;padding:3px 6px;margin:0 0 3px;background:var(--cream);color:var(--lead);border-bottom:3px solid var(--lead);}
+  .bigstrip .bsv{flex:none;font-size:10px;font-weight:800;line-height:1;padding:2px 5px;border:2px solid var(--lead);border-radius:999px;background:#fff;align-self:flex-start;}
+  .bigstrip .bsp{flex:1;min-width:0;display:grid;grid-template-columns:repeat(6,1fr);gap:2px;}
+  .bigstrip .bsp span{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;}
+  .bigstrip .bsp img{width:24px;height:24px;object-fit:contain;background:var(--dark);border-radius:5px;border:1.5px solid var(--lead);}
+  .bigstrip .bsp em{font-style:normal;font-size:8.5px;font-weight:800;line-height:1;white-space:nowrap;}
+  .bigstrip .bsw{flex:none;display:flex;gap:4px;}
+  .bigstrip .bsw button{padding:0;width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--lead);border-radius:7px;cursor:pointer;}
+  .bigstrip .bsw button.on{background:var(--yellow);box-shadow:0 2px 0 var(--lead);}
+  .bigstrip .bsw .sw{display:grid;grid-template-columns:1fr 1fr;overflow:hidden;width:18px;height:18px;border:1.5px solid var(--lead);border-radius:4px;}
+  .bigstrip .bsw .sw i{display:block;}
+  @media (min-width:951px){ .bigstrip .bsp img{width:30px;height:30px;} .bigstrip .bsp em{font-size:10px;} .bigstrip .bsv{font-size:11px;} .bigstrip .bsw button{width:30px;height:30px;} .bigstrip .bsw .sw{width:21px;height:21px;} }
+  @media (max-width:950px) and (orientation:landscape) and (max-height:520px){
+    .bigstrip .bsp em{display:none;} .bigstrip .bsp img{width:20px;height:20px;} .bigstrip .bsw button{width:22px;height:22px;} .bigstrip .bsw .sw{width:14px;height:14px;}
+  }
+  #arrowRow,#arrowHint{display:none !important;}
   body.tg header.top nav{display:none;}
 </style>
 </head>
 <body>
+<div id="specNote" class="hide" role="status"><div class="sn-t"><b>This game has already started.</b> You are spectating. Go back to the lobby to start your own game.</div><button type="button" id="specLobby">Go back to the lobby</button></div>
+
 <div id="welcome" class="hide" role="dialog" aria-modal="true" aria-label="Welcome to Sproto Chess">
-  <div class="card"><div class="ic">&#9823;&#65039;</div><h2>Welcome to Sproto Chess</h2>
+  <div class="card"><div class="ic" id="welIc">&#9823;&#65039;</div><h2>Welcome to Sproto Chess</h2>
     <p>Continue with Telegram or continue without signing in.</p>
     <div class="wopt"><b>Continue with Telegram</b><span>Keep the same name, picture and record in the bot and on the website.</span><button type="button" class="wtg hide" id="welTgBtn">&#9992;&#65039; Continue with Telegram</button><div id="welTg"></div></div>
     <button type="button" class="wno" id="welNo">Continue without signing in</button>
@@ -423,10 +494,10 @@
 </div>
 
 <div id="oldInv" class="hide" role="dialog" aria-modal="true" aria-label="Old invite link">
-  <div class="card"><div class="ic">&#8987;</div><h2>This invite link is old</h2>
-    <p>That game has already started, been cancelled, or filled up, so you can't join it any more.</p>
-    <p class="what"><b>What to do:</b> tap <b>Go to main lobby</b>, then start a new game and send your friend the new invite link, or join someone else's game from <b>Open games</b>. You can also ask your friend for a fresh link.</p>
-    <div class="row"><button type="button" class="go" id="oldMain">Go to main lobby</button></div></div>
+  <div class="card"><div class="ic">&#8987;</div><h2>Old game</h2>
+    <p>This invite link is for an old game, so there is nothing to join or watch.</p>
+    <p class="what">Go back to the lobby to start a new game.</p>
+    <div class="row"><button type="button" class="go" id="oldMain">Go back to the lobby</button></div></div>
 </div>
 
 <div id="tour" class="hide" role="dialog" aria-modal="true" aria-label="How Sproto Chess works">
@@ -473,6 +544,7 @@
     </aside>
 
     <div class="boardwrap">
+      <div class="bigstrip" id="bigStrip" aria-label="Piece names and board colors"></div>
       <div class="pbar hide" id="topBar"><span class="pn" id="topName"></span><button type="button" class="fsbtn mini" id="fsGame" aria-label="Full screen"><span class="fsi">&#x26F6;</span> <span class="fst">Full screen</span></button><span class="clk" id="topClk">--:--</span></div>
       <div class="bwrap">
         <div class="board" id="board" role="grid" aria-label="Chess board"></div>
@@ -498,7 +570,7 @@
       <button type="button" class="bt ghost wide hide" id="fsLobby">&#x26F6; Full screen</button>
       <div class="tabbar hide" id="tabBar" role="tablist">
         <button type="button" class="on" id="tabPlay" role="tab">&#9823; Play</button>
-        <button type="button" id="tabChat" role="tab">&#128172; Global chat <span class="tabdot hide" id="tabChatN"></span></button>
+        <button type="button" id="tabChat" role="tab" style="display:none !important">&#128172; Global chat <span class="tabdot hide" id="tabChatN"></span></button>
         <button type="button" id="tabLb" role="tab">&#127942; Leaderboard</button>
         <button type="button" id="tabProf" role="tab">&#128100; Profile</button>
         <button type="button" id="tabHow" role="tab">&#128214; How to play</button>
@@ -507,7 +579,14 @@
         <div class="strow"><p class="status" id="status">White to move</p><span class="chathint" id="chatHint">Scroll down to chat &darr;</span></div>
         <p class="sub" id="sub">Tap a piece, then tap where to move it.</p>
         <p class="spec hide" id="specCount"></p>
-        <p class="livechat" id="lobbyTag">WITH LIVE CHAT!</p>
+        <p class="livechat" id="lobbyTag" style="display:none !important"></p>
+      <div class="lchatbox hide" id="lchatPanel">
+        <p class="ph"><span class="live"></span>Live chat <span class="badge hide" id="lchatBadge"></span></p>
+        <ol class="chatlog lchatlog" id="lchatLog"></ol>
+        <form class="chatform" id="lchatForm" autocomplete="off"><input type="text" id="lchatIn" maxlength="200" placeholder="Say hi to the lobby..." enterkeyhint="send"><button class="bt red" type="submit">Send</button></form>
+        <button type="button" class="bt ghost wide hide" id="lchatInvite" style="margin-top:8px">&#128226; Invite the lobby to my game</button>
+        <p class="sub" id="lchatHint" style="font-size:13px;margin-top:6px;">Start a game, then tap Invite to call people in. Once a game starts, chat is only between the two players.</p>
+      </div>
         <div class="btns" id="localBtns">
           <button class="bt red" id="newBtn" type="button">New game</button>
           <button class="bt" id="undoBtn" type="button">Undo</button>
@@ -558,14 +637,6 @@
         
       </div>
 
-      <div class="panel hide" id="lchatPanel">
-        <p class="ph"><span class="live"></span>Lobby chat <span class="badge hide" id="lchatBadge"></span></p>
-        <ol class="chatlog lchatlog" id="lchatLog"></ol>
-        <form class="chatform" id="lchatForm" autocomplete="off"><input type="text" id="lchatIn" maxlength="200" placeholder="Say hi to the lobby..." enterkeyhint="send"><button class="bt red" type="submit">Send</button></form>
-        <button type="button" class="bt ghost wide hide" id="lchatInvite" style="margin-top:8px">&#128226; Invite the lobby to my game</button>
-        <p class="sub" id="lchatHint" style="font-size:13px;margin-top:6px;">Start a game, then tap Invite to call people in. Once a game starts, chat is only between the two players.</p>
-      </div>
-
       <div class="panel" id="profPanel">
         <p class="ph">&#128100; Your profile</p>
         <div class="prof"><div id="profAv"></div><div class="profn" id="profName"></div><button type="button" class="sigpill" id="profPill"></button><div class="profsub" id="profSub"></div></div>
@@ -605,7 +676,7 @@
         <details><summary>Playing Sproto Chess</summary><div class="dbody"><ul>
           <li><b>Move:</b> tap a piece, then tap the square to move it to.</li>
           <li><b>Start a game:</b> pick 5 or 10 minutes and tap Start game, then invite a friend or wait for someone to join from Open games.</li>
-          <li><b>Join or watch:</b> tap Join on an open game, or watch a live game from Live games. Spectators can read the chat and cheer for a side.</li>
+          <li><b>Join or watch:</b> tap Join on an open game, or watch a live game from Live games. Spectators can chat with the players and cheer for a side.</li>
           <li><b>During a game:</b> use live chat, offer a draw, resign, or draw arrows on the board. Pick your board colors any time.</li>
           <li><b>After a game:</b> ask for a rematch, or go back to the lobby. Wins, losses and draws count on the public leaderboard.</li>
         </ul></div></details>
@@ -1478,13 +1549,15 @@ var FIREBASE_CONFIG = {
   /* ---------- full screen (phones): makes the board as big as the phone screen allows ---------- */
   (function(){
     var b=$('fsGame'); if(!b) return;
-    function apply(on){ document.body.classList.toggle('big',on); b.querySelector('.fst').textContent=on?'Exit full screen':'Full screen'; }
+    function tgIsFs(){ try{ return !!(IN_TG&&TG&&TG.isFullscreen); }catch(e){ return false; } }
+    function label(){ b.querySelector('.fst').textContent=(document.body.classList.contains('big')||tgIsFs())?'Exit full screen':'Full screen'; }
+    function apply(on){ document.body.classList.toggle('big',on); label(); }
     apply(lsGet('spc_big')==='1');
     document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&document.body.classList.contains('big')){ lsSet('spc_big','0'); apply(false); } });
-    b.addEventListener('click',function(){ var on=!document.body.classList.contains('big'); lsSet('spc_big',on?'1':'0'); b.classList.add('used'); apply(on); tgFull(on); });
+    b.addEventListener('click',function(){ var on=!(document.body.classList.contains('big')||tgIsFs()); lsSet('spc_big',on?'1':'0'); b.classList.add('used'); apply(on); tgFull(on); });
     // Inside Telegram, also hide Telegram's own top bar (phone and desktop) when the app supports it (Bot API 8.0+).
     function tgFull(on){ if(!IN_TG||!TG) return; try{ if(!TG.isVersionAtLeast||!TG.isVersionAtLeast('8.0')) return; if(on){ if(!TG.isFullscreen) TG.requestFullscreen(); } else if(TG.isFullscreen){ TG.exitFullscreen(); } }catch(e){} }
-    if(IN_TG&&TG&&TG.onEvent){ try{ TG.onEvent('fullscreenChanged',function(){ if(!TG.isFullscreen&&document.body.classList.contains('big')){ lsSet('spc_big','0'); apply(false); } }); }catch(e){} }
+    if(IN_TG&&TG&&TG.onEvent){ try{ TG.onEvent('fullscreenChanged',function(){ if(!TG.isFullscreen&&document.body.classList.contains('big')){ lsSet('spc_big','0'); apply(false); } label(); }); }catch(e){} }
   })();
   $('soundBtn').addEventListener('click',function(){ soundOn=!soundOn; lsSet('spc_snd',soundOn?'1':'0'); soundLabel(); if(soundOn) playSound('move'); });
   $('arrowBtn').addEventListener('click',function(){
@@ -1552,6 +1625,8 @@ var FIREBASE_CONFIG = {
     (function(){ var sc=$('specCount'), on=(mode==='online'||mode==='watch')&&!!G; sc.classList.toggle('hide',!on); if(on){ var n=G.watchers?Object.keys(G.watchers).length:0; sc.textContent='\uD83D\uDC41 '+n+' watching'; } })();
     show('lobbyPanel',mode==='lobby'); show('tabBar',mode==='lobby'); show('howPanel',mode==='lobby'); show('profPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('lobbyGuide',mode==='lobby'); show('lobbyTag',mode==='lobby'); show('waitPanel',mode==='waiting'); if(mode==='waiting') fillInvite(); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch'); show('soundRow',mode==='online'||mode==='watch'); show('tipsPanel',mode==='online'||mode==='watch'); show('chatPanel',mode==='watch'||(mode==='online'&&!!(G&&G.white&&G.black))); show('cheerRow',mode==='watch'&&!!(G&&G.white&&G.black&&!G.result));
     lcSync(); try{ fsLobbySync(); }catch(e){}
+    try{ if(mode!=='watch') spHide(); }catch(e){}
+    try{ bsUpdate(); }catch(e){}
     show('localBtns',mode==='lobby'||mode==='local');
     show('onlineBtns',mode==='online' && G && !G.result);
     show('overBtns',mode==='online' && G && !!G.result);
@@ -1596,6 +1671,7 @@ var FIREBASE_CONFIG = {
     var lp=$('lobbyPieces');
     order.forEach(function(o){ var d=document.createElement('div'), im=document.createElement('img'); im.alt=o[1]; im.src=PIECES['w'+o[0]];
       var s=document.createElement('span'); s.textContent=o[1]; d.appendChild(im); d.appendChild(s); lp.appendChild(d); });
+    var wic=$('welIc'); if(wic&&PIECES.wp){ var wim=document.createElement('img'); wim.alt='Pawn'; wim.src=PIECES.wp; wim.style.cssText='height:120px;width:auto;display:block;margin:0 auto;'; wic.textContent=''; wic.appendChild(wim); }
   })();
 
   /* ---------- leaderboard ---------- */
@@ -1611,13 +1687,13 @@ var FIREBASE_CONFIG = {
       var ol=$('lb'); ol.innerHTML='';
       if(!rows.length){ var li=document.createElement('li'); li.className='empty'; li.style.display='block'; li.textContent='No players yet. Start a game to get on the board!'; ol.appendChild(li); return; }
       var mine=nameKey(meName||lsGet('spc_name')||'');
-      rows.slice(0,25).forEach(function(r,i){
+      rows.slice(0,50).forEach(function(r,i){
         var li=document.createElement('li'); if(r.k===mine) li.className='me';
         li.innerHTML='<span class="rk"></span><span class="nm"><b></b><small></small></span><span class="pct"></span>';
         li.children[0].textContent=i+1; li.children[1].firstChild.textContent=r.name;
         li.children[1].lastChild.textContent=r.w+'W-'+r.l+'L-'+r.d+'D'+(r.g?' \u00b7 '+r.pct+'% wins':' \u00b7 new');
         li.children[2].textContent=r.elo; li.children[2].title='Elo rating';
-        li.insertBefore(avatar(r.photo,34),li.children[1]); ol.appendChild(li);
+        li.insertBefore(avatar(r.photo,46),li.children[1]); ol.appendChild(li);
       });
     },function(){ lbProblem(); });
   }
@@ -1625,22 +1701,22 @@ var FIREBASE_CONFIG = {
   // results are counted once per player per game; any connected client (player or spectator) can do it, so a result is never lost if one player leaves
   function recordResult(g){ /* handled by the server */ }
   // put a player on the leaderboard as soon as they sit down to a game
-  /* ---------- chat (the two players only) ---------- */
+  /* ---------- chat (players and viewers) ---------- */
   var chatSeen=0, chatGid=null, lastSend=0;
   function renderChat(g){
     var log=$('chatLog'); if(!log) return;
     if(chatGid!==gid){ chatGid=gid; chatSeen=0; log.innerHTML=''; $('chatBadge').classList.add('hide'); }
     if((mode!=='online'&&mode!=='watch')||!g){ return; }
-    $('chatForm').classList.toggle('hide',mode==='watch'); $('chatWatchNote').classList.toggle('hide',mode!=='watch');
+    $('chatForm').classList.remove('hide'); $('chatWatchNote').classList.add('hide');
     var ms=[]; var c=g.chat||{}; Object.keys(c).sort().forEach(function(k){ if(c[k]&&c[k].text) ms.push(c[k]); });
     ms=ms.slice(-60);
     var shown=log.getAttribute('data-n')|0; if(shown===ms.length) return;
     var atEnd=log.scrollHeight-log.scrollTop-log.clientHeight<40;
     log.innerHTML='';
-    if(!ms.length){ var n=document.createElement('li'); n.className='none'; n.textContent=(mode==='watch'?'No messages yet.':'No messages yet. Say hi!'); log.appendChild(n); }
+    if(!ms.length){ var n=document.createElement('li'); n.className='none'; n.textContent='No messages yet. Say hi!'; log.appendChild(n); }
     ms.forEach(function(m){
       var li=document.createElement('li'), nm=document.createElement('b'), tx=document.createElement('span');
-      nm.textContent=m.name||'Player'; tx.textContent=m.text; if(m.uid===uid) li.className='me';
+      nm.textContent=(m.name||'Player')+(m.sp?' \u00b7 viewer':''); tx.textContent=m.text; if(m.uid===uid) li.className='me';
       li.appendChild(nm); li.appendChild(tx); log.appendChild(li);
     });
     log.setAttribute('data-n',ms.length);
@@ -1651,11 +1727,12 @@ var FIREBASE_CONFIG = {
   }
   $('chatBox').addEventListener('toggle',function(){ if(this.open){ chatSeen=0; var log=$('chatLog'); $('chatBadge').classList.add('hide'); log.setAttribute('data-n','0'); if(G) renderChat(G); log.scrollTop=log.scrollHeight; } });
   $('chatForm').addEventListener('submit',function(e){
-    e.preventDefault(); if(mode!=='online'||!gid||!G||!G.white||!G.black) return;
+    e.preventDefault(); if((mode!=='online'&&mode!=='watch')||!gid||!G||!G.white||!G.black) return;
     var inp=$('chatIn'), t=inp.value.replace(/\s+/g,' ').trim().slice(0,200); if(!t) return;
     if(Date.now()-lastSend<500) return; lastSend=Date.now();
     var key=Date.now().toString(36)+rid(3);
-    DB.set('games/'+gid+'/chat/'+key,{uid:uid,name:meName||'Player',text:t,t:Date.now()});
+    var spec=(mode==='watch'), nmx=(spec?(nameVal()||lsGet('spc_name')||'Viewer'):(meName||'Player')).slice(0,18), msg={uid:uid,name:nmx,text:t,t:Date.now()}; if(spec) msg.sp=1;
+    DB.set('games/'+gid+'/chat/'+key,msg);
     inp.value='';
   });
 
@@ -1791,7 +1868,7 @@ var FIREBASE_CONFIG = {
     api('join',{gid:id,name:name}).then(function(r){
       gid=r.gid; myColor=r.col; joined=true; mode='online'; resetBoard(); flipped=(r.col==='b'); G=null;
       stopLobbyList(); lsSet(ACTIVE_KEY,gid+'|'+r.col); watchGame(); setPanels(); render();
-    }).catch(function(e){ if(invite){ showOldInvite(); } else alert(e.message||'Sorry, that game is no longer available.'); });
+    }).catch(function(e){ if(invite){ inviteFallback(id); } else alert(e.message||'Sorry, that game is no longer available.'); });
   }
 
   /* ---------- game sync ---------- */
@@ -2246,7 +2323,7 @@ var FIREBASE_CONFIG = {
   function fsIsOn(){ try{ return IN_TG?!!TG.isFullscreen:!!document.fullscreenElement; }catch(e){ return false; } }
   function fsLobbySync(){
     var b=$('fsLobby'); if(!b) return;
-    b.classList.toggle('hide',!(mode==='lobby'&&fsAvail()));
+    b.classList.toggle('hide',!((mode==='lobby'||mode==='waiting'||mode==='local')&&fsAvail()));
     b.innerHTML=fsIsOn()?'&#x26F6; Exit full screen':'&#x26F6; Full screen';
     document.body.classList.toggle('tgfull',IN_TG&&fsIsOn());
   }
@@ -2259,6 +2336,60 @@ var FIREBASE_CONFIG = {
   }
   $('fsLobby').addEventListener('click',fsToggle);
   document.addEventListener('fullscreenchange',fsLobbySync);
+
+  /* ---------- invite link fallbacks ---------- */
+  function spShow(){
+    var n=$('specNote'); n.classList.remove('hide'); document.body.classList.add('spechint');
+    document.documentElement.style.setProperty('--sn-h',n.offsetHeight+'px');
+  }
+  function spHide(){ var n=$('specNote'); if(!n||n.classList.contains('hide')) return; n.classList.add('hide'); document.body.classList.remove('spechint'); }
+  function inviteFallback(id){
+    var un=DB.listen('games/'+id,function(g){
+      un();
+      if(g&&g.white&&g.black&&!g.result){
+        stopLobbyList(); gid=id; resetBoard(); G=null; flipped=false;
+        var meIsW=g.white.uid===uid, meIsB=g.black.uid===uid;
+        if(meIsW||meIsB){ myColor=meIsW?'w':'b'; flipped=!meIsW; mode='online'; lsSet(ACTIVE_KEY,id+'|'+myColor); watchGame(); setPanels(); render(); return; }   // it is my own game
+        myColor=null; mode='watch'; watchGame(); setPanels(); render(); spShow();
+      } else showOldInvite();
+    });
+  }
+  $('specLobby').addEventListener('click',function(){ spHide(); endSession(); });
+
+  /* ---------- full screen strip: viewers, piece names, board colors ---------- */
+  (function(){
+    var st=$('bigStrip'); if(!st) return;
+    var v=document.createElement('span'); v.id='bsView'; v.className='bsv'; v.title='People watching'; v.textContent='\uD83D\uDC41 0'; st.appendChild(v);
+    var pl=document.createElement('div'); pl.className='bsp';
+    [['k','King'],['q','Queen'],['r','Rook'],['b','Bishop'],['n','Knight'],['p','Pawn']].forEach(function(o){
+      var d=document.createElement('span'), im=document.createElement('img'), t=document.createElement('em');
+      im.alt=o[1]; im.src=PIECES['w'+o[0]]; t.textContent=o[1]; d.appendChild(im); d.appendChild(t); pl.appendChild(d);
+    });
+    st.appendChild(pl);
+    var sw=document.createElement('div'); sw.className='bsw';
+    Array.prototype.forEach.call(document.querySelectorAll('#themeRow button'),function(b){
+      var c=document.createElement('button'); c.type='button'; c.dataset.b=b.dataset.b; c.title='Board colors: '+b.textContent.trim(); c.setAttribute('aria-label',c.title);
+      var s=b.querySelector('.sw'); if(s) c.appendChild(s.cloneNode(true));
+      c.addEventListener('click',function(){ b.click(); bsUpdate(); }); sw.appendChild(c);
+    });
+    st.appendChild(sw);
+  })();
+  // wide screens and phones on their side: the strip goes to the top of the chat column so the board keeps all its room
+  (function(){
+    var mq=window.matchMedia('(min-width:951px), (orientation:landscape) and (max-height:520px)');
+    function place(){
+      var st=$('bigStrip'), lc=$('leftCol'), tb=$('topBar'); if(!st||!lc||!tb) return;
+      if(mq.matches){ if(st.parentNode!==lc) lc.insertBefore(st,lc.firstChild); }
+      else if(st.parentNode!==tb.parentNode) tb.parentNode.insertBefore(st,tb);
+    }
+    if(mq.addEventListener) mq.addEventListener('change',place); else if(mq.addListener) mq.addListener(place);
+    place();
+  })();
+  function bsUpdate(){
+    var n=(G&&G.watchers)?Object.keys(G.watchers).length:0, v=$('bsView'); if(v) v.textContent='\uD83D\uDC41 '+n;
+    var cur=document.documentElement.getAttribute('data-board')||'rb';
+    Array.prototype.forEach.call(document.querySelectorAll('#bigStrip .bsw button'),function(b){ b.classList.toggle('on',b.dataset.b===cur); });
+  }
 
   /* ---------- lobby chat ---------- */
   var lcUn, lcData, lcLast=0, lcFirst=true;
@@ -2275,7 +2406,7 @@ var FIREBASE_CONFIG = {
     var log=$('lchatLog'); if(!log||!lcData) return;
     var near=(log.scrollHeight-log.scrollTop-log.clientHeight)<60||lcFirst; lcFirst=false;
     log.innerHTML='';
-    var keys=Object.keys(lcData).sort().slice(-60), n=0, now=Date.now();
+    var keys=Object.keys(lcData).sort(), n=0, now=Date.now();
     keys.forEach(function(k){
       var m=lcData[k]; if(!m||(!m.text&&!m.inv)) return; n++;
       var li=document.createElement('li'); if(m.uid===uid) li.className='me';
@@ -2327,7 +2458,7 @@ var FIREBASE_CONFIG = {
       ['\u265F\uFE0F','Welcome to Sproto Chess','Multiplayer chess with the same rules you already know. Play live against real people, right here in Telegram.'],
       ['\u23F1\uFE0F','5 or 10 minute matches','Pick a 5 minute or 10 minute clock, then tap Start game. Your game shows up in Open games for anyone to join.'],
       ['\uD83D\uDC65','Play with friends','Create a lobby, join one, or spectate a live game. Tap Invite your friend to send a link that drops them straight into your game.'],
-      ['\uD83D\uDCAC','Live chat and your colors','Every game has live chat. Spectators can read along and cheer for a side. Choose your board colors any time.'],
+      ['\uD83D\uDCAC','Live chat and your colors','Every game has live chat. Spectators can join the chat and cheer for a side. Choose your board colors any time.'],
       ['\uD83C\uDFC6','Public leaderboard','Wins, losses and draws are counted for everyone. Tap the Leaderboard tab to see where you rank, under your Telegram @username.']
     ], i=0, el=$('tour');
     function draw(){
@@ -2370,7 +2501,7 @@ var FIREBASE_CONFIG = {
   }
   identify().then(function(r){
     ACTIVE_KEY='spc_active_'+uid;
-    if(r&&r.via==='telegram'&&r.name){ var pn=$('pname'); pn.value=r.name; pn.maxLength=33; pn.readOnly=true; pn.title='Your Telegram name'; try{lsSet('spc_name',r.name);}catch(e){} refreshName(); } else if(r&&r.name&&!$('pname').value) $('pname').value=r.name;
+    if(r&&(r.via==='telegram'||r.via==='guest')&&r.name){ var pn=$('pname'); pn.value=r.name; pn.maxLength=33; pn.readOnly=true; pn.title=(r.via==='telegram'?'Your Telegram name':'Log in with Telegram to play under your @username'); try{lsSet('spc_name',r.name);}catch(e){} refreshName(); } else if(r&&r.name&&!$('pname').value) $('pname').value=r.name;
     boot(); telegramReady();
   },function(e){
     var n=$('demoNote'); n.textContent=(e&&e.message)||'Could not connect to the game server.'; n.classList.remove('hide');
