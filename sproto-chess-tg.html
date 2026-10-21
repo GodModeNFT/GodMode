@@ -493,6 +493,23 @@
   .rtag{display:inline-block;margin-left:8px;padding:2px 9px;border:2px solid var(--lead);border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.04em;vertical-align:middle;white-space:nowrap;}
   .rtag.win{background:var(--yellow);color:var(--lead);}
   .rtag.draw{background:#2F6BFF;color:#fff;}
+  .winbanner{text-align:center;border:5px solid var(--lead);border-radius:16px;padding:12px 10px;margin:0 0 12px;box-shadow:5px 5px 0 var(--lead);}
+  .winbanner.hide{display:none;}
+  .winbanner .wb-h{font-family:'Alfa Slab One',Georgia,serif;font-size:clamp(28px,6vw,42px);line-height:1.05;text-shadow:2px 2px 0 rgba(16,24,40,.3);overflow-wrap:anywhere;}
+  .winbanner .wb-s{font-weight:800;font-size:16px;margin-top:4px;text-transform:uppercase;letter-spacing:.06em;opacity:.85;}
+  .winbanner.win{background:linear-gradient(180deg,#ffe066,#ffc400);color:var(--lead);animation:wbpulse 1.6s ease-in-out infinite;}
+  .winbanner.lose{background:var(--red);color:#fff;}
+  .winbanner.draw{background:#2F6BFF;color:#fff;}
+  @keyframes wbpulse{0%,100%{box-shadow:5px 5px 0 var(--lead),0 0 0 0 rgba(255,196,0,.7);}50%{box-shadow:5px 5px 0 var(--lead),0 0 0 10px rgba(255,196,0,0);}}
+  body.fs .leftcol .winbanner{margin:0 0 8px;padding:6px 8px;border-width:4px;box-shadow:3px 3px 0 var(--lead);}
+  body.fs .leftcol .winbanner .wb-h{font-size:clamp(22px,6vw,32px);} body.fs .leftcol .winbanner .wb-s{font-size:12px;margin-top:2px;}
+  body:not(.fs) .leftcol .winbanner{display:none !important;}
+  body.fs #statusPanel .winbanner{display:none !important;}
+  body.hasres.big.fs #chatPanel .chatlog{max-height:max(44px,calc(100dvh - min(100vw,calc(100dvh - 78px)) - 345px));}
+  .pbar.winner{background:linear-gradient(180deg,#ffe066,#ffc400);}
+  .pbar.winner .pn{font-weight:800;}
+  .pbar.drawn{background:#cfe0ff;}
+  .rtag{font-size:15px !important;padding:3px 12px !important;border-width:3px !important;}
 </style>
 </head>
 <body>
@@ -532,6 +549,7 @@
 
   <div class="game">
     <aside class="leftcol" id="leftCol">
+      <div class="winbanner hide" id="winBanner2"></div>
       <div class="panel hide" id="tipsPanel">
         <p class="ph">Tips</p>
         <ul class="tips">
@@ -611,6 +629,7 @@
       </div>
 
       <div class="panel" id="statusPanel">
+        <div class="winbanner hide" id="winBanner1"></div>
         <div class="strow"><p class="status" id="status">White to move</p><span class="chathint" id="chatHint">Scroll down to chat &darr;</span></div>
         <p class="sub" id="sub">Tap a piece, then tap where to move it.</p>
         <p class="spec hide" id="specCount"></p>
@@ -1444,6 +1463,7 @@ var FIREBASE_CONFIG = {
     return {t:t,s:s,tone:tone,key:(gid||'local')+'|'+r.type+'|'+game.history().length};
   }
   function afterRender(){
+    try{ winBannerUpd(); }catch(e){}
     var es=isViewing()?null:endState(), b=$('endB');
     if(es){
       if(es.key!==endKey){ endKey=es.key; endHidden=false; b.className='endb '+es.tone; $('endT').textContent=es.t; $('endS').textContent=es.s;
@@ -1467,6 +1487,18 @@ var FIREBASE_CONFIG = {
     drawArrows();
   }
   $('endB').addEventListener('click',function(){ endHidden=true; this.classList.add('hide'); });
+  // the winner stays on screen for as long as the finished game is open, even after the big message is tapped away
+  function winBannerUpd(){
+    var r=((mode==='online'||mode==='watch')&&G&&G.result)?G.result:null, ids=['winBanner1','winBanner2'];
+    document.body.classList.toggle('hasres',!!r);
+    if(!r){ ids.forEach(function(i){ $(i).className='winbanner hide'; $(i).textContent=''; }); return; }
+    var w=r.winner, head, tone, nm=function(c){ var p=(c==='w'?G.white:G.black)||{}; return (p.name||(c==='w'?'Blue':'Red')); };
+    if(w==null){ head='DRAW'; tone='draw'; }
+    else if(mode==='online'){ head=(w===myColor)?'\uD83C\uDFC6 YOU WIN!':nm(w).toUpperCase()+' WINS'; tone=(w===myColor)?'win':'lose'; }
+    else { head='\uD83C\uDFC6 '+nm(w).toUpperCase()+' WINS'; tone='win'; }
+    var why={checkmate:'by checkmate',resign:'by resignation',timeout:'on time',stalemate:'stalemate: no legal moves',insufficient:'not enough pieces left',repetition:'same position three times',fifty:'50-move rule',agreed:'draw agreed'}[r.type]||'';
+    ids.forEach(function(i){ var el=$(i); el.className='winbanner '+tone; el.textContent=''; var a=document.createElement('div'); a.className='wb-h'; a.textContent=head; el.appendChild(a); if(why){ var b=document.createElement('div'); b.className='wb-s'; b.textContent=why; el.appendChild(b); } });
+  }
 
   function ghosts(){ var g={}; arrows.forEach(function(a){ var p=game.get(a[0])||g[a[0]]; if(p) g[a[1]]={type:p.type,color:p.color}; }); return g; }
   function pieceAt(sq){ return game.get(sq)||ghosts()[sq]||null; }
@@ -1639,10 +1671,12 @@ var FIREBASE_CONFIG = {
       if(mode==='watch'){ topP=((flipped?G.white:G.black)||{}).photo; botP=((flipped?G.black:G.white)||{}).photo; }
       else { var oc=(myColor==='w'?G.black:G.white)||{}, mc=(myColor==='w'?G.white:G.black)||{}; topP=oc.photo; botP=mc.photo||MY_PHOTO; }
       $('topName').insertBefore(avatar(topP,28),$('topName').firstChild); $('botName').insertBefore(avatar(botP,28),$('botName').firstChild);
+      if(!G.result){ ['topBar','botBar'].forEach(function(i){ $(i).classList.remove('winner','drawn'); }); }
       if(G.result){   // the result stays on the player bars after the big message is tapped away
         var tC=(mode==='watch')?(flipped?'w':'b'):(myColor==='w'?'b':'w'), bC=tC==='w'?'b':'w', rw=G.result.winner;
         [['topName',tC],['botName',bC]].forEach(function(p){
           var tag=null; if(rw==null) tag=['DRAW','draw']; else if(rw===p[1]) tag=['\uD83C\uDFC6 WINNER','win'];
+          var bar=$(p[0]==='topName'?'topBar':'botBar'); bar.classList.toggle('winner',rw!=null&&rw===p[1]); bar.classList.toggle('drawn',rw==null);
           if(tag){ var sp=document.createElement('span'); sp.className='rtag '+tag[1]; sp.textContent=tag[0]; $(p[0]).appendChild(sp); }
         });
       }
@@ -1989,7 +2023,7 @@ var FIREBASE_CONFIG = {
     var now=DB.now(), cd=$('cd'), ct=$('cdText');
     if(G.startAt && !G.result){
       var left=G.startAt-now, txt=null, cls='';
-      if(left>3000){ txt='Get ready'; cls='sm'; } else if(left>0){ txt=String(Math.ceil(left/1000)); } else if(left>-700){ txt='GO!'; }
+      if(left>0){ txt=String(Math.ceil(left/1000)); } else if(left>-700){ txt='GO!'; }
       if(txt!==null){ cd.classList.remove('hide'); if(lastCdText!==txt){ lastCdText=txt; playSound(txt==='Get ready'?'ready':txt==='GO!'?'go':'tick'); ct.className=cls; ct.textContent=txt; ct.style.animation='none'; void ct.offsetWidth; ct.style.animation=''; } }
       else { cd.classList.add('hide'); }
       if(left<=0 && lastCdText!==null && left<=-700){ lastCdText=null; }
