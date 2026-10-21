@@ -523,13 +523,13 @@
   .pbar.winner .pn{font-weight:800;}
   .pbar.drawn{background:#cfe0ff;}
   .rtag{font-size:15px !important;padding:3px 12px !important;border-width:3px !important;}
-  .botmodal{position:relative;width:min(460px,100%);max-height:92vh;overflow:auto;display:flex;flex-direction:column;gap:10px;}
+  .botmodal{position:relative;width:min(520px,100%);padding:16px 12px;max-height:92vh;overflow:auto;display:flex;flex-direction:column;gap:10px;}
   .botmodal strong{font-family:'Alfa Slab One',Georgia,serif;font-size:24px;padding:0 28px;}
   .bm-x{position:absolute;top:8px;right:10px;width:38px;height:38px;border-radius:50%;border:3px solid var(--lead);background:#fff;font-size:26px;line-height:1;font-weight:800;cursor:pointer;color:var(--lead);}
-  .bm-grid{display:flex;flex-direction:column;gap:10px;}
-  .bm-card{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:4px solid var(--lead);border-radius:16px;background:#fff;padding:10px 12px;cursor:pointer;box-shadow:4px 4px 0 var(--lead);font-family:inherit;color:var(--lead);}
+  .bm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .bm-card{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;min-width:0;text-align:center;border:4px solid var(--lead);border-radius:16px;background:#fff;padding:10px 2px 12px;cursor:pointer;box-shadow:3px 3px 0 var(--lead);font-family:inherit;color:var(--lead);}
   .bm-card:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--lead);}
-  .bm-card .av{flex:none;} .bm-card b{display:block;font-size:20px;line-height:1.15;} .bm-card small{display:inline-block;margin-top:4px;font-size:13px;font-weight:800;padding:2px 10px;border:2px solid var(--lead);border-radius:999px;}
+  .bm-card .av{flex:none;} .bm-card b{display:block;font-size:13px;line-height:1.2;overflow-wrap:normal;word-break:normal;} .bm-card small{display:inline-block;margin-top:4px;font-size:13px;font-weight:800;padding:2px 10px;border:2px solid var(--lead);border-radius:999px;}
   .bm-card.l1 small{background:#9BE29B;} .bm-card.l2 small{background:#FFD23F;} .bm-card.l3 small{background:#FF8A94;}
   .modebox{width:min(420px,100%);display:flex;flex-direction:column;gap:10px;}
   .modebox strong{font-family:'Alfa Slab One',Georgia,serif;font-size:22px;margin-bottom:2px;}
@@ -792,7 +792,6 @@
   <button type="button" class="bt big wide" id="modePrivate">&#128274; Private match<span class="ms">Not listed. You get an invite code for one friend.</span></button>
   <button type="button" class="bt ghost wide" id="modeCancel">Cancel</button></div></div>
 <div class="modal" id="botModal"><div class="box botmodal"><button type="button" class="bm-x" id="botModalX" aria-label="Close">&times;</button><strong>Choose your opponent</strong>
-  <p class="sub">Plays on your phone. Your time control is used.</p>
   <div class="bm-grid" id="botCards"></div>
   <button type="button" class="bt ghost wide" id="botModalCancel">No thanks</button></div></div>
 <div class="modal" id="promoModal"><div class="box"><strong>Promote pawn to:</strong><div class="promo" id="promo"></div></div></div>
@@ -2538,7 +2537,7 @@ function bxPick(level,fen,msLeft){
   }
   function botLeave(){ BOT.on=false; BOT.busy=false; BOT.over=null; clearTimeout(BOT.t); BOT.t=null; mode='lobby'; myColor=null; resetBoard(); flipped=false; setPanels(); render(); }
   (function(){ var box=$('botCards'); [1,2,3].forEach(function(l){ var B=BOTS[l], b=document.createElement('button'); b.type='button'; b.className='bm-card l'+l;
-    b.appendChild(avatar(B.img,96)); var t=document.createElement('span'); t.innerHTML='<b></b><small></small>'; t.firstChild.textContent=B.name; t.lastChild.textContent=B.lv; b.appendChild(t);
+    b.appendChild(avatar(B.img,84)); var t=document.createElement('span'); t.innerHTML='<b></b><small></small>'; t.firstChild.textContent=B.name; t.lastChild.textContent=B.lv; b.appendChild(t);
     b.addEventListener('click',function(){ $('botModal').classList.remove('on'); botStart(l); }); box.appendChild(b); }); })();
   function botModalClose(){ $('botModal').classList.remove('on'); }
   $('botOpen').addEventListener('click',function(){ $('botModal').classList.add('on'); });
