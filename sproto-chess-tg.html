@@ -511,9 +511,8 @@
   .joinpanel .lobbies{margin:0 12px;}
   .joinnote{margin:12px 0 0;padding:8px 10px;background:var(--yellow);border:3px solid var(--lead);border-radius:10px;font-size:15px;line-height:1.3;}
   body.inlobby:not(.fs) .boardwrap{--bw:min(100%,560px);}
-  body.inlobby:not(.fs) .bwrap{--bw:min(86%,450px);}
+  body.inlobby:not(.fs) .bwrap{--bw:min(86%,450px);margin:0 auto;}
   body.inlobby:not(.fs) .joinpanel{width:100%;}
-  @media(max-width:760px){body.inlobby:not(.fs) .bwrap{margin:0 auto;}}
   .rtag{display:inline-block;margin-left:8px;padding:2px 9px;border:2px solid var(--lead);border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.04em;vertical-align:middle;white-space:nowrap;}
   .rtag.win{background:var(--yellow);color:var(--lead);}
   .rtag.draw{background:#2F6BFF;color:#fff;}
@@ -657,8 +656,8 @@
         <ul class="lobbies" id="lobbies"></ul>
         <p class="jp-h"><span class="live"></span>Live games &middot; tap Watch to spectate <span id="liveCount"></span></p>
         <ul class="lobbies" id="liveList"></ul>
-        <p class="jp-h jp-w"><span class="live"></span>Lichess games &middot; tap Watch to spectate <span id="liCount"></span></p>
-        <ul class="lobbies" id="liList"></ul>
+        <p class="jp-h jp-w hide" id="liHead"><span class="live"></span>Lichess games &middot; tap Watch to spectate <span id="liCount"></span></p>
+        <ul class="lobbies hide" id="liList"></ul>
         <div class="li-playrow"><button type="button" class="bt ghost wide" id="liOpen">&#9822; Play on Lichess &middot; 24/7 Lobbies</button><p class="li-small" style="text-align:center">Sign in with Lichess and play real Lichess players on our board.</p></div>
       </div>
       <div class="pguide" id="lobbyGuide" aria-label="Piece names"><div class="pg-t">Pieces</div><div class="plist" id="lobbyPieces"></div></div>
@@ -840,7 +839,7 @@
   <div id="liTg" class="hide"><p class="li-small">Lichess sign in opens in your phone's browser, where you can play on this same board. Watching live games works right here.</p><button type="button" class="bt red wide" id="liTgBtn">Play in browser</button></div>
   <div id="liIn" class="hide">
     <p class="li-small" style="margin:0">Signed in as <b id="liWho"></b> &middot; <a href="#" id="liLogout">Sign out</a></p>
-    <div id="liSetup"><div class="field" style="margin:8px 0 4px">Time<div class="seg" id="liTc" style="grid-template-columns:repeat(3,1fr)"><button type="button" data-t="5">5 min</button><button type="button" data-t="10">10 min</button><button type="button" data-t="15">15 min</button></div></div>
+    <div id="liSetup"><div class="field" style="margin:8px 0 4px">Time<div class="seg" id="liTc"><button type="button" data-t="5">5 min</button><button type="button" data-t="10">10 min</button></div></div>
       <div class="field" style="margin:8px 0 4px">Game<div class="seg" id="liRated"><button type="button" data-r="0">Casual</button><button type="button" data-r="1">Rated</button></div></div></div>
     <button type="button" class="bt red big wide" id="liFind">Find opponent</button>
     <div id="liSeeking" class="hide"><p class="li-small" style="font-size:16px"><b>Searching for a Lichess opponent...</b><br>The game opens here as soon as someone joins.</p><button type="button" class="bt ghost wide" id="liCancel">Cancel search</button></div>
@@ -2656,17 +2655,18 @@ function bxPick(level,fen,msLeft){
         .catch(function(e){ LI.msg='Lichess sign in did not work: '+e.message; liUi(); });
     } else if(open){ try{ history.replaceState(null,'',liRedirect()); }catch(e){} $('liModal').classList.add('on'); liUi(); }
   }
+  function liErr(t,status){ var m=''; try{ var j=JSON.parse(t); var e=(j&&(j.error!==undefined?j.error:(j.message!==undefined?j.message:j))); if(typeof e==='string') m=e; else if(e&&typeof e==='object'){ m=Object.keys(e).map(function(k){ var v=e[k]; v=Array.isArray(v)?v.join(', '):(typeof v==='object'?JSON.stringify(v):v); return /^\d+$/.test(k)?v:k+': '+v; }).join('; '); } }catch(x){ m=String(t||'').slice(0,160); } return m||('Lichess said '+status); }
   /* reads a Lichess stream (one JSON object per line) */
   function liStream(url,opt,onLine,ac){
     return fetch(url,{method:opt.method||'GET',headers:opt.headers,body:opt.body,signal:ac.signal}).then(function(r){
-      if(!r.ok) return r.text().then(function(t){ var m=''; try{ var j=JSON.parse(t); m=j.error||j.message||''; }catch(e){} var er=new Error(m||('Lichess said '+r.status)); er.status=r.status; throw er; });
+      if(!r.ok) return r.text().then(function(t){ var er=new Error(liErr(t,r.status)); er.status=r.status; throw er; });
       var rd=r.body.getReader(), dec=new TextDecoder(), buf='';
       function feed(ln){ ln=ln.trim(); if(!ln) return; var o; try{ o=JSON.parse(ln); }catch(e){ return; } try{ onLine(o); }catch(e){ console.log('li line',e); } }
       function pump(){ return rd.read().then(function(x){ if(x.done){ feed(buf); return; } buf+=dec.decode(x.value,{stream:true}); var i; while((i=buf.indexOf('\n'))>=0){ feed(buf.slice(0,i)); buf=buf.slice(i+1); } return pump(); }); }
       return pump();
     });
   }
-  function liPost(path,form){ return fetch(LI_API+path,{method:'POST',headers:liAuth({'Content-Type':'application/x-www-form-urlencoded'}),body:form||''}).then(function(r){ if(r.status===401){ liLogout(); throw new Error('Your Lichess sign in expired. Sign in again.'); } if(!r.ok) return r.text().then(function(t){ var m=''; try{ m=JSON.parse(t).error; }catch(e){} throw new Error(m||('Lichess said '+r.status)); }); return r.json().catch(function(){ return {}; }); }); }
+  function liPost(path,form){ return fetch(LI_API+path,{method:'POST',headers:liAuth({'Content-Type':'application/x-www-form-urlencoded'}),body:form||''}).then(function(r){ if(r.status===401){ liLogout(); throw new Error('Your Lichess sign in expired. Sign in again.'); } if(!r.ok) return r.text().then(function(t){ throw new Error(liErr(t,r.status)); }); return r.json().catch(function(){ return {}; }); }); }
   /* the event stream tells us when an opponent was found */
   function liEvents(){
     if(LI.evAbort||!liSignedIn()) return; LI.evWant=true; var ac=LI.evAbort=new AbortController();
@@ -2678,7 +2678,7 @@ function bxPick(level,fen,msLeft){
   function liSeek(){
     if(!liSignedIn()||LI.seeking) return; LI.seeking=true; LI.msg=''; liUi(); liEvents();
     var ac=LI.seekAbort=new AbortController();
-    liStream(LI_API+'/api/board/seek',{method:'POST',headers:liAuth({'Content-Type':'application/x-www-form-urlencoded'}),body:'rated='+(LI.rated?'true':'false')+'&time='+LI.time+'&increment=0&color=random'},function(){},ac)
+    liStream(LI_API+'/api/board/seek',{method:'POST',headers:liAuth({'Content-Type':'application/x-www-form-urlencoded'}),body:'rated='+(LI.rated?'true':'false')+'&time='+LI.time+'&increment=0&variant=standard&color=random'},function(){},ac)
       .catch(function(e){ if(e.name==='AbortError') return; LI.msg=e.message; if(e.status===401) liLogout(); })
       .then(function(){ if(LI.seekAbort===ac){ LI.seekAbort=null; LI.seeking=false; liUi(); } });
   }
@@ -2811,8 +2811,8 @@ function bxPick(level,fen,msLeft){
         b.type='button'; b.className='bt'; b.textContent='Watch'; b.addEventListener('click',function(){ liPick(g.gameId); });
         li.appendChild(w); li.appendChild(b); ul.appendChild(li); });
       $('liCount').textContent=n?'('+n+')':'';
-      if(!n){ var e=document.createElement('li'); e.className='empty'; e.style.display='block'; e.textContent='No Lichess games to show right now.'; ul.appendChild(e); }
-    }).catch(function(){ if(!ul.children.length){ var e=document.createElement('li'); e.className='empty'; e.style.display='block'; e.textContent='Could not load Lichess games.'; ul.appendChild(e); } });
+      $('liHead').classList.toggle('hide',!n); ul.classList.toggle('hide',!n);   // nothing to show: the whole section stays hidden
+    }).catch(function(){ if(!ul.children.length){ $('liHead').classList.add('hide'); ul.classList.add('hide'); } });
   }
   setInterval(function(){ if(mode==='lobby'&&!document.hidden) liLive(); },45000); setTimeout(liLive,600);
   /* tapping a Lichess game: sign in first (we remember the game and open it on our board afterwards), or just watch */
