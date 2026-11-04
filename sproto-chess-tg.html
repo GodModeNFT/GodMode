@@ -35,6 +35,13 @@
   h1{font-family:'Alfa Slab One',Georgia,serif;font-weight:400;font-size:clamp(32px,6vw,54px);margin:6px 0 16px;color:var(--lead);text-shadow:none;}
   h1 span{color:var(--lead);}
 
+  .shopad{display:flex;align-items:center;gap:12px;margin:0 0 16px;padding:10px 14px;background:var(--yellow);color:var(--lead);border:3px solid var(--lead);border-radius:12px;box-shadow:4px 4px 0 var(--lead);text-decoration:none;cursor:pointer;}
+  .shopad .sa-ic{font-size:30px;line-height:1;}
+  .shopad .sa-t{font-family:'Alfa Slab One',Georgia,serif;font-size:clamp(17px,4.6vw,24px);line-height:1.15;flex:1;}
+  .shopad .sa-go{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase;background:var(--red);color:#fff;border:3px solid var(--lead);border-radius:9px;padding:6px 12px;white-space:nowrap;}
+  .shopad.soon-ad{cursor:default;}
+  .shopad .sa-go.soon{background:var(--lead);color:var(--yellow);}
+  body.fs .shopad{display:none;}
   .game{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:26px;align-items:start;}
   .boardwrap{min-width:0;}
   .board{
@@ -297,6 +304,7 @@
   .tabbar button{flex:1;min-height:46px;font-size:15px;line-height:1.15;padding:4px 6px;font-weight:800;border:3px solid var(--lead);border-radius:12px;background:#fff;color:var(--lead);cursor:pointer;box-shadow:3px 3px 0 var(--lead);}
   .tabbar button.on{background:var(--yellow);}
   body.tab-lb #lobbyPanel,body.tab-how #lobbyPanel,body.tab-prof #lobbyPanel,body.tab-chat #lobbyPanel{display:none !important;}
+  body.tab-lb #waitPanel,body.tab-how #waitPanel,body.tab-prof #waitPanel{display:none !important;}
   body:not(.tab-prof) #profPanel{display:none !important;}
   body:not(.tab-lb) #lbPanel{display:none !important;}
   body:not(.tab-how) #howPanel{display:none !important;}
@@ -451,20 +459,20 @@
   body.big.fs .chathint{display:none !important;}
   body.big.fs #chatPanel{margin:0;padding:8px 10px;border-width:3px;border-radius:12px;box-shadow:none;}
   body.big.fs #chatBox summary{display:none;}
-  body.big.fs #chatPanel .chatlog{max-height:max(44px,calc(100dvh - min(100vw,calc(100dvh - 78px)) - 275px));min-height:44px;margin:0 0 6px;}
+  body.big.fs #chatPanel .chatlog{max-height:max(44px,calc(100dvh - min(100vw,calc(100dvh - 78px)) - 275px - var(--fsah,0px)));min-height:44px;margin:0 0 6px;}
   body.big.fs #chatPanel .chatform .bt{min-height:42px;}
   @media (max-width:950px) and (orientation:portrait){
     body.big.fs .game{justify-content:flex-start;overflow:auto;}
   }
   @media (max-width:950px) and (orientation:landscape) and (max-height:520px){
     body.big.fs .game > .leftcol{width:clamp(210px,34vw,340px);flex:none;order:2;padding:0;align-self:stretch;justify-content:flex-start;}
-    body.big.fs #chatPanel .chatlog{max-height:calc(100dvh - 150px);}
+    body.big.fs #chatPanel .chatlog{max-height:calc(100dvh - 150px - var(--fsah,0px));}
   }
   @media (min-width:951px){
     body.big.fs .game{display:flex !important;flex-direction:row !important;align-items:flex-start;justify-content:center;gap:18px;padding:2px 12px;}
     body.big.fs .boardwrap{--bw:min(calc(100vw - 440px),calc(100dvh - 104px));flex:none;}
     body.big.fs .game > .leftcol{width:360px;flex:none;order:2;padding:0;margin-top:0;}
-    body.big.fs #chatPanel .chatlog{max-height:calc(100dvh - 365px);min-height:110px;}
+    body.big.fs #chatPanel .chatlog{max-height:calc(100dvh - 365px - var(--fsah,0px));min-height:110px;}
     body.big.fs .leftcol #tipsPanel{display:block !important;margin:0;padding:8px 12px;border-width:3px;border-radius:12px;box-shadow:none;}
     body.big.fs .leftcol #tipsPanel .ph{margin:0 0 4px;font-size:15px;} body.big.fs .leftcol #tipsPanel .tips{margin:0;padding-left:18px;font-size:13px;line-height:1.3;}
   }
@@ -495,7 +503,7 @@
   body.tg header.top nav{display:none;}
   #fsLobbyBtn{display:none !important;background:var(--red);color:#fff;}
   body.big.fs.fsover #fsLobbyBtn{display:inline-flex !important;animation:none;}
-  .joinpanel{width:var(--bw,min(100%,720px));max-width:100%;margin:12px 0 0;padding:0 0 10px;background:var(--cream);color:var(--lead);border:5px solid var(--lead);border-radius:14px;box-shadow:6px 6px 0 var(--lead);overflow:hidden;box-sizing:border-box;}
+  .joinpanel{width:var(--bw,min(100%,720px));max-width:100%;margin:8px 0 0;padding:0 0 10px;background:var(--cream);color:var(--lead);border:5px solid var(--lead);border-radius:14px;box-shadow:6px 6px 0 var(--lead);overflow:hidden;box-sizing:border-box;}
   .joinpanel.hide{display:none;}
   .joinpanel .jp-t{background:var(--red);color:#fff;font-family:'Alfa Slab One',Georgia,serif;font-size:clamp(18px,4.6vw,26px);letter-spacing:.02em;text-align:center;padding:10px 12px;border-bottom:5px solid var(--lead);}
   .joinpanel .jp-h{margin:12px 12px 6px;font-weight:800;font-size:17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
@@ -503,6 +511,9 @@
   .joinpanel .lobbies{margin:0 12px;}
   .joinnote{margin:12px 0 0;padding:8px 10px;background:var(--yellow);border:3px solid var(--lead);border-radius:10px;font-size:15px;line-height:1.3;}
   body.inlobby:not(.fs) .boardwrap{--bw:min(100%,560px);}
+  body.inlobby:not(.fs) .bwrap{--bw:min(86%,450px);}
+  body.inlobby:not(.fs) .joinpanel{width:100%;}
+  @media(max-width:760px){body.inlobby:not(.fs) .bwrap{margin:0 auto;}}
   .rtag{display:inline-block;margin-left:8px;padding:2px 9px;border:2px solid var(--lead);border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.04em;vertical-align:middle;white-space:nowrap;}
   .rtag.win{background:var(--yellow);color:var(--lead);}
   .rtag.draw{background:#2F6BFF;color:#fff;}
@@ -518,11 +529,23 @@
   body.fs .leftcol .winbanner .wb-h{font-size:clamp(22px,6vw,32px);} body.fs .leftcol .winbanner .wb-s{font-size:12px;margin-top:2px;}
   body:not(.fs) .leftcol .winbanner{display:none !important;}
   body.fs #statusPanel .winbanner{display:none !important;}
-  body.hasres.big.fs #chatPanel .chatlog{max-height:max(44px,calc(100dvh - min(100vw,calc(100dvh - 78px)) - 345px));}
+  body.hasres.big.fs #chatPanel .chatlog{max-height:max(44px,calc(100dvh - min(100vw,calc(100dvh - 78px)) - 345px - var(--fsah,0px)));}
   .pbar.winner{background:linear-gradient(180deg,#ffe066,#ffc400);}
   .pbar.winner .pn{font-weight:800;}
   .pbar.drawn{background:#cfe0ff;}
   .rtag{font-size:15px !important;padding:3px 12px !important;border-width:3px !important;}
+  .li-playrow{padding:12px 12px 14px;}
+  .limodal{text-align:center;}
+  .li-small{font-size:13px;color:#52608A;margin:6px 0 0;line-height:1.35;}
+  .li-msg{background:#fff;border:3px solid var(--red);color:#8b0d19;border-radius:10px;padding:8px 10px;font-weight:700;font-size:14px;margin:0;}
+  .li-live{text-align:left;margin-top:6px;border-top:3px solid var(--lead);padding-top:8px;}
+  .li-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;}
+  .li-h .bt{min-height:34px;padding:2px 10px;font-size:14px;box-shadow:none;border-width:2px;}
+  .li-live ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
+  .li-live li{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border:3px solid var(--lead);border-radius:10px;padding:6px 8px;}
+  .li-live li span{display:flex;flex-direction:column;min-width:0;} .li-live li small{font-size:13px;color:#52608A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .li-live li .bt{min-height:36px;padding:2px 12px;font-size:15px;box-shadow:none;border-width:2px;}
+  .li-live li.li-none{justify-content:center;color:#52608A;font-weight:700;border-style:dashed;}
   .botmodal{position:relative;width:min(520px,100%);padding:16px 12px;max-height:92vh;overflow:auto;display:flex;flex-direction:column;gap:10px;}
   .botmodal strong{font-family:'Alfa Slab One',Georgia,serif;font-size:24px;padding:0 28px;}
   .bm-x{position:absolute;top:8px;right:10px;width:38px;height:38px;border-radius:50%;border:3px solid var(--lead);background:#fff;font-size:26px;line-height:1;font-weight:800;cursor:pointer;color:var(--lead);}
@@ -532,11 +555,18 @@
   .bm-card .av{flex:none;} .bm-card b{display:block;font-size:13px;line-height:1.2;overflow-wrap:normal;word-break:normal;} .bm-card small{display:inline-block;margin-top:4px;font-size:13px;font-weight:800;padding:2px 10px;border:2px solid var(--lead);border-radius:999px;}
   .bm-card.l1 small{background:#9BE29B;} .bm-card.l2 small{background:#FFD23F;} .bm-card.l3 small{background:#FF8A94;}
   .modebox{width:min(420px,100%);display:flex;flex-direction:column;gap:10px;}
-  .modebox strong{font-family:'Alfa Slab One',Georgia,serif;font-size:22px;margin-bottom:2px;}
-  .modebox .bt .ms{display:block;font-size:13px;font-weight:600;margin-top:3px;opacity:.9;}
+  .modebox strong{font-family:'Barlow',system-ui,sans-serif;font-weight:800;font-size:26px;line-height:1.15;margin-bottom:4px;}
+  .modebox .bt{font-family:'Barlow',system-ui,sans-serif;font-weight:800;font-size:22px;min-height:72px;padding:10px 14px;line-height:1.15;}
+  .modebox .bt .ms{display:block;font-size:16px;font-weight:600;margin-top:4px;opacity:1;}
+  .modebox .bt.ghost{min-height:48px;font-size:18px;}
   .codejoin{margin-top:10px;} .codejoin .cj-row{display:flex;gap:8px;margin-top:4px;} .codejoin input{flex:1;min-width:0;text-transform:uppercase;letter-spacing:.2em;font-weight:800;text-align:center;}
   .codebox{margin:8px 0;padding:10px;background:#fff;border:3px dashed var(--lead);border-radius:12px;text-align:center;}
   .codebox.hide{display:none;} .codebox .cb-l{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;} .codebox .cb-c{font-family:'Alfa Slab One',Georgia,serif;font-size:44px;letter-spacing:.18em;margin:4px 0 8px;}
+  .fsact{display:none;}
+  body.big.fs .fsact{display:flex;flex-direction:column;gap:6px;}
+  .fsact .fsa-row{display:flex;gap:6px;} .fsact .fsa-row.hide,.fsact .fsa-ban.hide{display:none;}
+  .fsact .bt{flex:1;min-height:40px;padding:2px 6px;font-size:14px;box-shadow:2px 2px 0 var(--lead);border-width:3px;}
+  .fsact .fsa-ban{border:3px solid var(--lead);border-radius:12px;background:var(--yellow);padding:6px 8px;font-weight:800;font-size:14px;display:flex;flex-direction:column;gap:6px;}
   .cheer2{display:none;} body.big.fs .cheer2.on{display:flex;gap:8px;margin:0 0 8px;} body.big.fs .cheer2 .bt{flex:1;min-height:42px;font-size:14px;padding:4px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 </style>
 </head>
@@ -573,12 +603,19 @@
     </nav>
   </header>
   <h1>Sproto <span>Chess</span></h1>
+  <div class="shopad soon-ad" id="shopAd"><span class="sa-ic">&#127922;</span><span class="sa-t">Physical Sproto Chess</span><span class="sa-go soon">Coming Soon</span></div>
 
 
   <div class="game">
     <aside class="leftcol" id="leftCol">
       <div class="winbanner hide" id="winBanner2"></div>
       <div class="cheer2" id="cheerRow2"><button type="button" id="cheerW2" class="bt"></button><button type="button" id="cheerB2" class="bt red"></button></div>
+      <div class="fsact" id="fsAct">
+        <div class="fsa-ban hide" id="fsaDraw"><span id="fsaDrawText"></span><div class="fsa-row"><button type="button" class="bt" id="fsaDrawYes">Accept</button><button type="button" class="bt ghost" id="fsaDrawNo">Decline</button></div></div>
+        <div class="fsa-ban hide" id="fsaRm"><span>Your opponent wants a rematch.</span><div class="fsa-row"><button type="button" class="bt" id="fsaRmYes">Accept</button></div></div>
+        <div class="fsa-row hide" id="fsaPlay"><button type="button" class="bt" id="fsaDrawBtn">Offer draw</button><button type="button" class="bt red" id="fsaResign">Resign</button><button type="button" class="bt ghost" id="fsaLeave">Leave</button></div>
+        <div class="fsa-row hide" id="fsaOver"><button type="button" class="bt red" id="fsaRematch">Rematch</button><button type="button" class="bt ghost" id="fsaBack">Back to lobby</button></div>
+      </div>
       <div class="panel hide" id="tipsPanel">
         <p class="ph">Tips</p>
         <ul class="tips">
@@ -614,14 +651,17 @@
         <div class="endb hide" id="endB" role="alert"><div class="et" id="endT"></div><div class="es" id="endS"></div><div class="ex">tap to hide</div></div>
       </div>
       <div class="pbar hide" id="botBar"><span class="pn" id="botName"></span><span class="hnav hide" id="hnav"><span class="rwl">Rewind</span><button type="button" class="hFirst" aria-label="First move">&#9198;</button><button type="button" class="hPrev" aria-label="Previous move">&#9664;</button><button type="button" class="hNext" aria-label="Next move">&#9654;</button><button type="button" class="hLast" aria-label="Back to live game">&#9197;</button></span><span class="clk" id="botClk">--:--</span></div>
-      <div class="pguide" id="lobbyGuide" aria-label="Piece names"><div class="pg-t">Pieces</div><div class="plist" id="lobbyPieces"></div></div>
       <div class="joinpanel hide" id="joinPanel">
         <div class="jp-t"><span id="jpIc"></span> Join a game or watch one live</div>
         <p class="jp-h"><span class="live"></span>Open games &middot; tap Join to play <span id="lobbyCount"></span></p>
         <ul class="lobbies" id="lobbies"></ul>
-        <p class="jp-h jp-w"><span class="live"></span>Live games &middot; tap Watch to spectate <span id="liveCount"></span></p>
+        <p class="jp-h"><span class="live"></span>Live games &middot; tap Watch to spectate <span id="liveCount"></span></p>
         <ul class="lobbies" id="liveList"></ul>
+        <p class="jp-h jp-w"><span class="live"></span>Lichess games &middot; tap Watch to spectate <span id="liCount"></span></p>
+        <ul class="lobbies" id="liList"></ul>
+        <div class="li-playrow"><button type="button" class="bt ghost wide" id="liOpen">&#9822; Play on Lichess &middot; 24/7 Lobbies</button><p class="li-small" style="text-align:center">Sign in with Lichess and play real Lichess players on our board.</p></div>
       </div>
+      <div class="pguide" id="lobbyGuide" aria-label="Piece names"><div class="pg-t">Pieces</div><div class="plist" id="lobbyPieces"></div></div>
     </div>
 
     <aside class="side">
@@ -673,6 +713,7 @@
         <div class="strow"><p class="status" id="status">White to move</p><span class="chathint" id="chatHint">Scroll down to chat &darr;</span></div>
         <p class="sub" id="sub">Tap a piece, then tap where to move it.</p>
         <p class="spec hide" id="specCount"></p>
+        <button type="button" class="bt red wide hide" id="liStart" style="margin:6px 0">&#9822; Start your own Lichess game</button>
         <p class="livechat" id="lobbyTag" style="display:none !important"></p>
       <div class="lchatbox hide" id="lchatPanel">
         <p class="ph"><span class="live"></span>Live chat <span class="badge hide" id="lchatBadge"></span></p>
@@ -778,7 +819,7 @@
         <p class="sub" id="waitSub">Your game is listed in the open games, tell your friend your username and have him join your open lobby.</p>
         <div class="codebox hide" id="codeBox"><div class="cb-l">Private match: invite code</div><div class="cb-c" id="codeShow"></div><button type="button" class="bt" id="codeCopy">Copy code</button></div>
         <p class="invlink hide" id="inviteTxt"></p>
-        <div class="btns"><button class="bt red hide" id="tgShareBtn" type="button">Send to a Telegram friend</button><button class="bt" id="copySiteBtn" type="button">Invite your friend</button><button class="bt ghost" id="cancelBtn" type="button">Cancel game</button></div>
+        <div class="btns"><button class="bt red hide" id="tgShareBtn" type="button">Send to a Telegram friend</button><button class="bt" id="copySiteBtn" type="button">Invite your friend</button><button class="bt ghost" id="botOpen2" type="button">&#129302; Play a bot instead</button><button class="bt ghost" id="cancelBtn" type="button">Cancel game</button></div>
       </div>
 
 
@@ -789,8 +830,23 @@
 
 <div class="modal" id="modeModal"><div class="box modebox"><strong>How do you want to play?</strong>
   <button type="button" class="bt red big wide" id="modePublic">&#127758; Public match<span class="ms">Shows in Open games. Anyone can join.</span></button>
-  <button type="button" class="bt big wide" id="modePrivate">&#128274; Private match<span class="ms">Not listed. You get an invite code for one friend.</span></button>
+  <button type="button" class="bt big wide" id="modePrivate">&#128274; Private match<span class="ms">Not listed. You get an invite code and link for one friend.</span></button>
   <button type="button" class="bt ghost wide" id="modeCancel">Cancel</button></div></div>
+<div class="modal" id="liModal"><div class="box botmodal limodal"><button type="button" class="bm-x" id="liX" aria-label="Close">&times;</button><strong>Play on Lichess</strong>
+  <p class="sub" style="margin:0">Play real Lichess players on the Sproto Chess board.</p>
+  <p class="li-msg hide" id="liMsg"></p>
+  <div id="liOut"><button type="button" class="bt red big wide" id="liOutBtn">Sign in with Lichess</button>
+    <p class="li-small">You sign in on lichess.org. Sproto Chess only gets permission to play games for you. We never see your password.</p></div>
+  <div id="liTg" class="hide"><p class="li-small">Lichess sign in opens in your phone's browser, where you can play on this same board. Watching live games works right here.</p><button type="button" class="bt red wide" id="liTgBtn">Play in browser</button></div>
+  <div id="liIn" class="hide">
+    <p class="li-small" style="margin:0">Signed in as <b id="liWho"></b> &middot; <a href="#" id="liLogout">Sign out</a></p>
+    <div id="liSetup"><div class="field" style="margin:8px 0 4px">Time<div class="seg" id="liTc" style="grid-template-columns:repeat(3,1fr)"><button type="button" data-t="5">5 min</button><button type="button" data-t="10">10 min</button><button type="button" data-t="15">15 min</button></div></div>
+      <div class="field" style="margin:8px 0 4px">Game<div class="seg" id="liRated"><button type="button" data-r="0">Casual</button><button type="button" data-r="1">Rated</button></div></div></div>
+    <button type="button" class="bt red big wide" id="liFind">Find opponent</button>
+    <div id="liSeeking" class="hide"><p class="li-small" style="font-size:16px"><b>Searching for a Lichess opponent...</b><br>The game opens here as soon as someone joins.</p><button type="button" class="bt ghost wide" id="liCancel">Cancel search</button></div>
+  </div>
+  <button type="button" class="bt ghost wide hide" id="liJustWatch">Just watch this game</button>
+</div></div>
 <div class="modal" id="botModal"><div class="box botmodal"><button type="button" class="bm-x" id="botModalX" aria-label="Close">&times;</button><strong>Choose your opponent</strong>
   <div class="bm-grid" id="botCards"></div>
   <button type="button" class="bt ghost wide" id="botModalCancel">No thanks</button></div></div>
@@ -1624,17 +1680,20 @@ var FIREBASE_CONFIG = {
   soundLabel();
   // The invite link: opening it in Telegram starts the Mini App and joins this game straight away.
   function inviteUrl(){ return (SC.TG_LINK&&IN_TG)?(SC.TG_LINK+(SC.TG_LINK.indexOf('?')<0?'?':'&')+'startapp='+gid):(location.origin+location.pathname+'?join='+gid); }
+  function botHandle(){ return '@'+((window.SERVER_CONFIG&&window.SERVER_CONFIG.BOT_USERNAME)||'sprotoschessbot'); }
+  function shareText(){ return privGame?(botHandle()+' '+String(gid||'').toUpperCase()):botHandle(); }
   function fillInvite(){
-    // Public game: invite link (also listed in Open games). Private match: invite code AND a private invite link.
+    // No invite links. Public game: friends get the bot name. Private match: the bot name + the private code.
     $('codeBox').classList.toggle('hide',!privGame); $('codeBox').querySelector('.cb-l').textContent='Private match: invite code';
-    var t=$('inviteTxt'), cs=$('copySiteBtn'), ts=$('tgShareBtn');
+    var t=$('inviteTxt'), cs=$('copySiteBtn'), ts=$('tgShareBtn'); ts.classList.add('hide');
     if(privGame){
       $('codeShow').textContent=String(gid||'').toUpperCase();
-      $('waitSub').textContent='Private match. Send your friend the code (they enter it under "Join private game") or the private invite link. Nobody else can see or join this game.';
+      $('waitSub').textContent='Private match. Tap the button to copy the bot name and your private code, and send it to your friend. They open the bot and enter the code under "Join private game". Nobody else can see or join this game.';
+    } else {
+      $('waitSub').textContent='Your game is listed in Open games. Tap the button to copy the bot name, and send it to your friend so they can find your game.';
     }
-    cs.classList.remove('hide'); t.textContent=inviteUrl(); t.classList.remove('hide');
-    if(!privGame) $('waitSub').textContent=IN_TG?'Your game is listed in Open games. Send this invite link to your friend on Telegram. When they tap it, they join your game instantly.':'Your game is listed in Open games. Tell your friend your name so they can join it, or send them the invite link.';
-    if(IN_TG){ ts.classList.remove('hide'); cs.textContent='Copy invite link'; cs.classList.add('ghost'); } else { ts.classList.add('hide'); cs.textContent='Copy invite link'; }
+    t.textContent=shareText(); t.classList.remove('hide');
+    cs.classList.remove('hide'); cs.classList.remove('ghost'); cs.textContent=privGame?'Copy '+botHandle()+' + code':'Copy '+botHandle();
   }
   $('codeCopy').addEventListener('click',function(){ var b=this, t=String(gid||'').toUpperCase(); function ok(){ b.textContent='Copied!'; setTimeout(function(){ b.textContent='Copy code'; },1500); } try{ navigator.clipboard.writeText(t).then(ok,ok); }catch(e){ ok(); } });
   $('tgShareBtn').addEventListener('click',function(){
@@ -1644,7 +1703,7 @@ var FIREBASE_CONFIG = {
     window.open(share,'_blank');
   });
   $('copySiteBtn').addEventListener('click',function(){
-    var b=this, url=inviteUrl(), lbl=IN_TG?'Copy invite link':'Invite your friend';
+    var b=this, url=shareText(), lbl=privGame?'Copy '+botHandle()+' + code':'Copy '+botHandle();
     function ok(){ b.textContent='Copied!'; setTimeout(function(){ b.textContent=lbl; },1800); }
     function fb(){ var t=document.createElement('textarea'); t.value=url; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{ document.execCommand('copy'); }catch(e){} document.body.removeChild(t); ok(); }
     if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(ok,fb); } else fb();
@@ -1748,7 +1807,7 @@ var FIREBASE_CONFIG = {
       }
     }
     (function(){ var sc=$('specCount'), on=(mode==='online'||mode==='watch')&&!!G; sc.classList.toggle('hide',!on); if(on){ var n=G.watchers?Object.keys(G.watchers).length:0; sc.textContent='\uD83D\uDC41 '+n+' watching'; } })();
-    document.body.classList.toggle('inlobby',mode==='lobby'); show('lobbyPanel',mode==='lobby'); show('tabBar',mode==='lobby'); show('howPanel',mode==='lobby'); show('profPanel',mode==='lobby'); show('lbPanel',mode==='lobby'); show('lobbyGuide',mode==='lobby'); show('joinPanel',mode==='lobby'); show('lobbyTag',mode==='lobby'); show('waitPanel',mode==='waiting'); if(mode==='waiting') fillInvite(); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch'); show('soundRow',mode==='online'||mode==='watch'); show('tipsPanel',mode==='online'||mode==='watch'); show('chatPanel',mode==='watch'||(mode==='online'&&!!(G&&G.white&&G.black))); show('cheerRow',mode==='watch'&&!!(G&&G.white&&G.black&&!G.result));
+    document.body.classList.toggle('inlobby',mode==='lobby'); show('lobbyPanel',mode==='lobby'); show('tabBar',mode==='lobby'||mode==='waiting'); show('howPanel',mode==='lobby'||mode==='waiting'); show('profPanel',mode==='lobby'||mode==='waiting'); show('lbPanel',mode==='lobby'||mode==='waiting'); show('lobbyGuide',mode==='lobby'); show('joinPanel',mode==='lobby'); show('lobbyTag',mode==='lobby'); show('waitPanel',mode==='waiting'); if(mode==='waiting') fillInvite(); show('legendPanel',mode==='local'||mode==='online'||mode==='watch'); show('watchBtns',mode==='watch'); show('soundRow',mode==='online'||mode==='watch'); show('tipsPanel',mode==='online'||mode==='watch'); show('chatPanel',mode==='watch'||(mode==='online'&&!!(G&&G.white&&G.black))); show('cheerRow',mode==='watch'&&!!(G&&G.white&&G.black&&!G.result));
     lcSync(); try{ fsLobbySync(); }catch(e){}
     try{ if(mode!=='watch') spHide(); }catch(e){}
     try{ bsUpdate(); }catch(e){}
@@ -1859,7 +1918,6 @@ var FIREBASE_CONFIG = {
   $('chatForm').addEventListener('submit',function(e){
     e.preventDefault(); if((mode!=='online'&&mode!=='watch')||!gid||!G||!G.white||!G.black) return;
     var inp=$('chatIn'), t=inp.value.replace(/\s+/g,' ').trim().slice(0,200); if(!t) return;
-    if(Date.now()-lastSend<500) return; lastSend=Date.now();
     var key=Date.now().toString(36)+rid(3);
     var spec=(mode==='watch'), nmx=(spec?(nameVal()||lsGet('spc_name')||'Viewer'):(meName||'Player')).slice(0,18), msg={uid:uid,name:nmx,text:t,t:Date.now()}; if(spec) msg.sp=1;
     DB.set('games/'+gid+'/chat/'+key,msg);
@@ -2084,6 +2142,20 @@ var FIREBASE_CONFIG = {
     showBackToOnline(false); setPanels(); startLobbyList(); render();
   }
 
+  /* in-game full screen: the same Offer draw / Resign / Leave / Rematch buttons as the side panel (mirrors it, board size unchanged) */
+  (function(){
+    var map=[['fsaDraw','drawBanner'],['fsaRm','rematchBanner'],['fsaPlay','onlineBtns'],['fsaOver','overBtns']];
+    function sync(){
+      var big=document.body.classList.contains('big')&&document.body.classList.contains('fs'); if(!big){ document.documentElement.style.setProperty('--fsah','0px'); return; }
+      map.forEach(function(p){ $(p[0]).classList.toggle('hide',$(p[1]).classList.contains('hide')); });
+      $('fsaDrawText').textContent=$('drawText').textContent; $('fsaDrawBtn').disabled=$('drawBtn').disabled; $('fsaRematch').disabled=$('rematchBtn').disabled;
+      document.documentElement.style.setProperty('--fsah',($('fsAct').offsetHeight?($('fsAct').offsetHeight+8):0)+'px');
+    }
+    [['fsaDrawBtn','drawBtn'],['fsaResign','resignBtn'],['fsaLeave','leaveBtn'],['fsaRematch','rematchBtn'],['fsaBack','backBtn'],['fsaDrawYes','drawYes'],['fsaDrawNo','drawNo'],['fsaRmYes','rmYes']].forEach(function(p){
+      $(p[0]).addEventListener('click',function(){ $(p[1]).click(); setTimeout(sync,150); });
+    });
+    setInterval(sync,300); try{ new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['class']}); }catch(e){} addEventListener('resize',sync);
+  })();
   $('fsLobbyBtn').addEventListener('click',function(){ toLobby(); });
   $('cancelBtn').addEventListener('click',function(){ var id=gid; api('cancel',{gid:id}).catch(function(){}); toLobby(); });
   $('resignBtn').addEventListener('click',function(){ if(!G||G.result) return; if(!confirm('Resign this game?')) return; api('resign',{gid:gid}).catch(function(){}); });
@@ -2538,9 +2610,10 @@ function bxPick(level,fen,msLeft){
   function botLeave(){ BOT.on=false; BOT.busy=false; BOT.over=null; clearTimeout(BOT.t); BOT.t=null; mode='lobby'; myColor=null; resetBoard(); flipped=false; setPanels(); render(); }
   (function(){ var box=$('botCards'); [1,2,3].forEach(function(l){ var B=BOTS[l], b=document.createElement('button'); b.type='button'; b.className='bm-card l'+l;
     b.appendChild(avatar(B.img,84)); var t=document.createElement('span'); t.innerHTML='<b></b><small></small>'; t.firstChild.textContent=B.name; t.lastChild.textContent=B.lv; b.appendChild(t);
-    b.addEventListener('click',function(){ $('botModal').classList.remove('on'); botStart(l); }); box.appendChild(b); }); })();
+    b.addEventListener('click',function(){ $('botModal').classList.remove('on'); if(mode==='waiting'){ var wid=gid; api('cancel',{gid:wid}).catch(function(){}); toLobby(); } botStart(l); }); box.appendChild(b); }); })();
   function botModalClose(){ $('botModal').classList.remove('on'); }
   $('botOpen').addEventListener('click',function(){ $('botModal').classList.add('on'); });
+  $('botOpen2').addEventListener('click',function(){ $('botModal').classList.add('on'); });
   $('botModalX').addEventListener('click',botModalClose); $('botModalCancel').addEventListener('click',botModalClose);
   $('botModal').addEventListener('click',function(e){ if(e.target===this) botModalClose(); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') botModalClose(); });
@@ -2554,6 +2627,210 @@ function bxPick(level,fen,msLeft){
     if(pre){ var now=Date.now(); if(game.history().length&&game.turn()!==mover){ BOT.cl[mover]=Math.max(0,BOT.cl[mover]-(now-BOT.cl.t)); BOT.cl.t=now; } botClockShow(); botMoveSoon(); }
   };
   var _cm2=canMove; canMove=function(){ if(BOT.on&&mode==='local') return !BOT.over&&!game.isGameOver()&&game.turn()==='w'&&!BOT.busy; return _cm2(); };
+
+  /* ======================= Lichess: sign in, find an opponent, watch live games (all on our board) ======================= */
+  var LI={tok:lsGet('spc_li_tok'),user:lsGet('spc_li_user'),time:10,rated:false,seeking:false,seekAbort:null,evAbort:null,evWant:false,subs:{},recs:{},streams:{},timers:{},polls:{},pending:null,msg:''};
+  var LI_ID='sprotochess-godmodenft', LI_API='https://lichess.org';
+  function liB64(bytes){ bytes=new Uint8Array(bytes); var s=''; for(var i=0;i<bytes.length;i++) s+=String.fromCharCode(bytes[i]); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+  function liRedirect(){ return location.origin+location.pathname; }
+  function liAuth(extra){ var h={Authorization:'Bearer '+LI.tok}; if(extra) for(var k in extra) h[k]=extra[k]; return h; }
+  function liSignedIn(){ return !!(LI.tok&&LI.user); }
+  function liLogin(){
+    if(IN_TG){ var u=liRedirect()+'?lichess=1'; try{ if(TG&&TG.openLink){ TG.openLink(u); return; } }catch(e){} window.open(u,'_blank'); return; }   // sign-in cannot return into Telegram, so it happens on the website
+    var vb=new Uint8Array(48); crypto.getRandomValues(vb); var ver=liB64(vb), st=liB64(crypto.getRandomValues(new Uint8Array(12)));
+    crypto.subtle.digest('SHA-256',new TextEncoder().encode(ver)).then(function(d){
+      lsSet('spc_li_ver',ver); lsSet('spc_li_state',st);
+      location.href=LI_API+'/oauth?response_type=code&client_id='+LI_ID+'&redirect_uri='+encodeURIComponent(liRedirect())+'&scope='+encodeURIComponent('board:play')+'&code_challenge_method=S256&code_challenge='+liB64(d)+'&state='+st;
+    });
+  }
+  function liLogout(){ liSeekCancel(); liEvStop(); LI.tok=null; LI.user=null; lsSet('spc_li_tok',null); lsSet('spc_li_user',null); liUi(); }
+  function liBack(){   // coming back from the Lichess approval page
+    var q=new URLSearchParams(location.search), code=q.get('code'), st=q.get('state'), open=q.get('lichess')==='1';
+    if(code&&st&&st===lsGet('spc_li_state')){
+      var ver=lsGet('spc_li_ver'); lsSet('spc_li_state',null); lsSet('spc_li_ver',null);
+      try{ history.replaceState(null,'',liRedirect()); }catch(e){}
+      LI.msg='Signing you in...'; $('liModal').classList.add('on'); liUi();
+      fetch(LI_API+'/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=authorization_code&code='+encodeURIComponent(code)+'&redirect_uri='+encodeURIComponent(liRedirect())+'&client_id='+LI_ID+'&code_verifier='+encodeURIComponent(ver||'')})
+        .then(function(r){ return r.json(); }).then(function(j){ if(!j.access_token) throw new Error(j.error_description||j.error||'Sign in failed'); LI.tok=j.access_token; lsSet('spc_li_tok',LI.tok); return fetch(LI_API+'/api/account',{headers:liAuth()}); })
+        .then(function(r){ return r.json(); }).then(function(a){ if(!a.username) throw new Error('Could not read your Lichess account'); LI.user=a.username; lsSet('spc_li_user',LI.user); LI.msg=''; liUi(); var pw=lsGet('spc_li_watch'); if(pw){ lsSet('spc_li_watch',null); liWatch(pw); } })
+        .catch(function(e){ LI.msg='Lichess sign in did not work: '+e.message; liUi(); });
+    } else if(open){ try{ history.replaceState(null,'',liRedirect()); }catch(e){} $('liModal').classList.add('on'); liUi(); }
+  }
+  /* reads a Lichess stream (one JSON object per line) */
+  function liStream(url,opt,onLine,ac){
+    return fetch(url,{method:opt.method||'GET',headers:opt.headers,body:opt.body,signal:ac.signal}).then(function(r){
+      if(!r.ok) return r.text().then(function(t){ var m=''; try{ var j=JSON.parse(t); m=j.error||j.message||''; }catch(e){} var er=new Error(m||('Lichess said '+r.status)); er.status=r.status; throw er; });
+      var rd=r.body.getReader(), dec=new TextDecoder(), buf='';
+      function feed(ln){ ln=ln.trim(); if(!ln) return; var o; try{ o=JSON.parse(ln); }catch(e){ return; } try{ onLine(o); }catch(e){ console.log('li line',e); } }
+      function pump(){ return rd.read().then(function(x){ if(x.done){ feed(buf); return; } buf+=dec.decode(x.value,{stream:true}); var i; while((i=buf.indexOf('\n'))>=0){ feed(buf.slice(0,i)); buf=buf.slice(i+1); } return pump(); }); }
+      return pump();
+    });
+  }
+  function liPost(path,form){ return fetch(LI_API+path,{method:'POST',headers:liAuth({'Content-Type':'application/x-www-form-urlencoded'}),body:form||''}).then(function(r){ if(r.status===401){ liLogout(); throw new Error('Your Lichess sign in expired. Sign in again.'); } if(!r.ok) return r.text().then(function(t){ var m=''; try{ m=JSON.parse(t).error; }catch(e){} throw new Error(m||('Lichess said '+r.status)); }); return r.json().catch(function(){ return {}; }); }); }
+  /* the event stream tells us when an opponent was found */
+  function liEvents(){
+    if(LI.evAbort||!liSignedIn()) return; LI.evWant=true; var ac=LI.evAbort=new AbortController();
+    liStream(LI_API+'/api/stream/event',{headers:liAuth()},function(ev){ if(ev.type==='gameStart'&&ev.game) liGameStart(ev.game); },ac).catch(function(e){ if(e.status===401) liLogout(); }).then(function(){
+      if(LI.evAbort===ac){ LI.evAbort=null; if(LI.evWant) setTimeout(liEvents,3000); }
+    });
+  }
+  function liEvStop(){ LI.evWant=false; if(LI.evAbort){ try{ LI.evAbort.abort(); }catch(e){} LI.evAbort=null; } }
+  function liSeek(){
+    if(!liSignedIn()||LI.seeking) return; LI.seeking=true; LI.msg=''; liUi(); liEvents();
+    var ac=LI.seekAbort=new AbortController();
+    liStream(LI_API+'/api/board/seek',{method:'POST',headers:liAuth({'Content-Type':'application/x-www-form-urlencoded'}),body:'rated='+(LI.rated?'true':'false')+'&time='+LI.time+'&increment=0&color=random'},function(){},ac)
+      .catch(function(e){ if(e.name==='AbortError') return; LI.msg=e.message; if(e.status===401) liLogout(); })
+      .then(function(){ if(LI.seekAbort===ac){ LI.seekAbort=null; LI.seeking=false; liUi(); } });
+  }
+  function liSeekCancel(){ if(LI.seekAbort){ try{ LI.seekAbort.abort(); }catch(e){} LI.seekAbort=null; } LI.seeking=false; liUi(); }
+  /* ---- one Lichess game, kept in the same shape as our own games so the whole board screen just works ---- */
+  function liName(p){ if(!p) return 'Opponent'; if(p.aiLevel) return 'Stockfish level '+p.aiLevel; var n=(p.title?p.title+' ':'')+(p.name||p.username||(p.user&&p.user.name)||'Anonymous'); var r=p.rating; return r?n+' ('+r+(p.provisional?'?':'')+')':n; }
+  function liPlay(u){ var c=new Chess(), ok=true; for(var i=0;i<u.length;i++){ try{ if(!c.move({from:u[i].slice(0,2),to:u[i].slice(2,4),promotion:u[i][4]})){ ok=false; break; } }catch(e){ ok=false; break; } } return c; }
+  function liResult(st,w,moves){
+    if(st==='created'||st==='started') return null;
+    if(st==='aborted'||st==='noStart') return 'gone';
+    var win=w==='white'?'w':(w==='black'?'b':null), type='draw';
+    if(st==='mate') type='checkmate'; else if(st==='resign') type='resign'; else if(st==='stalemate') type='stalemate'; else if(st==='timeout'||st==='outoftime') type='timeout';
+    else if(st==='draw'){ var c=liPlay(moves); type=c.isInsufficientMaterial()?'insufficient':(c.isThreefoldRepetition()?'repetition':(c.isDraw()&&!c.isStalemate()?'fifty':'draw')); }
+    else if(win) type='resign';
+    return {type:type,winner:win};
+  }
+  function liEmit(id){ var s=LI.subs[id]; if(s) s.cb(LI.recs[id]||null); }
+  function liFreezeOn(id){   // Lichess does not start the clocks until both sides have moved
+    if(LI.timers[id]) return; LI.timers[id]=setInterval(function(){ var r=LI.recs[id]; if(r&&!r.result&&(r.moves||[]).length<2) r.ts=DB.now(); },250);
+  }
+  function liStopGame(id){
+    if(LI.streams[id]){ try{ LI.streams[id].abort(); }catch(e){} delete LI.streams[id]; }
+    if(LI.timers[id]){ clearInterval(LI.timers[id]); delete LI.timers[id]; }
+    if(LI.polls&&LI.polls[id]){ clearTimeout(LI.polls[id]); delete LI.polls[id]; }
+    delete LI.recs[id]; if(!LI.seeking&&!Object.keys(LI.streams).length) liEvStop();
+  }
+  function liApplyState(rec,st){
+    var arr=st.moves?String(st.moves).split(' ').filter(Boolean):[];
+    rec.moves=arr; if(st.wtime!=null) rec.w=st.wtime; if(st.btime!=null) rec.b=st.btime; rec.ts=DB.now();
+    rec.drawOffer=st.wdraw?'w':(st.bdraw?'b':null); if(!rec.drawOffer) delete rec.drawOffer;
+    var r=liResult(st.status,st.winner,arr);
+    if(r==='gone') return 'gone'; if(r){ rec.result=r; delete rec.drawOffer; } else delete rec.result;
+    return null;
+  }
+  function liChatAdd(rec,line){
+    if(!line||!line.text) return; rec.chat=rec.chat||{};
+    var k='c'+(rec._cn=(rec._cn||0)+1); rec.chat[k]={uid:(line.username&&LI.user&&line.username.toLowerCase()===LI.user.toLowerCase())?uid:'li:'+line.username,name:String(line.username||'Lichess').slice(0,18),text:String(line.text).slice(0,200),t:Date.now()};
+  }
+  function liOpenStream(id){
+    var ac=LI.streams[id]=new AbortController(), rec=LI.recs[id];
+    liFreezeOn(id);
+    liStream(LI_API+'/api/board/game/stream/'+id,{headers:liAuth()},function(ev){
+      if(LI.streams[id]!==ac) return;
+      if(ev.type==='gameFull'){
+        rec=LI.recs[id]||(LI.recs[id]={}); rec.white={uid:'li:'+((ev.white&&ev.white.id)||'w'),name:liName(ev.white)}; rec.black={uid:'li:'+((ev.black&&ev.black.id)||'b'),name:liName(ev.black)};
+        rec.tc=ev.clock?Math.round(ev.clock.initial/1000):0; rec.first='w'; rec.startAt=DB.now()-1000; rec.chat={};
+        if(liApplyState(rec,ev.state)==='gone'){ delete LI.recs[id]; }
+      } else if(ev.type==='gameState'&&rec){ if(liApplyState(rec,ev)==='gone'){ delete LI.recs[id]; } }
+      else if(ev.type==='chatLine'&&rec){ liChatAdd(rec,ev); }
+      liEmit(id);
+    },ac).catch(function(){}).then(function(){
+      if(LI.streams[id]!==ac) return; var r=LI.recs[id];
+      if(r&&!r.result){ setTimeout(function(){ if(LI.streams[id]===ac&&LI.subs[id]) liOpenStream(id); },1500); }   // the connection dropped: pick up where we were
+    });
+  }
+  function liGameStart(g){
+    var id=g.gameId||g.id; if(!id||gid==='li:'+id) return;
+    if(g.variant&&g.variant.key&&g.variant.key!=='standard') return;
+    if(LI.seekAbort){ try{ LI.seekAbort.abort(); }catch(e){} LI.seekAbort=null; } LI.seeking=false; $('liModal').classList.remove('on');
+    if(mode==='waiting'){ var wid=gid; api('cancel',{gid:wid}).catch(function(){}); }
+    if(BOT.on){ BOT.on=false; clearTimeout(BOT.t); }
+    if(unsubGame){ unsubGame(); unsubGame=null; } stopLobbyList();
+    gid='li:'+id; myColor=g.color==='black'?'b':'w'; flipped=(myColor==='b'); G=null; mode='online'; joined=true; meName=LI.user||'Player'; resetBoard();
+    watchGame(); liOpenStream(id); setPanels(); render();
+  }
+  /* watching somebody else's Lichess game (no sign in needed): ask Lichess for the game a couple of times a second */
+  function liSanToUci(san){ var c=new Chess(), out=[]; for(var i=0;i<san.length;i++){ var m=null; try{ m=c.move(san[i]); }catch(e){} if(!m) break; out.push(m.from+m.to+(m.promotion||'')); } return out; }
+  function liPoll(id,first){
+    LI.polls=LI.polls||{};
+    fetch(LI_API+'/game/export/'+id+'?clocks=true&moves=true&tags=false&opening=false&pgnInJson=false',{headers:{Accept:'application/json'}}).then(function(r){ if(!r.ok) throw new Error('game'); return r.json(); }).then(function(j){
+      var rec=LI.recs[id]||(LI.recs[id]={}), moves=liSanToUci(String(j.moves||'').split(' ').filter(Boolean)), n=moves.length, ck=j.clocks||[];
+      var P=j.players||{}; rec.white={uid:'li:w',name:liName({name:P.white&&P.white.user&&P.white.user.name,title:P.white&&P.white.user&&P.white.user.title,rating:P.white&&P.white.rating,aiLevel:P.white&&P.white.aiLevel})}; rec.black={uid:'li:b',name:liName({name:P.black&&P.black.user&&P.black.user.name,title:P.black&&P.black.user&&P.black.user.title,rating:P.black&&P.black.rating,aiLevel:P.black&&P.black.aiLevel})};
+      rec.tc=j.clock?j.clock.initial:0; rec.first='w'; rec.startAt=DB.now()-1000; rec.moves=moves;
+      var init=(j.clock?j.clock.initial:0)*1000, wi=-1, bi=-1; for(var i=0;i<n;i++){ if(i%2===0) wi=i; else bi=i; }
+      rec.w=wi>=0&&ck[wi]!=null?ck[wi]*10:init; rec.b=bi>=0&&ck[bi]!=null?ck[bi]*10:init;
+      var turn=n%2===0?'w':'b'; if(n>=2&&j.lastMoveAt&&j.status==='started') rec[turn]=Math.max(0,rec[turn]-Math.max(0,Date.now()-j.lastMoveAt));
+      rec.ts=DB.now();
+      var r=liResult(j.status,j.winner,moves); if(r&&r!=='gone') rec.result=r; else delete rec.result;
+      liFreezeOn(id); liEmit(id);
+      if(first) first(); first=null;
+      if(!rec.result&&LI.subs[id]) LI.polls[id]=setTimeout(function(){ liPoll(id); },2000);
+    }).catch(function(){ if(first){ alert('That Lichess game is not available any more.'); first=null; } else if(LI.subs[id]) LI.polls[id]=setTimeout(function(){ liPoll(id); },4000); });
+  }
+  function liWatch(id){
+    $('liModal').classList.remove('on'); if(unsubGame){ unsubGame(); unsubGame=null; }
+    liPoll(id,function(){ stopLobbyList(); gid='li:'+id; myColor=null; G=null; mode='watch'; resetBoard(); flipped=false; watchGame(); setPanels(); render(); });
+  }
+  /* plug into the game screen: our board talks to games/<id> and api(); for li: games those go to Lichess */
+  var _dl=DB.listen, _ds=DB.set, _dr=DB.remove, _dd=DB.dropOnLeave, _api=api;
+  DB.listen=function(p,cb,err){
+    var m=/^games\/li:([A-Za-z0-9]+)$/.exec(p); if(!m) return _dl.call(DB,p,cb,err);
+    var id=m[1], sub={cb:cb}; LI.subs[id]=sub; if(LI.recs[id]) setTimeout(function(){ if(LI.subs[id]===sub) cb(LI.recs[id]); },0);
+    return function(){ if(LI.subs[id]===sub){ delete LI.subs[id]; liStopGame(id); } };
+  };
+  DB.set=function(p,v){ var m=/^games\/li:([A-Za-z0-9]+)\/chat\//.exec(p); if(m){ if(mode==='online'&&liSignedIn()) liPost('/api/board/game/'+m[1]+'/chat','room=player&text='+encodeURIComponent(String(v.text||'').slice(0,140))).catch(function(){}); return Promise.resolve(); } if(/^games\/li:/.test(p)) return Promise.resolve(); return _ds.call(DB,p,v); };
+  DB.remove=function(p){ if(/^(games|lobbies)\/li:/.test(p)) return Promise.resolve(); return _dr.call(DB,p); };
+  DB.dropOnLeave=function(p){ if(/^games\/li:/.test(p)) return; return _dd.call(DB,p); };
+  api=function(op,body){
+    if(!(body&&typeof body.gid==='string'&&body.gid.indexOf('li:')===0)) return _api(op,body);
+    var id=body.gid.slice(3), base='/api/board/game/'+id, rec=LI.recs[id];
+    if(op==='move') return liPost(base+'/move/'+body.uci);
+    if(op==='resign') return liPost(base+((rec&&(rec.moves||[]).length<2)?'/abort':'/resign'));
+    if(op==='drawOffer'||op==='drawAccept') return liPost(base+'/draw/yes');
+    if(op==='drawDecline') return liPost(base+'/draw/no');
+    if(op==='cancel') return Promise.resolve({});
+    return Promise.reject(new Error('For a new game, tap Play on Lichess in the lobby.'));
+  };
+  /* ---- the Lichess window ---- */
+  function liUi(){
+    var m=$('liModal'); if(!m) return;
+    var inTg=IN_TG, ok=liSignedIn();
+    $('liMsg').textContent=LI.msg||''; $('liMsg').classList.toggle('hide',!LI.msg);
+    $('liOut').classList.toggle('hide',ok); $('liIn').classList.toggle('hide',!ok||inTg);
+    $('liTg').classList.toggle('hide',!inTg);
+    $('liJustWatch').classList.toggle('hide',!LI.pending);
+    $('liOutBtn').textContent=inTg?'Sign in with Lichess (opens your browser)':'Sign in with Lichess';
+    if(ok){ $('liWho').textContent=LI.user; }
+    $('liFind').classList.toggle('hide',LI.seeking); $('liSeeking').classList.toggle('hide',!LI.seeking); $('liSetup').classList.toggle('hide',LI.seeking);
+    Array.prototype.forEach.call($('liTc').children,function(b){ b.classList.toggle('on',+b.getAttribute('data-t')===LI.time); });
+    Array.prototype.forEach.call($('liRated').children,function(b){ b.classList.toggle('on',(b.getAttribute('data-r')==='1')===LI.rated); });
+  }
+  var LI_CH=['Top Rated','Bullet','Blitz','Rapid','Classical'];
+  function liLive(){
+    var ul=$('liList'); if(!ul) return;
+    fetch(LI_API+'/api/tv/channels',{headers:{Accept:'application/json'}}).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){
+      ul.innerHTML=''; var n=0;
+      LI_CH.forEach(function(ch){ var g=j[ch]; if(!g||!g.gameId) return; n++;
+        var li=document.createElement('li'), w=document.createElement('div'), sm=document.createElement('small'), b=document.createElement('button');
+        w.className='who'; w.textContent=((g.user&&((g.user.title?g.user.title+' ':'')+g.user.name))||'Player')+(g.rating?' ('+g.rating+')':''); sm.textContent='Lichess \u00b7 '+ch; w.appendChild(sm);
+        b.type='button'; b.className='bt'; b.textContent='Watch'; b.addEventListener('click',function(){ liPick(g.gameId); });
+        li.appendChild(w); li.appendChild(b); ul.appendChild(li); });
+      $('liCount').textContent=n?'('+n+')':'';
+      if(!n){ var e=document.createElement('li'); e.className='empty'; e.style.display='block'; e.textContent='No Lichess games to show right now.'; ul.appendChild(e); }
+    }).catch(function(){ if(!ul.children.length){ var e=document.createElement('li'); e.className='empty'; e.style.display='block'; e.textContent='Could not load Lichess games.'; ul.appendChild(e); } });
+  }
+  setInterval(function(){ if(mode==='lobby'&&!document.hidden) liLive(); },45000); setTimeout(liLive,600);
+  /* tapping a Lichess game: sign in first (we remember the game and open it on our board afterwards), or just watch */
+  function liPick(id){
+    if(liSignedIn()){ liWatch(id); return; }
+    LI.pending=id; lsSet('spc_li_watch',id); LI.msg='Sign in with Lichess to play on our board, or just watch this game.'; $('liModal').classList.add('on'); liUi();
+  }
+  $('liJustWatch').addEventListener('click',function(){ var id=LI.pending; LI.pending=null; lsSet('spc_li_watch',null); liClose(); if(id) liWatch(id); });
+  $('liStart').addEventListener('click',function(){ toLobby(); liOpen(); });
+  var _sp3=setPanels; setPanels=function(){ _sp3(); show('liStart',mode==='watch'&&/^li:/.test(gid||'')); };
+  function liOpen(){ LI.msg=''; LI.pending=null; lsSet('spc_li_watch',null); $('liModal').classList.add('on'); liUi(); }
+  function liClose(){ $('liModal').classList.remove('on'); }
+  $('liOpen').addEventListener('click',liOpen); $('liX').addEventListener('click',liClose); $('liModal').addEventListener('click',function(e){ if(e.target===this) liClose(); });
+  $('liOutBtn').addEventListener('click',liLogin); $('liTgBtn').addEventListener('click',liLogin); $('liLogout').addEventListener('click',function(e){ e.preventDefault(); liLogout(); });
+  $('liFind').addEventListener('click',liSeek); $('liCancel').addEventListener('click',liSeekCancel);
+  Array.prototype.forEach.call($('liTc').children,function(b){ b.addEventListener('click',function(){ LI.time=+b.getAttribute('data-t'); liUi(); }); });
+  Array.prototype.forEach.call($('liRated').children,function(b){ b.addEventListener('click',function(){ LI.rated=b.getAttribute('data-r')==='1'; liUi(); }); });
+  liUi(); setTimeout(liBack,50);
 
   function avatar(url,size){
     var d=document.createElement('span'); d.className='av';
@@ -2754,7 +3031,6 @@ function bxPick(level,fen,msLeft){
     if(!nameOk()){ try{ $('tabPlay').click(); }catch(e){} $('pname').dataset.touched='1'; needName(); return; }
     var inp=$('lchatIn'), t=inp.value.replace(/\s+/g,' ').trim().slice(0,200);
     if(!invite&&!t) return;
-    if(Date.now()-lcLast<900) return; lcLast=Date.now();
     inp.value='';
     api('lobbysay',{name:myName(),text:t,invite:invite?gid:undefined}).catch(function(e){ alert(e.message||'Could not send.'); });
   }
