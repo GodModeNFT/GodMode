@@ -158,12 +158,12 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
     <div class="mamt" id="mAmt"></div>
     <button class="bt red wide" id="mCpAmt" type="button">Copy amount</button>
     <div class="mqr" id="mQr"></div>
+    <p style="margin:0 0 6px;font-weight:700">QR contains: <span id="mQrAmt"></span></p>
     <p class="hint" id="mCap" style="margin:0 0 8px">Scan with MetaMask, Coinbase Wallet, Trust, Rainbow and most wallets: it opens a payment to our address with your exact amount filled in.</p>
-    <a class="bt wide hide" id="mWallet" style="display:block;text-align:center;line-height:44px;text-decoration:none;margin-bottom:10px">Open in my wallet app</a>
     <span class="lbl">To this address</span>
     <div class="addr" id="mAddr" style="text-align:left"></div>
     <button class="bt ghost" id="mCpAddr" type="button" style="margin-top:8px">Copy address</button>
-    <p class="hint" style="margin:10px 0 0">Wallet did not fill in the amount (some, like Phantom, only read the address)? Copy the amount above and paste it in. It must match exactly.</p>
+    <p class="hint" style="margin:10px 0 0"><b>Type in the ETH amount exactly as shown here: <span id="mHintAmt"></span></b></p>
     <button class="bt ghost wide" id="mClose" type="button" style="margin-top:10px">Close (see all details)</button>
   </div>
 </div>
@@ -176,7 +176,7 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
       <p style="margin:6px 0">Order <b id="pId"></b> &middot; total <b id="pUsd"></b></p>
       <button class="bt red wide" id="payNow" type="button" style="margin:4px 0 10px">Pay now: show my QR &amp; exact amount</button>
       <p style="margin:8px 0;font-weight:700">Send exactly this much ETH to the address below within <span class="holdn">30</span> minutes:</p>
-      <div class="note" style="margin:8px 0"><b>Type the amount exactly, or tap Copy amount and paste it.</b> Check that every digit matches the number shown here. If it differs even slightly, we cannot match your payment.</div><span class="lbl">1. Amount (exactly)</span>
+      <div class="note" style="margin:8px 0"><b>Make sure the address and the ETH amount is exactly the same.</b></div><span class="lbl">1. Amount (exactly)</span>
       <div class="big" id="pEth"></div>
       <button class="bt ghost" id="cpEth" type="button" style="margin-top:8px">Copy amount</button>
       <span class="lbl">2. To this address (the only address to pay)</span>
@@ -184,9 +184,7 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
       <button class="bt ghost" id="cpAddr" type="button" style="margin-top:8px">Copy address</button>
       <div id="qr"></div>
       <p class="hint" id="qrCap" style="text-align:center;margin:0 0 8px">Scan with MetaMask, Coinbase Wallet, Trust, Rainbow or most wallets: it fills in the address and the amount.</p>
-      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:8px"><button class="bt ghost" id="qrA" type="button" style="min-height:40px;font-size:15px">QR: address + amount</button><button class="bt ghost" id="qrB" type="button" style="min-height:40px;font-size:15px">QR: address only</button></div>
-      <p class="hint" style="text-align:center;margin:0 0 10px">Wallet did not fill in the amount (some, like Phantom, only read the address)? Tap &ldquo;address only&rdquo; and type the amount above.</p>
-      <a class="bt wide hide" id="walletBtn" style="display:block;text-align:center;line-height:44px;text-decoration:none">Open in my wallet app</a>
+      <p class="hint" style="text-align:center;margin:0 0 10px"><b>Type in the ETH amount exactly as shown here: <span id="hintAmt"></span></b></p>
       <div class="note"><b>Important:</b> send <b>exactly</b> the amount shown above, in <b>ETH on the Ethereum network</b> (mainnet), in <b>one payment</b>. The amount is how we know the payment is yours, so a different amount (even slightly) cannot be matched to your order. Other coins or networks cannot be recovered. You have <b id="pCount"></b> left. If the exact amount does not arrive in time, the order is cancelled automatically.</div>
       <p style="margin:12px 0 0;font-weight:700">Trouble with your payment? Contact:</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0"><a class="bt" style="flex:1;text-align:center;text-decoration:none;line-height:44px;min-height:46px;font-size:16px" href="https://x.com/angelaeon777" target="_blank" rel="noopener">X</a><a class="bt ghost" style="flex:1;text-align:center;text-decoration:none;line-height:44px;min-height:46px;font-size:16px" href="https://t.me/mehoyminoy" target="_blank" rel="noopener">Telegram</a></div><p class="hint" style="margin-top:0">Include your order number.</p>
       <p class="hint">Rate used: 1 ETH = <span id="pRate"></span> USD. This page updates by itself as soon as the payment is confirmed (usually 1 to 2 minutes).</p>
@@ -370,12 +368,13 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
     try{ history.replaceState(null,'','?order='+encodeURIComponent(id)+'&t='+encodeURIComponent(token)); }catch(e){}
     $('pId').textContent=o.id.toUpperCase(); $('pUsd').textContent=usd(o.totalCents); $('pEth').textContent=o.eth+' ETH'; $('pAddr').textContent=o.addr; $('pRate').textContent=Number(o.ethUsd).toLocaleString('en-US');
     Array.prototype.forEach.call(document.querySelectorAll('.holdn'),function(n){ n.textContent=Math.round((o.expires-o.created)/60000); });
-    $('walletBtn').href=o.uri; $('walletBtn').classList.remove('hide');
-    function drawQr(txt,full){ try{ var qr=qrcode(0,'M'); qr.addData(txt); qr.make(); $('qr').innerHTML=qr.createSvgTag({cellSize:4,margin:0,scalable:true}); }catch(e){ $('qr').innerHTML=''; } $('qrA').style.background=full?'var(--yellow)':'#fff'; $('qrB').style.background=full?'#fff':'var(--yellow)'; }
-    $('qrA').onclick=function(){ drawQr(o.uri,true); }; $('qrB').onclick=function(){ drawQr(o.addr,false); }; drawQr(o.uri,true);
+    
+    function drawQr(txt){ try{ var qr=qrcode(0,'M'); qr.addData(txt); qr.make(); $('qr').innerHTML=qr.createSvgTag({cellSize:4,margin:0,scalable:true}); }catch(e){ $('qr').innerHTML=''; } }
+    drawQr('ethereum:'+o.addr+'@1?value='+o.wei);
     $('cpEth').onclick=function(){ copy(o.eth,this); }; $('cpAddr').onclick=function(){ copy(o.addr,this); };
-    $('mId').textContent=o.id.toUpperCase(); $('mAmt').textContent=o.eth+' ETH'; $('mAddr').textContent=o.addr; $('mWallet').href=o.uri; $('mWallet').classList.remove('hide');
-    try{ var q2=qrcode(0,'M'); q2.addData(o.uri); q2.make(); $('mQr').innerHTML=q2.createSvgTag({cellSize:4,margin:0,scalable:true}); }catch(e){ $('mQr').classList.add('hide'); }
+    $('hintAmt').textContent=o.eth+' ETH'; $('mHintAmt').textContent=o.eth+' ETH'; $('mId').textContent=o.id.toUpperCase(); $('mAmt').textContent=o.eth+' ETH'; $('mAddr').textContent=o.addr;
+    // the QR holds the address and exactly the ETH amount shown (value is in wei: the same number written out in full)
+    try{ var q2=qrcode(0,'M'); q2.addData('ethereum:'+o.addr+'@1?value='+o.wei); q2.make(); $('mQr').innerHTML=q2.createSvgTag({cellSize:4,margin:0,scalable:true}); }catch(e){ $('mQr').classList.add('hide'); }
     $('mCpAmt').onclick=function(){ copy(o.eth,this); }; $('mCpAddr').onclick=function(){ copy(o.addr,this); };
     $('payNow').onclick=function(){ openPay(); }; $('mClose').onclick=closePay;
     if(o.status==='pending' && !modalShown){ modalShown=true; openPay(); }
