@@ -507,7 +507,8 @@
   .joinpanel.hide{display:none;}
   .joinpanel .jp-t{background:var(--red);color:#fff;font-family:'Alfa Slab One',Georgia,serif;font-size:clamp(18px,4.6vw,26px);letter-spacing:.02em;text-align:center;padding:10px 12px;border-bottom:5px solid var(--lead);}
   .joinpanel .jp-h{margin:12px 12px 6px;font-weight:800;font-size:17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-  .joinpanel .jp-w{padding-top:12px;border-top:3px dashed var(--lead);margin-top:14px;}
+  .joinpanel .jp-w{margin-top:6px;}
+  #liList{max-height:300px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
   .joinpanel .lobbies{margin:0 12px;}
   .joinnote{margin:12px 0 0;padding:8px 10px;background:var(--yellow);border:3px solid var(--lead);border-radius:10px;font-size:15px;line-height:1.3;}
   body.inlobby:not(.fs) .boardwrap{--bw:min(100%,560px);}
@@ -2800,19 +2801,41 @@ function bxPick(level,fen,msLeft){
     Array.prototype.forEach.call($('liTc').children,function(b){ b.classList.toggle('on',+b.getAttribute('data-t')===LI.time); });
     Array.prototype.forEach.call($('liRated').children,function(b){ b.classList.toggle('on',(b.getAttribute('data-r')==='1')===LI.rated); });
   }
-  var LI_CH=['Top Rated','Bullet','Blitz','Rapid','Classical'];
+  var LI_CH=['Top Rated','Blitz','Rapid','Bullet','Classical'], liTries=0;
+  function liNm(pl){ pl=pl||{}; var u=pl.user||{}; return ((u.title?u.title+' ':'')+(u.name||pl.name||'Anonymous'))+(pl.rating?' ('+pl.rating+')':''); }
+  // best ongoing games of each Lichess TV channel (anyone on lichess.org, not only players from our site), several per channel
+  function liFetchCh(ch){
+    return fetch(LI_API+'/api/tv/'+encodeURIComponent(ch)+'?nb=8&moves=false',{headers:{Accept:'application/x-ndjson'}}).then(function(r){ if(!r.ok) throw 0; return r.text(); }).then(function(t){
+      var out=[]; t.split('\n').forEach(function(l){ l=l.trim(); if(!l) return; try{ var g=JSON.parse(l); if(g&&g.id){ var pl=g.players||{}; var w=pl.white||(Array.isArray(pl)?pl[0]:null), bk=pl.black||(Array.isArray(pl)?pl[1]:null); out.push({id:g.id,ch:ch,w:liNm(w),b:liNm(bk)}); } }catch(e){} });
+      return out; }).catch(function(){ return []; });
+  }
+  function liFeatured(){   // fallback: one featured game per channel
+    return fetch(LI_API+'/api/tv/channels').then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){
+      var out=[]; LI_CH.concat(['UltraBullet','Bot']).forEach(function(ch){ var g=j[ch]; if(g&&g.gameId) out.push({id:g.gameId,ch:ch,w:((g.user&&((g.user.title?g.user.title+' ':'')+g.user.name))||'Player')+(g.rating?' ('+g.rating+')':''),b:''}); });
+      return out; });
+  }
   function liLive(){
     var ul=$('liList'); if(!ul) return;
-    fetch(LI_API+'/api/tv/channels',{headers:{Accept:'application/json'}}).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){
-      ul.innerHTML=''; var n=0;
-      LI_CH.forEach(function(ch){ var g=j[ch]; if(!g||!g.gameId) return; n++;
+    Promise.all(LI_CH.map(liFetchCh)).then(function(all){
+      var seen={}, list=[]; all.forEach(function(a){ a.forEach(function(g){ if(!seen[g.id]){ seen[g.id]=1; list.push(g); } }); });
+      return list.length?list:liFeatured();
+    }).then(function(list){
+      liTries=0; ul.innerHTML=''; var n=0;
+      list.slice(0,40).forEach(function(g){ n++;
         var li=document.createElement('li'), w=document.createElement('div'), sm=document.createElement('small'), b=document.createElement('button');
-        w.className='who'; w.textContent=((g.user&&((g.user.title?g.user.title+' ':'')+g.user.name))||'Player')+(g.rating?' ('+g.rating+')':''); sm.textContent='Lichess \u00b7 '+ch; w.appendChild(sm);
-        b.type='button'; b.className='bt'; b.textContent='Watch'; b.addEventListener('click',function(){ liPick(g.gameId); });
+        w.className='who'; w.textContent=g.b?(g.w+' vs '+g.b):g.w; sm.textContent='Lichess \u00b7 '+g.ch; w.appendChild(sm);
+        b.type='button'; b.className='bt'; b.textContent='Watch'; b.addEventListener('click',function(){ liPick(g.id); });
         li.appendChild(w); li.appendChild(b); ul.appendChild(li); });
       $('liCount').textContent=n?'('+n+')':'';
       $('liHead').classList.toggle('hide',!n); ul.classList.toggle('hide',!n);   // nothing to show: the whole section stays hidden
-    }).catch(function(){ if(!ul.children.length){ $('liHead').classList.add('hide'); ul.classList.add('hide'); } });
+    }).catch(function(){
+      liTries++; if(liTries<4) setTimeout(liLive,4000*liTries);   // a few quick retries before giving up
+      if(!ul.children.length){   // could not reach Lichess: say so (with a retry) instead of showing nothing
+        $('liHead').classList.remove('hide'); $('liCount').textContent=''; ul.classList.remove('hide'); ul.innerHTML='';
+        var li=document.createElement('li'); li.style.cursor='pointer'; li.innerHTML='<div class="who">Could not load Lichess games<small>Tap to try again</small></div>';
+        li.addEventListener('click',function(){ liTries=0; liLive(); }); ul.appendChild(li);
+      }
+    });
   }
   setInterval(function(){ if(mode==='lobby'&&!document.hidden) liLive(); },45000); setTimeout(liLive,600);
   /* tapping a Lichess game: sign in first (we remember the game and open it on our board afterwards), or just watch */
