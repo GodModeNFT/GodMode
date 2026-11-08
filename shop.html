@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Buy Physical Sproto Chess</title>
+<meta name="description" content="Sproto Chess 10x10 physical chess set with pieces. Choose your colors and pay with ETH.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Barlow:wght@500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#1536A8;--yellow:#FFD23F;--red:#E63946;--lead:#101828;--cream:#FFF8DC;--green:#3D9141}
+*{box-sizing:border-box}
+body{margin:0;background:var(--green);color:var(--lead);font-family:'Barlow',system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-size:17px;line-height:1.35}
+.stripe{height:12px;background:linear-gradient(90deg,var(--red) 0 33.33%,var(--yellow) 33.33% 66.66%,#2F6BFF 66.66%);border-bottom:4px solid var(--lead)}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px 48px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 0 6px;flex-wrap:wrap}
+.brand{font-family:'Alfa Slab One',Georgia,serif;font-size:24px;text-decoration:none;color:var(--lead)}
+.back{font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:15px;text-decoration:none;color:var(--lead);background:var(--cream);border:3px solid var(--lead);border-radius:10px;box-shadow:3px 3px 0 var(--lead);padding:9px 14px}
+h1{font-family:'Alfa Slab One',Georgia,serif;font-weight:400;font-size:clamp(28px,6vw,46px);margin:8px 0 14px}
+h2{font-family:'Alfa Slab One',Georgia,serif;font-weight:400;font-size:21px;margin:0 0 10px}
+.card{background:var(--cream);border:3px solid var(--lead);border-radius:14px;box-shadow:5px 5px 0 var(--lead);padding:16px;margin:0 0 18px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media(max-width:760px){.grid{grid-template-columns:minmax(0,1fr)}}
+.photo{aspect-ratio:1/1;border:3px solid var(--lead);border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.photo img{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}
+.ph-fb{display:grid;grid-template-columns:repeat(10,1fr);width:78%;aspect-ratio:1/1;border:3px solid var(--lead)}
+.ph-fb i{display:block}
+.ph-note{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-weight:700;font-size:13px;color:#333;background:rgba(255,255,255,.8);padding:3px}
+.price{font-family:'Alfa Slab One',Georgia,serif;font-size:30px;margin:2px 0 8px}
+.facts{margin:0 0 12px;padding-left:20px;font-size:16px}
+.lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:15px;display:block;margin:12px 0 6px}
+.colors{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.col{border:3px solid var(--lead);border-radius:12px;background:#fff;padding:8px 4px;cursor:pointer;font:inherit;font-weight:700;font-size:14px;color:var(--lead);display:flex;flex-direction:column;align-items:center;gap:6px;min-height:84px}
+.col .sw{display:flex;width:44px;height:44px;border:2px solid var(--lead);border-radius:6px;overflow:hidden;transform:rotate(0)}
+.col .sw b{flex:1}
+.col.on{background:var(--yellow);box-shadow:3px 3px 0 var(--lead)}
+.qty{display:flex;align-items:center;gap:8px}
+.qb{width:46px;height:46px;border:3px solid var(--lead);border-radius:10px;background:#fff;font-size:24px;font-weight:700;cursor:pointer;color:var(--lead)}
+.qn{min-width:34px;text-align:center;font-weight:800;font-size:20px}
+.bt{min-height:50px;padding:0 18px;font:inherit;font-weight:700;font-size:18px;cursor:pointer;color:var(--lead);background:var(--yellow);border:3px solid var(--lead);border-radius:10px;box-shadow:3px 3px 0 var(--lead)}
+.bt.red{background:var(--red);color:#fff}
+.bt.ghost{background:#fff}
+.bt.wide{width:100%}
+.bt:disabled{opacity:.5;cursor:not-allowed}
+.bt:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--lead)}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:7px 0;border-bottom:2px dashed #c9bf90}
+.row:last-child{border-bottom:0}
+.row .sw{display:inline-flex;width:22px;height:22px;border:2px solid var(--lead);border-radius:4px;overflow:hidden;vertical-align:middle;margin-right:6px}
+.row .sw b{flex:1}
+.mini{display:inline-flex;align-items:center;gap:4px}
+.mini button{width:34px;height:34px;border:2px solid var(--lead);border-radius:8px;background:#fff;font-weight:800;cursor:pointer;color:var(--lead)}
+.tot{font-weight:800;font-size:20px;border-top:3px solid var(--lead);margin-top:6px;padding-top:8px}
+label.f{display:block;font-weight:700;font-size:15px;margin:10px 0 0}
+input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 10px;border:3px solid var(--lead);border-radius:10px;background:#fff;color:var(--lead);margin-top:4px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.three{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px}
+@media(max-width:520px){.three{grid-template-columns:1fr 1fr}.three>:first-child{grid-column:1/-1}}
+.sugg{position:relative}
+.sugg ul{position:absolute;z-index:20;left:0;right:0;top:100%;margin:2px 0 0;padding:0;list-style:none;background:#fff;border:3px solid var(--lead);border-radius:10px;box-shadow:4px 4px 0 var(--lead);max-height:260px;overflow:auto}
+.sugg li{padding:11px 12px;cursor:pointer;border-bottom:1px solid #ddd;font-size:16px}
+.sugg li:hover,.sugg li:focus{background:var(--yellow)}
+.hint{font-size:14px;color:#44506b;margin:5px 0 0}
+.err{background:#fff;border:3px solid var(--red);color:#8b0d19;border-radius:10px;padding:10px 12px;font-weight:700;margin:10px 0}
+.note{background:#fff;border:3px solid var(--lead);border-radius:10px;padding:10px 12px;margin:12px 0;font-size:15px}
+.soon{background:var(--yellow);border:3px solid var(--lead);border-radius:14px;box-shadow:5px 5px 0 var(--lead);padding:14px 16px;margin:0 0 18px;text-align:center;display:flex;flex-direction:column;gap:4px}
+.soon b{font-family:'Alfa Slab One',Georgia,serif;font-weight:400;font-size:clamp(26px,7vw,40px);letter-spacing:.04em}
+.soon span{font-weight:700;font-size:17px}
+.hide{display:none!important}
+.addr{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;word-break:break-all;background:#fff;border:3px solid var(--lead);border-radius:10px;padding:10px}
+.big{font-family:'Alfa Slab One',Georgia,serif;font-size:30px;word-break:break-all}
+#qr{display:flex;justify-content:center;margin:12px 0}
+#qr svg,#qr img{width:200px;height:200px;border:3px solid var(--lead);border-radius:8px;background:#fff;padding:6px}
+.status{font-weight:800;font-size:18px;padding:10px 12px;border-radius:10px;border:3px solid var(--lead);background:#fff;text-align:center;margin:12px 0}
+.status.ok{background:#b9f0b9}
+.steps{padding-left:20px;margin:6px 0}
+.cartbadge{background:var(--red);color:#fff;border-radius:99px;padding:1px 9px;margin-left:6px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="stripe"></div>
+<div class="wrap">
+<header><a class="brand" href="sproto-chess-tg.html">Sproto Chess</a><a class="back" href="sproto-chess-tg.html" id="backLink">&larr; Back to the game</a></header>
+<h1>Buy Physical Sproto Chess</h1>
+
+<div class="soon hide" id="soon"><b>COMING SOON</b><span>Physical Sproto Chess is almost here. Check back soon!</span></div>
+<div id="closed" class="err hide">Checkout is not open yet. Please check back soon.</div>
+
+<div id="viewShop">
+  <div class="grid">
+    <div class="card">
+      <div class="photo" id="photo">
+        <div class="ph-fb" id="phFb"></div>
+        <img id="phImg" alt="Sproto Chess physical set" class="hide">
+        <div class="ph-note" id="phNote">Product photo coming soon</div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Sproto Chess set</h2>
+      <div class="price" id="price">&nbsp;</div>
+      <ul class="facts">
+        <li>10 &times; 10 board chess set, <b>comes with all the pieces</b></li>
+        <li>Light and compact, only 147 g (5.2 oz)</li>
+        <li>Ships from Mineral Wells, Texas by USPS</li>
+        <li>Pay with ETH (Ethereum)</li>
+      </ul>
+      <span class="lbl">Choose your colors</span>
+      <div class="colors" id="colors"></div>
+      <span class="lbl">Quantity</span>
+      <div class="qty"><button class="qb" id="qMinus" type="button" aria-label="Fewer">&minus;</button><span class="qn" id="qN">1</span><button class="qb" id="qPlus" type="button" aria-label="More">+</button></div>
+      <div style="height:14px"></div>
+      <button class="bt red wide" id="addBtn" type="button">Add to cart</button>
+    </div>
+  </div>
+
+  <div class="card hide" id="cartCard">
+    <h2>Your cart</h2>
+    <div id="cartRows"></div>
+    <div class="row tot"><span>Items</span><span id="cartSub">$0.00</span></div>
+  </div>
+
+  <div class="card hide" id="coCard">
+    <h2>Checkout</h2>
+    <label class="f">Email (for your payment confirmation) *<input id="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com"></label>
+    <span class="lbl" style="margin-bottom:0">Telegram or X username * <small style="text-transform:none;letter-spacing:0">(so we can reach you about your order)</small></span>
+    <div class="two" style="grid-template-columns:130px 1fr"><select id="ckind" aria-label="Telegram or X"><option value="telegram">Telegram</option><option value="x">X</option></select><input id="chandle" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="@yourname" aria-label="Username"></div>
+    <label class="f">Search your address
+      <span class="sugg"><input id="search" type="text" autocomplete="off" placeholder="Start typing your street address" aria-autocomplete="list"><ul id="sugList" class="hide"></ul></span>
+    </label>
+    <p class="hint" id="searchHint">Pick your address from the list and the boxes below fill in automatically. Not found? Just type it in below.</p>
+    <label class="f">Full name<input id="name" type="text" autocomplete="name"></label>
+    <label class="f">Street address<input id="line1" type="text" autocomplete="address-line1"></label>
+    <label class="f">Apartment, suite, etc. (optional)<input id="line2" type="text" autocomplete="address-line2"></label>
+    <div class="three">
+      <label class="f">City<input id="city" type="text" autocomplete="address-level2"></label>
+      <label class="f">State<select id="state" autocomplete="address-level1"><option value="">Select</option></select></label>
+      <label class="f">ZIP code<input id="zip" type="text" inputmode="numeric" maxlength="10" autocomplete="postal-code"></label>
+    </div>
+    <p class="hint">We ship inside the United States.</p>
+
+    <div id="sumBox" class="hide" style="margin-top:16px">
+      <div id="sumRows"></div>
+    </div>
+    <div class="err hide" id="coErr"></div>
+    <button class="bt red wide" id="orderBtn" type="button" style="margin-top:14px" disabled>Place order &amp; pay with ETH</button>
+    <p class="hint">Next you will see the exact ETH amount to send and our payment address. You will have 30 minutes to send it.</p>
+  </div>
+</div>
+
+<div id="viewPay" class="hide">
+  <div class="card">
+    <h2>Pay with ETH</h2>
+    <div class="status" id="payStatus">Waiting for your payment&hellip;</div>
+    <div id="payBox">
+      <p style="margin:6px 0">Order <b id="pId"></b> &middot; total <b id="pUsd"></b></p>
+      <p style="margin:8px 0;font-weight:700">Send exactly this much ETH to the address below within <span class="holdn">30</span> minutes:</p>
+      <div class="note" style="margin:8px 0"><b>Type the amount exactly, or tap Copy amount and paste it.</b> Check that every digit matches the number shown here. If it differs even slightly, we cannot match your payment.</div><span class="lbl">1. Amount (exactly)</span>
+      <div class="big" id="pEth"></div>
+      <button class="bt ghost" id="cpEth" type="button" style="margin-top:8px">Copy amount</button>
+      <span class="lbl">2. To this address (the only address to pay)</span>
+      <div class="addr" id="pAddr"></div>
+      <button class="bt ghost" id="cpAddr" type="button" style="margin-top:8px">Copy address</button>
+      <div id="qr"></div>
+      <p class="hint" id="qrCap" style="text-align:center;margin:0 0 8px">Scan with MetaMask, Coinbase Wallet, Trust, Rainbow or most wallets: it fills in the address and the amount.</p>
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:8px"><button class="bt ghost" id="qrA" type="button" style="min-height:40px;font-size:15px">QR: address + amount</button><button class="bt ghost" id="qrB" type="button" style="min-height:40px;font-size:15px">QR: address only</button></div>
+      <p class="hint" style="text-align:center;margin:0 0 10px">Wallet did not fill in the amount (some, like Phantom, only read the address)? Tap &ldquo;address only&rdquo; and type the amount above.</p>
+      <a class="bt wide hide" id="walletBtn" style="display:block;text-align:center;line-height:44px;text-decoration:none">Open in my wallet app</a>
+      <div class="note"><b>Important:</b> send <b>exactly</b> the amount shown above, in <b>ETH on the Ethereum network</b> (mainnet), in <b>one payment</b>. The amount is how we know the payment is yours, so a different amount (even slightly) cannot be matched to your order. Other coins or networks cannot be recovered. You have <b id="pCount"></b> left. If the exact amount does not arrive in time, the order is cancelled automatically.</div>
+      <p style="margin:12px 0 0;font-weight:700">Trouble with your payment? Contact:</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0"><a class="bt" style="flex:1;text-align:center;text-decoration:none;line-height:44px;min-height:46px;font-size:16px" href="https://x.com/angelaeon777" target="_blank" rel="noopener">X</a><a class="bt ghost" style="flex:1;text-align:center;text-decoration:none;line-height:44px;min-height:46px;font-size:16px" href="https://t.me/mehoyminoy" target="_blank" rel="noopener">Telegram</a></div><p class="hint" style="margin-top:0">Include your order number.</p>
+      <p class="hint">Rate used: 1 ETH = <span id="pRate"></span> USD. This page updates by itself as soon as the payment is confirmed (usually 1 to 2 minutes).</p>
+    </div>
+    <div id="doneBox" class="hide"></div>
+  </div>
+  <div class="card">
+    <h2>Order summary</h2>
+    <div id="paySum"></div>
+    <p class="hint" id="payShip"></p>
+    <p class="hint">Keep this page's link or bookmark it to check your order later.</p>
+  </div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+(function(){
+  // The address of your Cloudflare Worker (the same one the game uses).
+  var API='https://sproto-chess-server.sprotochess.workers.dev/shop';
+  // Set to false when you are ready to take orders (the page then lets people add to cart and check out).
+  var COMING_SOON=false;
+  // Optional product photos: put shop-rb.jpg, shop-bw.jpg, shop-go.jpg next to this page (or just shop.jpg for one photo for all three).
+  var $=function(i){return document.getElementById(i)};
+  var CFG=null, color='rb', qty=1, cart=[], quote=null, qTimer=null, qSeq=0, sugTimer=null, sugSeq=0, order=null, poll=null, tick=null;
+  var STATE_NAME={Alabama:'AL',Alaska:'AK',Arizona:'AZ',Arkansas:'AR',California:'CA',Colorado:'CO',Connecticut:'CT',Delaware:'DE','District of Columbia':'DC',Florida:'FL',Georgia:'GA',Hawaii:'HI',Idaho:'ID',Illinois:'IL',Indiana:'IN',Iowa:'IA',Kansas:'KS',Kentucky:'KY',Louisiana:'LA',Maine:'ME',Maryland:'MD',Massachusetts:'MA',Michigan:'MI',Minnesota:'MN',Mississippi:'MS',Missouri:'MO',Montana:'MT',Nebraska:'NE',Nevada:'NV','New Hampshire':'NH','New Jersey':'NJ','New Mexico':'NM','New York':'NY','North Carolina':'NC','North Dakota':'ND',Ohio:'OH',Oklahoma:'OK',Oregon:'OR',Pennsylvania:'PA','Rhode Island':'RI','South Carolina':'SC','South Dakota':'SD',Tennessee:'TN',Texas:'TX',Utah:'UT',Vermont:'VT',Virginia:'VA',Washington:'WA','West Virginia':'WV',Wisconsin:'WI',Wyoming:'WY'};
+  function ls(k,v){try{ if(v===undefined) return JSON.parse(localStorage.getItem(k)); if(v===null) localStorage.removeItem(k); else localStorage.setItem(k,JSON.stringify(v)); }catch(e){} return null; }
+  function usd(c){return '$'+(c/100).toFixed(2);}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function call(body){
+    return fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json().catch(function(){return {error:'Server error, try again'};});}).then(function(j){ if(j&&j.error) throw new Error(j.error); return j; });
+  }
+  function sw(c){ return '<span class="sw"><b style="background:'+c.sw[0]+'"></b><b style="background:'+c.sw[1]+'"></b></span>'; }
+  function colorOf(id){ return CFG.colors.filter(function(c){return c.id===id;})[0]; }
+
+  // ---- back link: inside the game or the website ----
+  // ---- product ----
+  function drawFallback(){
+    var c=colorOf(color), h='';
+    for(var r=0;r<10;r++)for(var f=0;f<10;f++) h+='<i style="background:'+c.sw[(r+f)%2]+'"></i>';
+    $('phFb').innerHTML=h;
+    var img=$('phImg'); img.classList.add('hide'); $('phNote').classList.remove('hide');
+    var tries=['shop-'+color+'.jpg','shop.jpg'], i=0;
+    (function next(){ if(i>=tries.length) return; var t=new Image(), src=tries[i++]; t.onload=function(){ img.src=src; img.classList.remove('hide'); $('phNote').classList.add('hide'); }; t.onerror=next; t.src=src; })();
+  }
+  function renderColors(){
+    $('colors').innerHTML=CFG.colors.map(function(c){ return '<button type="button" class="col'+(c.id===color?' on':'')+'" data-c="'+c.id+'">'+sw(c)+c.name+'</button>'; }).join('');
+    Array.prototype.forEach.call($('colors').children,function(b){ b.onclick=function(){ color=b.getAttribute('data-c'); renderColors(); drawFallback(); }; });
+  }
+  function totalQty(){ return cart.reduce(function(s,i){return s+i.qty;},0); }
+  function saveCart(){ ls('spc_cart',cart); }
+  function renderCart(){
+    var has=cart.length>0;
+    $('cartCard').classList.toggle('hide',!has); $('coCard').classList.toggle('hide',!has);
+    $('cartRows').innerHTML=cart.map(function(it,i){ var c=colorOf(it.color); return '<div class="row"><span>'+sw(c)+c.name+'</span><span class="mini"><button type="button" data-i="'+i+'" data-d="-1" aria-label="Fewer">&minus;</button><b>'+it.qty+'</b><button type="button" data-i="'+i+'" data-d="1" aria-label="More">+</button></span><b>'+usd(it.qty*CFG.priceCents)+'</b></div>'; }).join('');
+    Array.prototype.forEach.call($('cartRows').querySelectorAll('button'),function(b){ b.onclick=function(){ var it=cart[+b.getAttribute('data-i')], d=+b.getAttribute('data-d'); if(d>0&&totalQty()>=CFG.maxQty) return; it.qty+=d; if(it.qty<1) cart.splice(+b.getAttribute('data-i'),1); saveCart(); renderCart(); requote(); }; });
+    $('cartSub').textContent=usd(totalQty()*CFG.priceCents);
+  }
+  $('qMinus').onclick=function(){ if(qty>1){qty--; $('qN').textContent=qty;} };
+  $('qPlus').onclick=function(){ if(qty<CFG.maxQty){qty++; $('qN').textContent=qty;} };
+  $('addBtn').onclick=function(){
+    if(totalQty()+qty>CFG.maxQty){ alertBox('You can order up to '+CFG.maxQty+' sets at a time.'); return; }
+    var ex=cart.filter(function(i){return i.color===color;})[0]; if(ex) ex.qty+=qty; else cart.push({color:color,qty:qty});
+    qty=1; $('qN').textContent=1; saveCart(); renderCart(); requote();
+    $('cartCard').scrollIntoView({behavior:'smooth',block:'start'});
+  };
+  function alertBox(m){ var e=$('coErr'); e.textContent=m; e.classList.remove('hide'); }
+
+  // ---- address search (free OpenStreetMap-based search by Komoot Photon) ----
+  function pickAddress(p){
+    var st=STATE_NAME[p.state]||''; var num=p.housenumber||'', street=p.street||p.name||'';
+    $('line1').value=((num?num+' ':'')+street).trim();
+    $('city').value=p.city||p.town||p.village||p.county||'';
+    if(st) $('state').value=st;
+    if(p.postcode) $('zip').value=String(p.postcode).slice(0,5);
+    $('sugList').classList.add('hide'); $('search').value=''; $('searchHint').textContent='Address filled in. Please check it below.';
+    requote(); if(!$('name').value) $('name').focus();
+  }
+  $('search').addEventListener('input',function(){
+    clearTimeout(sugTimer); var q=this.value.trim();
+    if(q.length<4){ $('sugList').classList.add('hide'); return; }
+    var seq=++sugSeq;
+    sugTimer=setTimeout(function(){
+      fetch('https://photon.komoot.io/api/?lang=en&limit=8&q='+encodeURIComponent(q)).then(function(r){return r.json();}).then(function(j){
+        if(seq!==sugSeq) return;
+        var f=(j.features||[]).filter(function(x){return x.properties&&x.properties.countrycode==='US'&&STATE_NAME[x.properties.state];}).slice(0,5);
+        if(!f.length){ $('sugList').innerHTML='<li style="cursor:default">No match found. Type your address in the boxes below.</li>'; $('sugList').classList.remove('hide'); return; }
+        $('sugList').innerHTML=f.map(function(x,i){ var p=x.properties; var l1=((p.housenumber?p.housenumber+' ':'')+(p.street||p.name||'')).trim(); return '<li tabindex="0" data-i="'+i+'">'+esc(l1+', '+(p.city||p.town||p.village||p.county||'')+', '+(STATE_NAME[p.state]||'')+' '+(p.postcode||''))+'</li>'; }).join('');
+        Array.prototype.forEach.call($('sugList').querySelectorAll('li[data-i]'),function(li){ var go=function(){ pickAddress(f[+li.getAttribute('data-i')].properties); }; li.onclick=go; li.onkeydown=function(e){ if(e.key==='Enter') go(); }; });
+        $('sugList').classList.remove('hide');
+      }).catch(function(){ $('sugList').classList.add('hide'); $('searchHint').textContent='Address search is not available right now. Please type your address in the boxes below.'; });
+    },350);
+  });
+  document.addEventListener('click',function(e){ if(!e.target.closest||!e.target.closest('.sugg')) $('sugList').classList.add('hide'); });
+
+  // ---- quote (shipping + tax from the server) ----
+  function addr(){ return {name:$('name').value,line1:$('line1').value,line2:$('line2').value,city:$('city').value,state:$('state').value,zip:$('zip').value.replace(/[^0-9]/g,'').slice(0,5)}; }
+  function requote(){
+    clearTimeout(qTimer); quote=null; $('orderBtn').disabled=true; $('sumBox').classList.add('hide'); $('coErr').classList.add('hide');
+    var a=addr(); if(!cart.length||!a.state||a.zip.length!==5) return;
+    var seq=++qSeq; qTimer=setTimeout(function(){
+      call({op:'quote',items:cart,address:{state:a.state,zip:a.zip}}).then(function(j){
+        if(seq!==qSeq) return; quote=j.quote; renderQuote();
+      }).catch(function(e){ if(seq!==qSeq) return; alertBox(e.message); });
+    },300);
+  }
+  function renderQuote(){
+    var q=quote, h='';
+    q.items.forEach(function(i){ h+='<div class="row"><span>'+i.qty+' &times; '+esc(i.name)+'</span><b>'+usd(i.lineCents)+'</b></div>'; });
+    h+='<div class="row"><span>Shipping (USPS, '+q.packages+' package'+(q.packages>1?'s':'')+')</span><b>'+usd(q.shippingCents)+'</b></div>';
+    h+='<div class="row"><span>'+esc(q.taxLabel)+'</span><b>'+usd(q.taxCents)+'</b></div>';
+    h+='<div class="row tot"><span>Total</span><span>'+usd(q.totalCents)+'</span></div>';
+    $('sumRows').innerHTML=h; $('sumBox').classList.remove('hide'); $('orderBtn').disabled=false;
+  }
+  ['line1','city','line2','name'].forEach(function(i){ $(i).addEventListener('input',function(){ $('coErr').classList.add('hide'); }); });
+  $('state').addEventListener('change',requote); $('zip').addEventListener('input',requote);
+
+  // ---- place order ----
+  $('orderBtn').onclick=function(){
+    $('coErr').classList.add('hide'); var b=$('orderBtn'); b.disabled=true; b.textContent='Creating your payment address…';
+    call({op:'order',email:$('email').value,contactKind:$('ckind').value,contactHandle:$('chandle').value,items:cart,address:addr()}).then(function(j){
+      ls('spc_order',{id:j.id,token:j.token}); ls('spc_cart',null); cart=[]; showOrder(j.id,j.token,j.order);
+    }).catch(function(e){ alertBox(e.message); }).then(function(){ b.textContent='Place order & pay with ETH'; b.disabled=!quote; });
+  };
+
+  // ---- payment screen ----
+  function fmtTime(ms){ var s=Math.max(0,Math.floor(ms/1000)); return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
+  function showOrder(id,token,o){
+    order={id:id,token:token,o:o}; $('viewShop').classList.add('hide'); $('viewPay').classList.remove('hide'); window.scrollTo(0,0);
+    try{ history.replaceState(null,'','?order='+encodeURIComponent(id)+'&t='+encodeURIComponent(token)); }catch(e){}
+    $('pId').textContent=o.id.toUpperCase(); $('pUsd').textContent=usd(o.totalCents); $('pEth').textContent=o.eth+' ETH'; $('pAddr').textContent=o.addr; $('pRate').textContent=Number(o.ethUsd).toLocaleString('en-US');
+    Array.prototype.forEach.call(document.querySelectorAll('.holdn'),function(n){ n.textContent=Math.round((o.expires-o.created)/60000); });
+    $('walletBtn').href=o.uri; $('walletBtn').classList.remove('hide');
+    function drawQr(txt,full){ try{ var qr=qrcode(0,'M'); qr.addData(txt); qr.make(); $('qr').innerHTML=qr.createSvgTag({cellSize:4,margin:0,scalable:true}); }catch(e){ $('qr').innerHTML=''; } $('qrA').style.background=full?'var(--yellow)':'#fff'; $('qrB').style.background=full?'#fff':'var(--yellow)'; }
+    $('qrA').onclick=function(){ drawQr(o.uri,true); }; $('qrB').onclick=function(){ drawQr(o.addr,false); }; drawQr(o.uri,true);
+    $('cpEth').onclick=function(){ copy(o.eth,this); }; $('cpAddr').onclick=function(){ copy(o.addr,this); };
+    var h=''; o.items.forEach(function(i){ h+='<div class="row"><span>'+i.qty+' &times; '+esc(i.name)+'</span><b>'+usd(i.lineCents)+'</b></div>'; });
+    h+='<div class="row"><span>Shipping</span><b>'+usd(o.shippingCents)+'</b></div><div class="row"><span>'+esc(o.taxLabel)+'</span><b>'+usd(o.taxCents)+'</b></div><div class="row tot"><span>Total</span><span>'+usd(o.totalCents)+'</span></div>';
+    $('paySum').innerHTML=h; $('payShip').textContent='Shipping to: '+o.shipTo;
+    apply(o); clearInterval(poll); clearInterval(tick);
+    poll=setInterval(refresh,10000); tick=setInterval(function(){ apply(order.o); },1000); refresh();
+  }
+  function copy(t,btn){ var done=function(){ var old=btn.textContent; btn.textContent='Copied!'; setTimeout(function(){btn.textContent=old;},1400); }; try{ navigator.clipboard.writeText(t).then(done,function(){ fb(); }); }catch(e){ fb(); } function fb(){ var a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); try{document.execCommand('copy');}catch(e){} a.remove(); done(); } }
+  function refresh(){
+    call({op:'status',id:order.id,token:order.token}).then(function(j){ order.o=j.order; apply(j.order); }).catch(function(e){ if(/not found/i.test(e.message)) { ls('spc_order',null); } });
+  }
+  function apply(o){
+    var st=$('payStatus'), now=Date.now();
+    if(o.status==='pending'){
+      var left=o.expires-now;
+      if(left>0){ st.className='status'; st.textContent=(o.received?'Partial payment seen. Please send the rest. ':'Waiting for your payment… ')+''; $('pCount').textContent=fmtTime(left); }
+      else { $('pCount').textContent='0:00'; st.className='status'; st.textContent='Time is up. Checking for your payment one last time…'; }
+      $('payBox').classList.remove('hide'); $('doneBox').classList.add('hide');
+    } else {
+      clearInterval(tick);
+      $('payBox').classList.add('hide'); $('doneBox').classList.remove('hide');
+      if(o.status==='expired'){ st.className='status'; st.textContent='Order cancelled'; $('doneBox').innerHTML='<p>No payment arrived within the time limit, so this order was cancelled. Please start a new order.</p><p><b>Sent ETH already, or having a problem with your payment?</b> Contact:</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0"><a class="bt" style="flex:1;text-align:center;text-decoration:none;line-height:44px;min-height:46px;font-size:16px" href="https://x.com/angelaeon777" target="_blank" rel="noopener">X</a><a class="bt ghost" style="flex:1;text-align:center;text-decoration:none;line-height:44px;min-height:46px;font-size:16px" href="https://t.me/mehoyminoy" target="_blank" rel="noopener">Telegram</a></div><p>Give us order number <b>'+esc(o.id.toUpperCase())+'</b>.</p><a class="bt red" style="display:inline-block;text-decoration:none;line-height:44px" href="shop.html">Start over</a>'; }
+      else { clearInterval(poll); st.className='status ok'; st.textContent=o.status==='shipped'?'Shipped!':'Payment received, thank you!';
+        $('doneBox').innerHTML='<p><b>Confirmed!</b> We received your payment for order <b>'+esc(o.id.toUpperCase())+'</b> ('+esc(o.eth)+' ETH). We will pack it and ship it with USPS from Mineral Wells, Texas.</p>'+(o.txHash?'<p><a href="https://etherscan.io/tx/'+encodeURIComponent(o.txHash)+'" target="_blank" rel="noopener">View your transaction</a></p>':'')+(o.tracking?'<p><b>USPS tracking number:</b> <span class="addr" style="display:inline-block;padding:4px 8px">'+esc(o.tracking)+'</span></p>':'<p>You will get a tracking number once it ships. Come back to this page to see it.</p>');
+        ls('spc_order',null); }
+    }
+  }
+
+  // ---- start ----
+  function init(){
+    var inGame=/[?&]from=game/.test(location.search);
+    call({op:'config'}).then(function(c){
+      CFG=c; $('price').textContent=usd(c.priceCents)+' each';
+      $('state').innerHTML='<option value="">Select</option>'+c.states.map(function(s){return '<option>'+s+'</option>';}).join('');
+      renderColors(); drawFallback();
+      if(COMING_SOON){ $('soon').classList.remove('hide'); $('addBtn').disabled=true; $('addBtn').textContent='Coming soon'; $('qMinus').disabled=true; $('qPlus').disabled=true; $('phNote').textContent='Coming soon'; ls('spc_cart',null); return; }
+      if(!c.open){ $('closed').classList.remove('hide'); $('addBtn').disabled=true; }
+      var m=location.search.match(/[?&]order=([a-z0-9]+)&t=([a-f0-9]+)/), saved=m?{id:m[1],token:m[2]}:ls('spc_order');
+      if(saved&&saved.id){ call({op:'status',id:saved.id,token:saved.token}).then(function(j){ showOrder(saved.id,saved.token,j.order); }).catch(function(){ ls('spc_order',null); start(); }); }
+      else start();
+    }).catch(function(e){ $('closed').textContent='Could not load the shop: '+e.message+'. Please refresh.'; $('closed').classList.remove('hide'); });
+  }
+  function start(){ var c=ls('spc_cart'); if(Array.isArray(c)) cart=c.filter(function(i){return colorOf(i.color)&&i.qty>=1;}); renderCart(); requote(); }
+  init();
+})();
+</script>
+</body>
+</html>
