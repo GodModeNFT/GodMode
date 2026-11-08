@@ -66,6 +66,8 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
 .soon b{font-family:'Alfa Slab One',Georgia,serif;font-weight:400;font-size:clamp(26px,7vw,40px);letter-spacing:.04em}
 .soon span{font-weight:700;font-size:17px}
 .hide{display:none!important}
+.chk{display:flex;gap:10px;align-items:flex-start;margin:12px 0 0;font-size:15px;font-weight:600;cursor:pointer}
+.chk input{width:22px;height:22px;flex:none;margin:1px 0 0;accent-color:var(--blue)}
 .modal{position:fixed;inset:0;background:rgba(20,20,30,.65);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:12px;overflow:auto}
 .modal .mc{background:var(--cream,#FFF6D6);border:4px solid var(--lead);border-radius:16px;box-shadow:6px 6px 0 var(--lead);width:100%;max-width:420px;margin:auto;padding:18px;text-align:center}
 .modal .mamt{font-family:'Alfa Slab One',Georgia,serif;font-size:34px;line-height:1.15;word-break:break-all;margin:4px 0 8px}
@@ -88,6 +90,7 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
 <h1>Buy Physical Sproto Chess</h1>
 
 <div class="soon hide" id="soon"><b>COMING SOON</b><span>Physical Sproto Chess is almost here. Check back soon!</span></div>
+<p style="text-align:center;margin:0 0 12px;font-weight:700"><a href="shop-policies.html#shipping" style="color:#fff">Shipping</a> &middot; <a href="shop-policies.html#returns" style="color:#fff">Returns</a> &middot; <a href="shop-policies.html#terms" style="color:#fff">Terms</a> &middot; <a href="shop-policies.html#privacy" style="color:#fff">Privacy</a></p>
 <div id="closed" class="err hide">Checkout is not open yet. Please check back soon.</div>
 
 <div id="viewShop">
@@ -107,6 +110,8 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
         <li>Light and compact, only 147 g (5.2 oz)</li>
         <li>Sold by 3DPRINTYOURNFT &middot; ships by USPS</li>
         <li>Pay with ETH (ERC20)</li>
+        <li>All sales final, no returns &middot; <a href="shop-policies.html#returns" target="_blank" rel="noopener">details</a></li>
+        <li>Not intended for children under 14 (small pieces)</li>
       </ul>
       <span class="lbl">Choose your colors</span>
       <div class="colors" id="colors"></div>
@@ -146,6 +151,8 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
       <p class="hint hide" id="intlNote" style="margin-top:8px"><b>International order:</b> shipping is an estimate for tracked USPS delivery (usually 1 to 4 weeks). Import duties, VAT and customs fees in your country are <b>not</b> included and are paid by you to the carrier or customs.</p>
     </div>
     <div class="err hide" id="coErr"></div>
+    <label class="chk"><input type="checkbox" id="agree"><span>I agree to the <a href="shop-policies.html#terms" target="_blank" rel="noopener">terms</a> and the <a href="shop-policies.html#returns" target="_blank" rel="noopener">no-returns policy</a>, and I understand this set is <a href="shop-policies.html#kids" target="_blank" rel="noopener">not intended for children under 14</a>.</span></label>
+    <label class="chk hide" id="dutiesRow"><input type="checkbox" id="agreeDuties"><span>I will pay any customs duties, VAT and import fees charged in my country.</span></label>
     <button class="bt red wide" id="orderBtn" type="button" style="margin-top:14px" disabled>Place order &amp; pay with ETH (ERC20)</button>
     <p class="hint">Next you will see the exact ETH amount to send and our payment address. You will have 30 minutes to send it.</p>
   </div>
@@ -317,9 +324,15 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
   document.addEventListener('click',function(e){ if(!e.target.closest||!e.target.closest('.sugg')) $('sugList').classList.add('hide'); });
 
   // ---- quote (shipping + tax from the server) ----
+  function syncBtn(){
+    var intl=!!(quote&&quote.international)||$('country').value!=='US';
+    $('dutiesRow').classList.toggle('hide',!intl);
+    $('orderBtn').disabled=!(quote&&$('agree').checked&&(!intl||$('agreeDuties').checked));
+  }
+  $('agree').addEventListener('change',syncBtn); $('agreeDuties').addEventListener('change',syncBtn);
   function addr(){ var us=isUS(); return {country:$('country').value,name:$('name').value,line1:$('line1').value,line2:$('line2').value,city:$('city').value,state:us?$('state').value:$('region').value,zip:us?$('zip').value.replace(/[^0-9]/g,'').slice(0,5):$('zip').value,phone:$('phone').value}; }
   function requote(){
-    clearTimeout(qTimer); quote=null; $('orderBtn').disabled=true; $('sumBox').classList.add('hide'); $('coErr').classList.add('hide');
+    clearTimeout(qTimer); quote=null; syncBtn(); $('sumBox').classList.add('hide'); $('coErr').classList.add('hide');
     var a=addr(); if(!cart.length||!a.country) return;
     if(a.country==='US'&&(!a.state||a.zip.length!==5)) return;
     var seq=++qSeq; qTimer=setTimeout(function(){
@@ -334,7 +347,7 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
     h+='<div class="row"><span>Shipping ('+(q.international?'USPS international estimate, ':'USPS, ')+q.packages+' package'+(q.packages>1?'s':'')+')</span><b>'+usd(q.shippingCents)+'</b></div>';
     h+='<div class="row"><span>'+esc(q.taxLabel)+'</span><b>'+usd(q.taxCents)+'</b></div>';
     h+='<div class="row tot"><span>Total</span><span>'+usd(q.totalCents)+'</span></div>';
-    $('sumRows').innerHTML=h; $('intlNote').classList.toggle('hide',!q.international); $('sumBox').classList.remove('hide'); $('orderBtn').disabled=false;
+    $('sumRows').innerHTML=h; $('intlNote').classList.toggle('hide',!q.international); $('sumBox').classList.remove('hide'); syncBtn();
   }
   ['line1','city','line2','name'].forEach(function(i){ $(i).addEventListener('input',function(){ $('coErr').classList.add('hide'); }); });
   $('state').addEventListener('change',requote); $('zip').addEventListener('input',requote);
@@ -351,9 +364,9 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
   // ---- place order ----
   $('orderBtn').onclick=function(){
     $('coErr').classList.add('hide'); var b=$('orderBtn'); b.disabled=true; b.textContent='Creating your payment address…';
-    call({op:'order',email:$('email').value,contactKind:$('ckind').value,contactHandle:$('chandle').value,items:cart,address:addr()}).then(function(j){
+    call({op:'order',email:$('email').value,contactKind:$('ckind').value,contactHandle:$('chandle').value,items:cart,address:addr(),agree:$('agree').checked,agreeDuties:$('agreeDuties').checked}).then(function(j){
       ls('spc_order',{id:j.id,token:j.token}); ls('spc_cart',null); cart=[]; showOrder(j.id,j.token,j.order);
-    }).catch(function(e){ alertBox(e.message); }).then(function(){ b.textContent='Place order & pay with ETH (ERC20)'; b.disabled=!quote; });
+    }).catch(function(e){ alertBox(e.message); }).then(function(){ b.textContent='Place order & pay with ETH (ERC20)'; syncBtn(); });
   };
 
   // ---- payment screen ----
