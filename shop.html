@@ -127,7 +127,7 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
     <h2>Checkout</h2>
     <label class="f">Email (for your payment confirmation) *<input id="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com"></label>
     <span class="lbl" style="margin-bottom:0">Telegram or X username * <small style="text-transform:none;letter-spacing:0">(so we can reach you about your order)</small></span>
-    <div class="two" style="grid-template-columns:130px 1fr"><select id="ckind" aria-label="Telegram or X"><option value="telegram">Telegram</option><option value="x">X</option></select><input id="chandle" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="@yourname" aria-label="Username"></div>
+    <div class="two" style="grid-template-columns:130px 1fr"><select id="ckind" aria-label="Telegram or X"><option value="telegram">Telegram</option><option value="x">X</option></select><input id="chandle" name="sproto_contact_handle_manual" type="text" autocomplete="off" data-lpignore="true" data-1p-ignore readonly onfocus="this.removeAttribute('readonly')" autocapitalize="off" spellcheck="false" placeholder="@yourname" aria-label="Username"></div>
     <label class="f">Country *<select id="country" autocomplete="country"><option value="US">United States</option></select></label>
     <label class="f">Full name *<input id="name" type="text" autocomplete="name"></label>
     <label class="f">Street address *<span class="sugg"><input id="line1" type="text" autocomplete="off" aria-autocomplete="list" placeholder="Start typing your street address"><ul id="sugList" class="hide"></ul></span></label>
@@ -340,6 +340,14 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
   }
   ['line1','city','line2','name'].forEach(function(i){ $(i).addEventListener('input',function(){ $('coErr').classList.add('hide'); }); });
   $('state').addEventListener('change',requote); $('zip').addEventListener('input',requote);
+  // the Telegram / X username is typed by hand: wipe anything a browser autofill puts in it
+  (function(){ var h=$('chandle'), typed=false;
+    h.addEventListener('keydown',function(){ typed=true; }); h.addEventListener('paste',function(){ typed=true; });
+    h.addEventListener('input',function(e){ var t=e.inputType||''; if(!/^(insertText|insertFromPaste|deleteContent|deleteByCut|insertCompositionText|historyUndo|historyRedo)/.test(t)&&!typed){ h.value=''; } });
+    function wipe(){ if(!typed) h.value=''; }
+    $('email').addEventListener('input',function(){ setTimeout(wipe,50); setTimeout(wipe,400); }); $('email').addEventListener('change',function(){ setTimeout(wipe,50); setTimeout(wipe,400); });
+    window.addEventListener('pageshow',function(){ h.value=''; typed=false; });
+  })();
   $('country').addEventListener('change',function(){ applyCountry(); requote(); });
 
   // ---- place order ----
