@@ -129,12 +129,9 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
     <span class="lbl" style="margin-bottom:0">Telegram or X username * <small style="text-transform:none;letter-spacing:0">(so we can reach you about your order)</small></span>
     <div class="two" style="grid-template-columns:130px 1fr"><select id="ckind" aria-label="Telegram or X"><option value="telegram">Telegram</option><option value="x">X</option></select><input id="chandle" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="@yourname" aria-label="Username"></div>
     <label class="f">Country *<select id="country" autocomplete="country"><option value="US">United States</option></select></label>
-    <label class="f">Search your address
-      <span class="sugg"><input id="search" type="text" autocomplete="off" placeholder="Start typing your street address" aria-autocomplete="list"><ul id="sugList" class="hide"></ul></span>
-    </label>
-    <p class="hint" id="searchHint">Pick your address from the list and the boxes below fill in automatically (it also sets your country). Can&rsquo;t find it? No problem, just type it in below. Any address in the world works.</p>
     <label class="f">Full name *<input id="name" type="text" autocomplete="name"></label>
-    <label class="f">Street address *<input id="line1" type="text" autocomplete="address-line1"></label>
+    <label class="f">Street address *<span class="sugg"><input id="line1" type="text" autocomplete="off" aria-autocomplete="list" placeholder="Start typing your street address"><ul id="sugList" class="hide"></ul></span></label>
+    <p class="hint" id="searchHint" style="margin-top:-4px">Start typing and tap your address in the list: it fills in your city, state, postal code and country. Not listed? Just type it in.</p>
     <label class="f">Apartment, suite, building, etc. (optional)<input id="line2" type="text" autocomplete="address-line2"></label>
     <div class="three">
       <label class="f">City *<input id="city" type="text" autocomplete="address-level2"></label>
@@ -281,7 +278,7 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
     $('line1').value=line1Of({housenumber:r.house,street:r.street},r.cc); $('city').value=r.city;
     if(r.cc==='US'){ var st=STATE_NAME[r.state]||''; $('state').value=st; $('zip').value=String(r.post).replace(/[^0-9-]/g,'').slice(0,10); }
     else { $('region').value=r.state; $('zip').value=r.post; }
-    $('sugList').classList.add('hide'); $('search').value=''; $('searchHint').textContent='Address filled in. Please check it below and add anything missing (apartment, postal code).';
+    $('sugList').classList.add('hide');  $('searchHint').textContent='Address filled in. Please check it below and add anything missing (apartment, postal code).';
     requote(); if(!$('name').value) $('name').focus();
   }
   function showSug(f){
@@ -290,9 +287,10 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
     Array.prototype.forEach.call($('sugList').querySelectorAll('li[data-i]'),function(li){ var go=function(){ pickAddress(f[+li.getAttribute('data-i')]); }; li.onclick=go; li.onkeydown=function(e){ if(e.key==='Enter') go(); }; });
     $('sugList').classList.remove('hide');
   }
+  var noSug=false;
   function jget(u){ return fetch(u).then(function(r){ if(!r.ok) throw new Error('x'); return r.json(); }); }
-  $('search').addEventListener('input',function(){
-    clearTimeout(sugTimer); var q=this.value.trim();
+  $('line1').addEventListener('input',function(){
+    noSug=false; clearTimeout(sugTimer); var q=this.value.trim();
     if(q.length<4){ $('sugList').classList.add('hide'); return; }
     var seq=++sugSeq;
     sugTimer=setTimeout(function(){
@@ -306,7 +304,7 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
           return (j||[]).map(normNomi).filter(function(r){return r.cc&&(r.street||r.city);});
         }).catch(function(){ return null; });
       }).then(function(f){
-        if(seq!==sugSeq) return;
+        if(seq!==sugSeq||noSug) return;
         if(f===null){ $('sugList').classList.add('hide'); $('searchHint').textContent='Address search is not available right now. Please type your address in the boxes below.'; return; }
         showSug(f.slice(0,7));
       });
