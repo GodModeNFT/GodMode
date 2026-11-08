@@ -267,15 +267,21 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
     $('zip').setAttribute('inputmode',us?'numeric':'text'); $('zip').maxLength=us?10:20;
     $('shipHint').textContent=us?'We ship worldwide. Orders outside the United States: choose your country at the top.':'Shipping is an estimate for tracked USPS delivery. Import duties, VAT and customs fees in your country are not included. A phone number helps the carrier deliver.';
   }
+  function typedNum(){ var t=$('line1').value.split(',')[0], m=t.match(/^\s*(\d+[A-Za-z]?(?:[-\/]\d+[A-Za-z]?)?)(?=\s)/)||t.match(/\s(\d+[A-Za-z]?(?:[-\/]\d+[A-Za-z]?)?)\s*$/); return m?m[1]:''; }
   function line1Of(p,cc){ var num=p.housenumber||'', st=p.street||p.name||''; if(!num) return st; return NUM_FIRST[cc]?(num+' '+st):(st+' '+num); }
   // Photon (OpenStreetMap) first; if it finds nothing or is down, Nominatim (also OpenStreetMap) is asked once
   function normPhoton(x){ var p=x.properties||{}; return {cc:(p.countrycode||'').toUpperCase(), house:p.housenumber||'', street:p.street||p.name||'', city:p.city||p.town||p.village||p.municipality||p.county||'', state:p.state||'', post:p.postcode||''}; }
   function normNomi(x){ var a=x.address||{}; return {cc:(a.country_code||'').toUpperCase(), house:a.house_number||'', street:a.road||a.pedestrian||a.footway||a.neighbourhood||x.name||'', city:a.city||a.town||a.village||a.municipality||a.suburb||a.county||'', state:a.state||a.region||'', post:a.postcode||''}; }
-  function labelOf(r){ return [line1Of({housenumber:r.house,street:r.street},r.cc),r.city,(r.cc==='US'?(STATE_NAME[r.state]||r.state):r.state),r.post,CNAME[r.cc]||r.cc].filter(Boolean).join(', '); }
+  function labelOf(r){ return [line1Of({housenumber:r.house||typedNum(),street:r.street},r.cc),r.city,(r.cc==='US'?(STATE_NAME[r.state]||r.state):r.state),r.post,CNAME[r.cc]||r.cc].filter(Boolean).join(', '); }
   function pickAddress(r){
     if(!CNAME[r.cc]){ $('sugList').classList.add('hide'); $('searchHint').textContent='Sorry, we cannot ship to that country.'; return; }
     $('country').value=r.cc; applyCountry();
-    $('line1').value=line1Of({housenumber:r.house,street:r.street},r.cc); $('city').value=r.city;
+    var num=r.house;
+    if(!num){   // the map often has the street but not the house number: keep the number the buyer typed
+      var t=$('line1').value.split(',')[0], m=t.match(/^\s*(\d+[A-Za-z]?(?:[-\/]\d+[A-Za-z]?)?)(?=\s)/)||t.match(/\s(\d+[A-Za-z]?(?:[-\/]\d+[A-Za-z]?)?)\s*$/);
+      if(m) num=m[1];
+    }
+    $('line1').value=line1Of({housenumber:num,street:r.street},r.cc); $('city').value=r.city;
     if(r.cc==='US'){ var st=STATE_NAME[r.state]||''; $('state').value=st; $('zip').value=String(r.post).replace(/[^0-9-]/g,'').slice(0,10); }
     else { $('region').value=r.state; $('zip').value=r.post; }
     $('sugList').classList.add('hide');  $('searchHint').textContent='Address filled in. Please check it below and add anything missing (apartment, postal code).';
