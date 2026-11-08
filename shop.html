@@ -171,7 +171,7 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
 <div id="viewPay" class="hide">
   <div class="card">
     <h2>Pay with ETH</h2>
-    <div class="status" id="payStatus">Waiting for your payment&hellip;</div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px"><div class="status" id="payStatus" style="margin:0">Waiting for your payment&hellip;</div><button class="bt ghost" id="cancelBtn" type="button" style="min-height:40px;font-size:15px;padding:0 14px">Cancel order</button></div>
     <div id="payBox">
       <p style="margin:6px 0">Order <b id="pId"></b> &middot; total <b id="pUsd"></b></p>
       <button class="bt red wide" id="payNow" type="button" style="margin:4px 0 10px">Pay now: show my QR &amp; exact amount</button>
@@ -376,6 +376,7 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
     // the QR holds the address and exactly the ETH amount shown (value is in wei: the same number written out in full)
     try{ var q2=qrcode(0,'M'); q2.addData('ethereum:'+o.addr+'@1?value='+o.wei); q2.make(); $('mQr').innerHTML=q2.createSvgTag({cellSize:4,margin:0,scalable:true}); }catch(e){ $('mQr').classList.add('hide'); }
     $('mCpAmt').onclick=function(){ copy(o.eth,this); }; $('mCpAddr').onclick=function(){ copy(o.addr,this); };
+    $('cancelBtn').onclick=function(){ if(!confirm('Cancel this order? Do not send ETH if you cancel.')) return; var b=this; b.disabled=true; call({op:'cancel',id:order.id,token:order.token}).then(function(j){ order.o=j.order; closePay(); apply(j.order); ls('spc_order',null); }).catch(function(e){ b.disabled=false; alert(e.message); }); };
     $('payNow').onclick=function(){ openPay(); }; $('mClose').onclick=closePay;
     if(o.status==='pending' && !modalShown){ modalShown=true; openPay(); }
     var h=''; o.items.forEach(function(i){ h+='<div class="row"><span>'+i.qty+' &times; '+esc(i.name)+'</span><b>'+usd(i.lineCents)+'</b></div>'; });
@@ -394,11 +395,11 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
       var left=o.expires-now;
       if(left>0){ st.className='status'; st.textContent=(o.received?'Partial payment seen. Please send the rest. ':'Waiting for your payment… ')+''; $('pCount').textContent=fmtTime(left); $('mCount').textContent=fmtTime(left); }
       else { $('pCount').textContent='0:00'; st.className='status'; st.textContent='Time is up. Checking for your payment one last time…'; }
-      $('payBox').classList.remove('hide'); $('doneBox').classList.add('hide');
+      $('payBox').classList.remove('hide'); $('doneBox').classList.add('hide'); $('cancelBtn').classList.remove('hide');
     } else {
-      clearInterval(tick); closePay();
+      clearInterval(tick); closePay(); $('cancelBtn').classList.add('hide'); if(o.status==='cancelled'||o.status==='expired') clearInterval(poll);
       $('payBox').classList.add('hide'); $('doneBox').classList.remove('hide');
-      if(o.status==='expired'){ st.className='status'; st.textContent='Order cancelled'; $('doneBox').innerHTML='<p>No payment arrived within the time limit, so this order was cancelled. Please start a new order.</p><p><b>Sent ETH already, or having a problem with your payment?</b> Contact:</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0"><a class="bt" style="flex:1;text-align:center;text-decoration:none;line-height:44px;min-height:46px;font-size:16px" href="https://x.com/angelaeon777" target="_blank" rel="noopener">X</a><a class="bt ghost" style="flex:1;text-align:center;text-decoration:none;line-height:44px;min-height:46px;font-size:16px" href="https://t.me/mehoyminoy" target="_blank" rel="noopener">Telegram</a></div><p>Give us order number <b>'+esc(o.id.toUpperCase())+'</b>.</p><a class="bt red" style="display:inline-block;text-decoration:none;line-height:44px" href="shop.html">Start over</a>'; }
+      if(o.status==='expired'||o.status==='cancelled'){ st.className='status'; st.textContent='Order cancelled'; $('doneBox').innerHTML='<p>'+(o.status==='cancelled'?'You cancelled this order.':'No payment arrived within the time limit, so this order was cancelled.')+' Please start a new order if you still want one.</p><p><b>Sent ETH already, or having a problem with your payment?</b> Contact:</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0"><a class="bt" style="flex:1;text-align:center;text-decoration:none;line-height:44px;min-height:46px;font-size:16px" href="https://x.com/angelaeon777" target="_blank" rel="noopener">X</a><a class="bt ghost" style="flex:1;text-align:center;text-decoration:none;line-height:44px;min-height:46px;font-size:16px" href="https://t.me/mehoyminoy" target="_blank" rel="noopener">Telegram</a></div><p>Give us order number <b>'+esc(o.id.toUpperCase())+'</b>.</p><a class="bt red" style="display:inline-block;text-decoration:none;line-height:44px" href="shop.html">Start over</a>'; }
       else { clearInterval(poll); st.className='status ok'; st.textContent=o.status==='shipped'?'Shipped!':'Payment received, thank you!';
         $('doneBox').innerHTML='<p><b>Confirmed!</b> We received your payment for order <b>'+esc(o.id.toUpperCase())+'</b> ('+esc(o.eth)+' ETH). We will pack it and ship it with USPS. Sold by 3DPRINTYOURNFT.</p>'+(o.txHash?'<p><a href="https://etherscan.io/tx/'+encodeURIComponent(o.txHash)+'" target="_blank" rel="noopener">View your transaction</a></p>':'')+(o.tracking?'<p><b>USPS tracking number:</b> <span class="addr" style="display:inline-block;padding:4px 8px">'+esc(o.tracking)+'</span></p>':'<p>You will get a tracking number once it ships. Come back to this page to see it.</p>');
         ls('spc_order',null); }
