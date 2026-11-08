@@ -2816,10 +2816,12 @@ function bxPick(level,fen,msLeft){
   }
   function liLive(){
     var ul=$('liList'); if(!ul) return;
-    Promise.all(LI_CH.map(liFetchCh)).then(function(all){
+    // 1) our own server keeps a fresh list of live Lichess games (fast, same for everyone); 2) if that is not available, ask Lichess directly
+    var viaServer=function(){ return fetch(SERVER_CONFIG.API_URL+'/lichess/live').then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){ return (j&&j.games)||[]; }).catch(function(){ return []; }); };
+    var direct=function(){ return Promise.all(LI_CH.map(liFetchCh)).then(function(all){
       var seen={}, list=[]; all.forEach(function(a){ a.forEach(function(g){ if(!seen[g.id]){ seen[g.id]=1; list.push(g); } }); });
-      return list.length?list:liFeatured();
-    }).then(function(list){
+      return list.length?list:liFeatured(); }); };
+    viaServer().then(function(l){ return l.length?l:direct(); }).then(function(list){
       liTries=0; ul.innerHTML=''; var n=0;
       list.slice(0,40).forEach(function(g){ n++;
         var li=document.createElement('li'), w=document.createElement('div'), sm=document.createElement('small'), b=document.createElement('button');
