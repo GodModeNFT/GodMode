@@ -106,7 +106,7 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
         <li>10 &times; 10 board chess set, <b>comes with all the pieces</b></li>
         <li>Light and compact, only 147 g (5.2 oz)</li>
         <li>Sold by 3DPRINTYOURNFT &middot; ships by USPS</li>
-        <li>Pay with ETH (Ethereum)</li>
+        <li>Pay with ETH (ERC20)</li>
       </ul>
       <span class="lbl">Choose your colors</span>
       <div class="colors" id="colors"></div>
@@ -146,7 +146,7 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
       <p class="hint hide" id="intlNote" style="margin-top:8px"><b>International order:</b> shipping is an estimate for tracked USPS delivery (usually 1 to 4 weeks). Import duties, VAT and customs fees in your country are <b>not</b> included and are paid by you to the carrier or customs.</p>
     </div>
     <div class="err hide" id="coErr"></div>
-    <button class="bt red wide" id="orderBtn" type="button" style="margin-top:14px" disabled>Place order &amp; pay with ETH</button>
+    <button class="bt red wide" id="orderBtn" type="button" style="margin-top:14px" disabled>Place order &amp; pay with ETH (ERC20)</button>
     <p class="hint">Next you will see the exact ETH amount to send and our payment address. You will have 30 minutes to send it.</p>
   </div>
 </div>
@@ -154,7 +154,7 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
 <div id="payModal" class="modal hide" role="dialog" aria-modal="true" aria-label="Pay with ETH">
   <div class="mc">
     <p style="margin:0;font-weight:700">Order <span id="mId"></span> &middot; pay within <span id="mCount"></span></p>
-    <p style="margin:10px 0 0;font-size:15px">Send exactly this amount of ETH:</p>
+    <p style="margin:10px 0 0;font-size:15px">Send exactly this amount of ETH (ERC20):</p>
     <div class="mamt" id="mAmt"></div>
     <button class="bt red wide" id="mCpAmt" type="button">Copy amount</button>
     <div class="mqr" id="mQr"></div>
@@ -170,12 +170,12 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
 
 <div id="viewPay" class="hide">
   <div class="card">
-    <h2>Pay with ETH</h2>
+    <h2>Pay with ETH (ERC20)</h2>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px"><div class="status" id="payStatus" style="margin:0">Waiting for your payment&hellip;</div><button class="bt ghost" id="cancelBtn" type="button" style="min-height:40px;font-size:15px;padding:0 14px">Cancel order</button></div>
     <div id="payBox">
       <p style="margin:6px 0">Order <b id="pId"></b> &middot; total <b id="pUsd"></b></p>
       <button class="bt red wide" id="payNow" type="button" style="margin:4px 0 10px">Pay now: show my QR &amp; exact amount</button>
-      <p style="margin:8px 0;font-weight:700">Send exactly this much ETH to the address below within <span class="holdn">30</span> minutes:</p>
+      <p style="margin:8px 0;font-weight:700">Send exactly this much ETH (ERC20) to the address below within <span class="holdn">30</span> minutes:</p>
       <div class="note" style="margin:8px 0"><b>Make sure the address and the ETH amount is exactly the same.</b></div><span class="lbl">1. Amount (exactly)</span>
       <div class="big" id="pEth"></div>
       <button class="bt ghost" id="cpEth" type="button" style="margin-top:8px">Copy amount</button>
@@ -353,7 +353,7 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
     $('coErr').classList.add('hide'); var b=$('orderBtn'); b.disabled=true; b.textContent='Creating your payment address…';
     call({op:'order',email:$('email').value,contactKind:$('ckind').value,contactHandle:$('chandle').value,items:cart,address:addr()}).then(function(j){
       ls('spc_order',{id:j.id,token:j.token}); ls('spc_cart',null); cart=[]; showOrder(j.id,j.token,j.order);
-    }).catch(function(e){ alertBox(e.message); }).then(function(){ b.textContent='Place order & pay with ETH'; b.disabled=!quote; });
+    }).catch(function(e){ alertBox(e.message); }).then(function(){ b.textContent='Place order & pay with ETH (ERC20)'; b.disabled=!quote; });
   };
 
   // ---- payment screen ----
@@ -366,13 +366,13 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
   function showOrder(id,token,o){
     order={id:id,token:token,o:o}; $('viewShop').classList.add('hide'); $('viewPay').classList.remove('hide'); window.scrollTo(0,0);
     try{ history.replaceState(null,'','?order='+encodeURIComponent(id)+'&t='+encodeURIComponent(token)); }catch(e){}
-    $('pId').textContent=o.id.toUpperCase(); $('pUsd').textContent=usd(o.totalCents); $('pEth').textContent=o.eth+' ETH'; $('pAddr').textContent=o.addr; $('pRate').textContent=Number(o.ethUsd).toLocaleString('en-US');
+    $('pId').textContent=o.id.toUpperCase(); $('pUsd').textContent=usd(o.totalCents); $('pEth').textContent=o.eth+' ETH (ERC20)'; $('pAddr').textContent=o.addr; $('pRate').textContent=Number(o.ethUsd).toLocaleString('en-US');
     Array.prototype.forEach.call(document.querySelectorAll('.holdn'),function(n){ n.textContent=Math.round((o.expires-o.created)/60000); });
     
     function drawQr(txt){ try{ var qr=qrcode(0,'M'); qr.addData(txt); qr.make(); $('qr').innerHTML=qr.createSvgTag({cellSize:4,margin:0,scalable:true}); }catch(e){ $('qr').innerHTML=''; } }
     drawQr('ethereum:'+o.addr+'@1?value='+o.wei);
     $('cpEth').onclick=function(){ copy(o.eth,this); }; $('cpAddr').onclick=function(){ copy(o.addr,this); };
-    $('hintAmt').textContent=o.eth+' ETH'; $('mHintAmt').textContent=o.eth+' ETH'; $('mId').textContent=o.id.toUpperCase(); $('mAmt').textContent=o.eth+' ETH'; $('mAddr').textContent=o.addr;
+    $('hintAmt').textContent=o.eth+' ETH (ERC20)'; $('mHintAmt').textContent=o.eth+' ETH (ERC20)'; $('mId').textContent=o.id.toUpperCase(); $('mAmt').textContent=o.eth+' ETH (ERC20)'; $('mAddr').textContent=o.addr;
     // the QR holds the address and exactly the ETH amount shown (value is in wei: the same number written out in full)
     try{ var q2=qrcode(0,'M'); q2.addData('ethereum:'+o.addr+'@1?value='+o.wei); q2.make(); $('mQr').innerHTML=q2.createSvgTag({cellSize:4,margin:0,scalable:true}); }catch(e){ $('mQr').classList.add('hide'); }
     $('mCpAmt').onclick=function(){ copy(o.eth,this); }; $('mCpAddr').onclick=function(){ copy(o.addr,this); };
@@ -401,7 +401,7 @@ input,select{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 
       $('payBox').classList.add('hide'); $('doneBox').classList.remove('hide');
       if(o.status==='expired'||o.status==='cancelled'){ st.className='status'; st.textContent='Order cancelled'; $('doneBox').innerHTML='<p>'+(o.status==='cancelled'?'You cancelled this order.':'No payment arrived within the time limit, so this order was cancelled.')+' Please start a new order if you still want one.</p><p><b>Sent ETH already, or having a problem with your payment?</b> Contact:</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0"><a class="bt" style="flex:1;text-align:center;text-decoration:none;line-height:44px;min-height:46px;font-size:16px" href="https://x.com/angelaeon777" target="_blank" rel="noopener">X</a><a class="bt ghost" style="flex:1;text-align:center;text-decoration:none;line-height:44px;min-height:46px;font-size:16px" href="https://t.me/mehoyminoy" target="_blank" rel="noopener">Telegram</a></div><p>Give us order number <b>'+esc(o.id.toUpperCase())+'</b>.</p><a class="bt red" style="display:inline-block;text-decoration:none;line-height:44px" href="shop.html">Start over</a>'; }
       else { clearInterval(poll); st.className='status ok'; st.textContent=o.status==='shipped'?'Shipped!':'Payment received, thank you!';
-        $('doneBox').innerHTML='<p><b>Confirmed!</b> We received your payment for order <b>'+esc(o.id.toUpperCase())+'</b> ('+esc(o.eth)+' ETH). We will pack it and ship it with USPS. Sold by 3DPRINTYOURNFT.</p>'+(o.txHash?'<p><a href="https://etherscan.io/tx/'+encodeURIComponent(o.txHash)+'" target="_blank" rel="noopener">View your transaction</a></p>':'')+(o.tracking?'<p><b>USPS tracking number:</b> <span class="addr" style="display:inline-block;padding:4px 8px">'+esc(o.tracking)+'</span></p>':'<p>You will get a tracking number once it ships. Come back to this page to see it.</p>');
+        $('doneBox').innerHTML='<p><b>Confirmed!</b> We received your payment for order <b>'+esc(o.id.toUpperCase())+'</b> ('+esc(o.eth)+' ETH (ERC20)). We will pack it and ship it with USPS. Sold by 3DPRINTYOURNFT.</p>'+(o.txHash?'<p><a href="https://etherscan.io/tx/'+encodeURIComponent(o.txHash)+'" target="_blank" rel="noopener">View your transaction</a></p>':'')+(o.tracking?'<p><b>USPS tracking number:</b> <span class="addr" style="display:inline-block;padding:4px 8px">'+esc(o.tracking)+'</span></p>':'<p>You will get a tracking number once it ships. Come back to this page to see it.</p>');
         ls('spc_order',null); }
     }
   }
